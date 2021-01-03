@@ -1,7 +1,7 @@
 name: ftauth
-description: A starting point for Dart libraries or applications.
+description: Client-side library for the FTAuth server.
 version: 1.0.0-nullsafety.0
-# homepage: https://www.example.com
+homepage: https://www.example.com
 
 environment:
   sdk: '>=2.12.0-0 <3.0.0'
@@ -10,6 +10,7 @@ dependencies:
   json_annotation: ^4.0.0-nullsafety.0
   equatable: ^2.0.0-nullsafety.0
   http: ^0.12.2
+  hive: ^1.4.4+1
   oauth2: ^1.6.3
   jose: ^0.2.1+1
 

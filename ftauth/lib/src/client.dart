@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:ftauth/src/credentials.dart';
-import 'package:ftauth/src/model/exception.dart';
 
 import 'model/state/auth_state.dart';
 

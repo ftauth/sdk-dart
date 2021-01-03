@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:ftauth/ftauth.dart';
 
-import 'config_loader_stub.dart';
+import 'config_loader.dart';
 
-class ConfigLoader extends ConfigLoaderStub {
+class ConfigLoader extends ConfigLoaderInterface {
   @override
   Future<Config> fromFile(String filename) async {
     final data = File(filename).readAsStringSync();

@@ -1,3 +1,10 @@
-import 'config_loader_stub.dart';
+import 'package:ftauth/src/model/config/config.dart';
 
-class ConfigLoader extends ConfigLoaderStub {}
+import 'config_loader.dart';
+
+class ConfigLoader extends ConfigLoaderInterface {
+  @override
+  Future<Config> fromFile(String filename) {
+    throw UnimplementedError();
+  }
+}

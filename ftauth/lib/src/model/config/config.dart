@@ -1,13 +1,13 @@
 import 'dart:html';
 
-import 'package:ftauth/src/authorizer/authorizer.dart';
 import 'package:ftauth/src/client.dart';
 import 'package:ftauth/src/ftauth.dart';
 import 'package:ftauth/src/model/model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:ftauth/src/config_loader/config_loader_html.dart'
-    if (dart.library.io) 'package:ftauth/src/config_loader/config_loader_io.dart';
+import 'package:ftauth/src/config_loader/config_loader.dart'
+    if (dart.library.io) 'package:ftauth/src/config_loader/config_loader_io.dart'
+    if (dart.library.html) 'package:ftauth/src/config_loader/config_loader_html.dart';
 
 part 'config.g.dart';
 
