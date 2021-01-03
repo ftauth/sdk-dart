@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:ftauth/src/client.dart';
 import 'package:ftauth/src/ftauth.dart';
 import 'package:ftauth/src/model/model.dart';

@@ -20,15 +20,3 @@ abstract class Authorizer {
     throw UnimplementedError();
   }
 }
-
-class AuthorizerImpl extends Authorizer {
-  @override
-  Future<Client> authorize(Config config) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> launchUrl(String url) {
-    throw UnimplementedError();
-  }
-}
