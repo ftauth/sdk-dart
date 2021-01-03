@@ -1,4 +1,9 @@
 # This is a generated file; do not edit or check into version control.
+flutter_secure_storage=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_secure_storage-3.3.5/
+path_provider=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-1.6.24/
+path_provider_linux=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_linux-0.0.1+2/
+path_provider_macos=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_macos-0.0.4+6/
+path_provider_windows=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-0.0.4+3/
 uni_links=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/uni_links-0.4.0/
 url_launcher=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-6.0.0-nullsafety.1/
 url_launcher_linux=/Users/dillonnys/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_linux-0.1.0-nullsafety.1/
