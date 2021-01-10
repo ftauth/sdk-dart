@@ -10,7 +10,7 @@ extension ClientTypeX on ClientType {
             'and native applications. Public clients are only issued a client ID '
             'which is not private, meaning anyone with the client ID can act as '
             'that client. Trust is established through pre-defined redirect URIs, and '
-            'a mechanism called DPoP (Demonstration of Proof of Possession) ensures '
+            'a mechanism called DPoP (Demonstration of Proof of Possession), which ensures '
             'that Man-In-The-Middle attacks are unsuccessful.\n\n'
             'These clients are required to use the authorization code grant type.';
       case ClientType.confidential:

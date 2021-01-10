@@ -5,6 +5,8 @@ import 'package:path/path.dart' as path;
 import 'path_provider.dart';
 
 class PathProvider extends PathProviderInterface {
+  const PathProvider();
+
   @override
   String? getHomeDirectory() {
     String? home;

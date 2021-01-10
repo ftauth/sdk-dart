@@ -26,4 +26,9 @@ class ConfigLoader extends ConfigLoaderInterface {
   Future<Config> fromFile(String filename) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<Config> fromUrl(String url) {
+    throw UnimplementedError();
+  }
 }

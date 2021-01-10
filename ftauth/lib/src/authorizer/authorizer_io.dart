@@ -3,8 +3,10 @@ import 'package:ftauth/ftauth.dart';
 import 'authorizer.dart';
 
 class AuthorizerImpl extends Authorizer {
+  AuthorizerImpl(Config config) : super(config);
+
   @override
-  Future<Client> authorize(Config config) async {
+  Future<Client> authorize() async {
     if (config.clientType == ClientType.public) {
       throw UnsupportedError(
           'Public clients cannot be used in server-side applications.');
@@ -15,9 +17,8 @@ class AuthorizerImpl extends Authorizer {
       'Client secret must be provided for confidential clients.',
     );
 
-    // Perform client credentials grant
-
-    return Client(credentials: Credentials());
+    // ignore: invalid_use_of_visible_for_testing_member
+    return authorizeConfidentialClient();
   }
 
   @override

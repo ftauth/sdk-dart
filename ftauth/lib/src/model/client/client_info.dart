@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'client_type.dart';
-import 'scope.dart';
 
 part 'client_info.g.dart';
 

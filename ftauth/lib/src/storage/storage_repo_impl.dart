@@ -5,13 +5,13 @@ import 'package:hive/hive.dart';
 import 'storage_repo.dart';
 
 class StorageRepoImpl extends StorageRepo {
-  late Box<String> _box;
+  late final Box<String> _box;
 
   Future<void> init({
     Uint8List? encryptionKey,
   }) async {
     _box = await Hive.openBox<String>(
-      'ftoauth',
+      'ftauth',
       encryptionCipher:
           encryptionKey != null ? HiveAesCipher(encryptionKey) : null,
     );

@@ -1,4 +1,5 @@
 library ftauth_flutter;
 
-export 'src/ftauth_extensions.dart';
+export 'package:ftauth/ftauth.dart';
+export 'src/ftauth_flutter.dart';
 export 'src/widgets/widgets.dart';

@@ -1,5 +1,5 @@
-import 'package:ftauth/src/client.dart';
-import 'package:ftauth/src/ftauth.dart';
+import 'dart:async';
+
 import 'package:ftauth/src/model/model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -16,30 +16,42 @@ part 'config.g.dart';
 class Config {
   static final ConfigLoader _configLoader = ConfigLoader();
 
-  final String gatewayUrl;
+  final Uri gatewayUrl;
   final String clientId;
   final String? clientSecret;
   final ClientType clientType;
   final List<String>? scopes;
-  final String redirectUri;
+  final Uri redirectUri;
+  final List<String>? grantTypes;
 
   Config({
-    required this.gatewayUrl,
+    required String gatewayUrl,
     required this.clientId,
     this.clientSecret,
     this.clientType = ClientType.public,
     this.scopes,
-    required this.redirectUri,
-  }) : assert(
+    required String redirectUri,
+    this.grantTypes,
+  })  : assert(
           clientType == ClientType.public || clientSecret != null,
           'Client secret must be included for confidential clients.',
-        );
+        ),
+        gatewayUrl = Uri.parse(gatewayUrl),
+        redirectUri = Uri.parse(redirectUri);
+
+  Uri get authorizationUri {
+    return gatewayUrl.replace(
+      pathSegments: [...gatewayUrl.pathSegments, 'authorize'],
+    );
+  }
+
+  Uri get tokenUri {
+    return gatewayUrl.replace(
+      pathSegments: [...gatewayUrl.pathSegments, 'token'],
+    );
+  }
 
   factory Config.fromJson(Map<String, dynamic> json) => _$ConfigFromJson(json);
-
-  Future<Client> authorize() {
-    return FTAuth.instance.authorizer.authorize(this);
-  }
 
   static Future<Config> fromFile(String filename) {
     return _configLoader.fromFile(filename);
