@@ -22,6 +22,11 @@ class AuthRouteInfo extends RouteInfo {
         state = null;
 
   bool get isEmpty => code == null && state == null;
+
+  Map<String, String> get parameters => {
+        'code': code,
+        'state': state,
+      };
 }
 
 class AuthRouteInfoParser extends RouteInformationParser<AuthRouteInfo> {
@@ -47,7 +52,7 @@ class AuthRouteInfoParser extends RouteInformationParser<AuthRouteInfo> {
   }
 }
 
-class AdminRouteInformationParser extends RouteInformationParser<RouteInfo> {
+class AppRouteInformationParser extends RouteInformationParser<RouteInfo> {
   final AuthRouteInfoParser _authParser = AuthRouteInfoParser();
 
   @override
@@ -77,15 +82,15 @@ class AdminRouteInformationParser extends RouteInformationParser<RouteInfo> {
   }
 }
 
-class AdminRouterDelegate extends RouterDelegate<RouteInfo>
+class AppRouterDelegate extends RouterDelegate<RouteInfo>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  RouteInfo _routeInfo = HomeRouteInfo();
-  Stream<AuthState> authStates;
+  final Config _config;
 
-  AdminRouterDelegate() {
-    authStates = FTAuth.instance.authStates.asBroadcastStream();
-    authStates.listen((state) {
+  RouteInfo _routeInfo = HomeRouteInfo();
+
+  AppRouterDelegate(this._config) {
+    FTAuth.instance.authStates.listen((state) {
       final showAuthScreen = state is! AuthSignedIn;
       if (showAuthScreen) {
         _routeInfo = AuthRouteInfo.empty();
@@ -99,7 +104,7 @@ class AdminRouterDelegate extends RouterDelegate<RouteInfo>
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: authStates,
+      stream: FTAuth.instance.authStates,
       initialData: const AuthLoading(),
       builder: (context, snapshot) {
         final state = snapshot.data;
@@ -123,11 +128,20 @@ class AdminRouterDelegate extends RouterDelegate<RouteInfo>
   }
 
   @override
-  RouteInfo get currentConfiguration => _routeInfo;
+  RouteInfo get currentConfiguration {
+    return _routeInfo;
+  }
 
   @override
   Future<void> setNewRoutePath(RouteInfo configuration) async {
     _routeInfo = configuration;
+
+    if (_routeInfo is AuthRouteInfo) {
+      final authRouteInfo = _routeInfo as AuthRouteInfo;
+      if (!authRouteInfo.isEmpty) {
+        _config.exchangeAuthorizationCode(authRouteInfo.parameters);
+      }
+    }
   }
 
   AuthRouteInfo get _authRouteInfo {

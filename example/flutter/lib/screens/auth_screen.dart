@@ -1,6 +1,8 @@
 import 'package:example_flutter/routes.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
+import 'package:provider/provider.dart';
 
 class AuthScreen extends StatelessWidget {
   final AuthRouteInfo routeInfo;
@@ -23,7 +25,17 @@ class AuthScreen extends StatelessWidget {
               case AuthLoading:
                 return CircularProgressIndicator();
               case AuthSignedOut:
-                return Text("You've been logged out.");
+                return RaisedButton(
+                  child: Text('Login'),
+                  onPressed: () async {
+                    final config = Provider.of<Config>(context, listen: false);
+                    if (kIsWeb) {
+                      await config.authorize();
+                    } else {
+                      await config.login();
+                    }
+                  },
+                );
               default:
                 return Container();
             }

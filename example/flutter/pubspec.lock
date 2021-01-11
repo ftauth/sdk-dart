@@ -114,12 +114,12 @@ packages:
     source: hosted
     version: "0.14.2"
   crypto:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.5"
+    version: "3.0.0-nullsafety.0"
   crypto_keys:
     dependency: transitive
     description:
@@ -191,6 +191,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   ftauth:
     dependency: transitive
     description:
@@ -232,12 +237,14 @@ packages:
     source: hosted
     version: "0.3.1"
   http:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: http
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.12.2"
+      path: "."
+      ref: stronger-types
+      resolved-ref: "688402b71cec43d8a153e5c6330c81994d9edcb3"
+      url: "https://github.com/dart-lang/http.git"
+    source: git
+    version: "0.13.0-nullsafety.0"
   http_extensions:
     dependency: transitive
     description:
@@ -253,12 +260,12 @@ packages:
     source: hosted
     version: "0.1.3"
   http_parser:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.4"
+    version: "4.0.0-nullsafety"
   integration_test:
     dependency: "direct dev"
     description: flutter
@@ -344,10 +351,12 @@ packages:
   oauth2:
     dependency: transitive
     description:
-      name: oauth2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.6.3"
+      path: "."
+      ref: nullsafety
+      resolved-ref: "47280cf1046f7060d2d821532925941cc0bff559"
+      url: "https://github.com/dnys1/oauth2.git"
+    source: git
+    version: "2.0.0-nullsafety.0"
   package_config:
     dependency: transitive
     description:
@@ -410,7 +419,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0-nullsafety.1"
+    version: "1.0.3"
   pointycastle:
     dependency: transitive
     description:
@@ -548,35 +557,42 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.0-nullsafety.1"
+    version: "5.7.10"
   url_launcher_linux:
     dependency: transitive
     description:
       name: url_launcher_linux
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0-nullsafety.1"
+    version: "0.0.1+4"
   url_launcher_macos:
     dependency: transitive
     description:
       name: url_launcher_macos
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0-nullsafety.1"
+    version: "0.0.1+9"
   url_launcher_platform_interface:
     dependency: transitive
     description:
       name: url_launcher_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0-nullsafety.1"
+    version: "1.0.9"
+  url_launcher_web:
+    dependency: transitive
+    description:
+      name: url_launcher_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.5+1"
   url_launcher_windows:
     dependency: transitive
     description:
       name: url_launcher_windows
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0-nullsafety.1"
+    version: "0.0.1+3"
   uuid:
     dependency: transitive
     description:
@@ -651,4 +667,4 @@ packages:
     version: "2.2.1"
 sdks:
   dart: ">=2.12.0-0.0 <3.0.0"
-  flutter: ">=1.20.0 <2.0.0"
+  flutter: ">=1.22.0 <2.0.0"
