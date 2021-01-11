@@ -4,6 +4,8 @@ import 'package:ftauth/src/storage/storage_repo.dart';
 import 'package:webcrypto/webcrypto.dart';
 
 abstract class CryptoRepo {
+  static final CryptoRepo instance = CryptoRepoImpl(StorageRepo.instance);
+
   static const privateStorageKey = 'private_key';
   static const publicStorageKey = 'public_key';
 

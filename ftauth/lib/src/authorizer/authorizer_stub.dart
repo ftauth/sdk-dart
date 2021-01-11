@@ -6,7 +6,7 @@ class AuthorizerImpl extends Authorizer {
   AuthorizerImpl(Config config) : super(config);
 
   @override
-  Future<Client> authorize() {
+  Future<void> authorize() {
     throw UnimplementedError();
   }
 

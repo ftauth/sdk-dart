@@ -21,7 +21,7 @@ class MetadataRepoImpl extends MetadataRepo {
     if (_cached == null || force) {
       final path =
           '${_config.gatewayUrl}/.well-known/oauth-authorization-server';
-      final res = await http.get(path);
+      final res = await http.get(Uri.parse(path));
       if (res.statusCode != 200) {
         throw ApiException.get(path, res.statusCode, res.body);
       } else {
@@ -37,7 +37,7 @@ class MetadataRepoImpl extends MetadataRepo {
     AuthorizationServerMetadata metadata,
   ) async {
     final path = '${_config.gatewayUrl}/.well-known/oauth-authorization-server';
-    final res = await http.put(path, body: metadata.toJson());
+    final res = await http.put(Uri.parse(path), body: metadata.toJson());
     if (res.statusCode != 200) {
       throw ApiException.put(path, res.statusCode, res.body);
     } else {

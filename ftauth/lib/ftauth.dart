@@ -1,6 +1,6 @@
-/// Support for doing something awesome.
+/// FTAuth client-side library for Dart servers and web applications.
 ///
-/// More dartdocs go here.
+/// For Flutter apps, see [ftauth_flutter](https://pub.dev/packages/ftauth_flutter).
 library ftauth;
 
 export 'src/ftauth.dart';

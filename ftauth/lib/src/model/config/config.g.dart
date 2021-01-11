@@ -12,9 +12,11 @@ Config _$ConfigFromJson(Map<String, dynamic> json) {
     clientId: json['client_id'] as String,
     clientSecret: json['client_secret'] as String?,
     clientType: _$enumDecode(_$ClientTypeEnumMap, json['client_type']),
-    scopes:
-        (json['scopes'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    scopes: (json['scopes'] as List<dynamic>).map((e) => e as String).toList(),
     redirectUri: json['redirect_uri'] as String,
+    grantTypes: (json['grant_types'] as List<dynamic>?)
+        ?.map((e) => e as String)
+        .toList(),
   );
 }
 

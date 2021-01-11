@@ -5,7 +5,7 @@ import 'client_type.dart';
 
 part 'client_info.g.dart';
 
-/// ClientInfo holds information about the client.
+/// Metadata about an FTAuth client.
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )

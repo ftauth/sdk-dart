@@ -2,6 +2,9 @@ import 'package:jose/jose.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
 
+import 'model/user/user.dart';
+
+/// A user's access and refresh tokens plus metadata needed to access services.
 class Credentials implements oauth2.Credentials {
   final Uri _tokenEndpoint;
   final JsonWebToken _accessToken;
@@ -39,6 +42,12 @@ class Credentials implements oauth2.Credentials {
     );
   }
 
+  User get user {
+    final userInfo =
+        _accessToken.claims.getTyped<Map<String, dynamic>>('userInfo');
+    return User.fromJson(userInfo);
+  }
+
   @override
   String get accessToken => _accessToken.toCompactSerialization();
 
@@ -56,7 +65,7 @@ class Credentials implements oauth2.Credentials {
 
   @override
   Future<Credentials> refresh({
-    String? identifier,
+    required String identifier,
     String? secret,
     Iterable<String>? newScopes,
     bool basicAuth = true,
@@ -66,6 +75,7 @@ class Credentials implements oauth2.Credentials {
       accessToken,
       refreshToken: refreshToken,
       tokenEndpoint: _tokenEndpoint,
+      scopes: scopes,
     ).refresh(
       identifier: identifier,
       secret: secret,
@@ -81,7 +91,7 @@ class Credentials implements oauth2.Credentials {
   List<String> get scopes => _scopes;
 
   @override
-  String? toJson() => null;
+  String toJson() => '';
 
   @override
   Uri get tokenEndpoint => _tokenEndpoint;

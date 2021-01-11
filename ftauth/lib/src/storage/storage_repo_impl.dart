@@ -7,6 +7,7 @@ import 'storage_repo.dart';
 class StorageRepoImpl extends StorageRepo {
   late final Box<String> _box;
 
+  @override
   Future<void> init({
     Uint8List? encryptionKey,
   }) async {

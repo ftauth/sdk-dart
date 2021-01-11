@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'metadata.g.dart';
 
+/// Information about to the server providing authentication and authorization.
 @JsonSerializable(
   fieldRename: FieldRename.snake,
 )
