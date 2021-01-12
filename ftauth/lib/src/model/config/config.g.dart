@@ -6,8 +6,8 @@ part of 'config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Config _$ConfigFromJson(Map<String, dynamic> json) {
-  return Config(
+FTAuthConfig _$FTAuthConfigFromJson(Map<String, dynamic> json) {
+  return FTAuthConfig(
     gatewayUrl: json['gateway_url'] as String,
     clientId: json['client_id'] as String,
     clientSecret: json['client_secret'] as String?,

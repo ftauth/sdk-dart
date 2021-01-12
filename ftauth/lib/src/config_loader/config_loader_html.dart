@@ -4,7 +4,7 @@ import 'config_loader.dart';
 
 class ConfigLoader extends ConfigLoaderInterface {
   @override
-  Future<Config> fromFile(String filename) {
+  Future<FTAuthConfig> fromFile(String filename) {
     throw UnimplementedError();
   }
 }

@@ -12,11 +12,11 @@ import 'model/config/config.dart';
 
 /// The main utility class. It is generally not necessary to work with this
 /// class directly.
-class FTAuth {
-  static final instance = FTAuth._();
-  late final Config _config;
+class FTAuthImpl {
+  static final instance = FTAuthImpl._();
+  late final FTAuthConfig _config;
 
-  FTAuth._();
+  FTAuthImpl._();
 
   /// Yields a stream of state objects representing the user's authenticated
   /// status.
@@ -27,7 +27,7 @@ class FTAuth {
   /// It is required to call either `init` for server and web applications or
   /// `initFlutter` for Flutter applications.
   Future<void> init(
-    Config config, {
+    FTAuthConfig config, {
     Uint8List? encryptionKey,
     Authorizer? authorizer,
   }) async {
@@ -44,12 +44,4 @@ class FTAuth {
 
     await StorageRepo.instance.init(encryptionKey: encryptionKey);
   }
-}
-
-/// Initialize the FTAuth library.
-///
-/// It is required to call either `init` for server and web applications or
-/// `initFlutter` for Flutter applications.
-Future<void> init(Config config) {
-  return FTAuth.instance.init(config);
 }

@@ -17,7 +17,7 @@ export 'authorizer_stub.dart'
     if (dart.library.html) 'authorizer_html.dart';
 
 abstract class Authorizer {
-  final Config _config;
+  final FTAuthConfig _config;
   final MetadataRepo _metadataRepo;
   final StorageRepo _storageRepo = StorageRepo.instance;
 

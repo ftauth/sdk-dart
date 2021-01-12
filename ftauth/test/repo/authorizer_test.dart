@@ -8,7 +8,7 @@ void main() {
   group('getAuthorizationUrl', () {
     test('with valid public config', () async {
       const clientId = 'some-client-id';
-      final config = ftauth.Config(
+      final config = ftauth.FTAuthConfig(
         gatewayUrl: 'http://localhost:8080',
         clientType: ftauth.ClientType.public,
         clientId: clientId,
@@ -48,7 +48,7 @@ void main() {
       const clientId = 'some-client-id';
       const clientSecret = 'some-client-secret';
 
-      final config = ftauth.Config(
+      final config = ftauth.FTAuthConfig(
         gatewayUrl: 'http://localhost:8080',
         clientType: ftauth.ClientType.confidential,
         clientId: clientId,

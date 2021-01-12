@@ -85,12 +85,12 @@ class AppRouteInformationParser extends RouteInformationParser<RouteInfo> {
 class AppRouterDelegate extends RouterDelegate<RouteInfo>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-  final Config _config;
+  final FTAuthConfig _config;
 
   RouteInfo _routeInfo = HomeRouteInfo();
 
   AppRouterDelegate(this._config) {
-    FTAuth.instance.authStates.listen((state) {
+    _config.authState.listen((state) {
       final showAuthScreen = state is! AuthSignedIn;
       if (showAuthScreen) {
         _routeInfo = AuthRouteInfo.empty();
@@ -104,7 +104,7 @@ class AppRouterDelegate extends RouterDelegate<RouteInfo>
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FTAuth.instance.authStates,
+      stream: FTAuth.of(context).authState,
       initialData: const AuthLoading(),
       builder: (context, snapshot) {
         final state = snapshot.data;

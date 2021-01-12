@@ -7,7 +7,7 @@ import 'package:jose/jose.dart';
 import 'metadata_repo.dart';
 
 class MetadataRepoImpl extends MetadataRepo {
-  final Config _config;
+  final FTAuthConfig _config;
 
   AuthorizationServerMetadata? _cached;
   JsonWebKeyStore? _keyStore;
@@ -55,7 +55,13 @@ class MetadataRepoImpl extends MetadataRepo {
 
     if (_keyStore == null) {
       _keyStore = JsonWebKeyStore();
-      _keyStore!.addKeySetUrl(Uri.parse(_cached!.jwksUri));
+      final path = '${_config.gatewayUrl}/jwks.json';
+      final res = await http.get(Uri.parse(path));
+      if (res.statusCode != 200) {
+        throw ApiException.get(path, res.statusCode, res.body);
+      }
+      final json = (jsonDecode(res.body) as Map).cast<String, dynamic>();
+      _keyStore!.addKeySet(JsonWebKeySet.fromJson(json));
     }
 
     return _keyStore!;

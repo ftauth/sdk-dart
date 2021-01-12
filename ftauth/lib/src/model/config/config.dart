@@ -17,7 +17,7 @@ const _defaultScopes = ['default'];
   fieldRename: FieldRename.snake,
   createToJson: false,
 )
-class Config with EquatableMixin implements Authorizer {
+class FTAuthConfig with EquatableMixin implements Authorizer {
   static final ConfigLoader _configLoader = ConfigLoader();
 
   final Uri gatewayUrl;
@@ -31,7 +31,7 @@ class Config with EquatableMixin implements Authorizer {
   @JsonKey(ignore: true)
   late final Authorizer authorizer;
 
-  Config({
+  FTAuthConfig({
     required String gatewayUrl,
     required this.clientId,
     this.clientSecret,
@@ -69,13 +69,14 @@ class Config with EquatableMixin implements Authorizer {
     );
   }
 
-  factory Config.fromJson(Map<String, dynamic> json) => _$ConfigFromJson(json);
+  factory FTAuthConfig.fromJson(Map<String, dynamic> json) =>
+      _$FTAuthConfigFromJson(json);
 
-  static Future<Config> fromFile(String filename) {
+  static Future<FTAuthConfig> fromFile(String filename) {
     return _configLoader.fromFile(filename);
   }
 
-  static Future<Config> fromUrl(String url) {
+  static Future<FTAuthConfig> fromUrl(String url) {
     return _configLoader.fromUrl(url);
   }
 

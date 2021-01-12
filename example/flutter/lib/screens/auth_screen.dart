@@ -16,27 +16,28 @@ class AuthScreen extends StatelessWidget {
       ),
       body: Center(
         child: StreamBuilder(
-          stream: FTAuth.instance.authStates,
+          stream: FTAuth.of(context).authState,
           initialData: const AuthLoading(),
           builder: (context, snapshot) {
             final state = snapshot.data;
             switch (state.runtimeType) {
               case AuthLoading:
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               case AuthSignedOut:
                 return RaisedButton(
-                  child: Text('Login'),
+                  child: const Text('Login'),
                   onPressed: () async {
-                    final config = Auth.of(context);
+                    final ftauth = FTAuth.of(context);
+
                     if (kIsWeb) {
-                      await config.authorize();
+                      await ftauth.authorize();
                     } else {
-                      await config.login();
+                      await ftauth.login();
                     }
                   },
                 );
               default:
-                return Container();
+                return const SizedBox.shrink();
             }
           },
         ),
