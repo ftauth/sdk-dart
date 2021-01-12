@@ -2,7 +2,6 @@ import 'package:example_flutter/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
-import 'package:provider/provider.dart';
 
 class AuthScreen extends StatelessWidget {
   final AuthRouteInfo routeInfo;
@@ -28,7 +27,7 @@ class AuthScreen extends StatelessWidget {
                 return RaisedButton(
                   child: Text('Login'),
                   onPressed: () async {
-                    final config = Provider.of<Config>(context, listen: false);
+                    final config = Auth.of(context);
                     if (kIsWeb) {
                       await config.authorize();
                     } else {

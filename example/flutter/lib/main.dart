@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart' as ftauth;
-import 'package:provider/provider.dart';
 
 import 'routes.dart';
 
@@ -14,31 +13,28 @@ Future<void> main() async {
     redirectUri: kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://auth',
   );
 
-  // or
-  // final config = ftauth.Config.fromAsset('assets/config.json');
-
   // {{ .Init }}
   await ftauth.initFlutter(config: config);
 
   runApp(
-    Provider.value(
-      value: config,
-      child: FTAuthApp(),
+    ftauth.Auth(
+      config: config,
+      child: MyApp(),
     ),
   );
 }
 
-class FTAuthApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final config = ftauth.Auth.of(context);
+
     return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      routerDelegate: AppRouterDelegate(
-        Provider.of<ftauth.Config>(context),
-      ),
+      routerDelegate: AppRouterDelegate(config),
       routeInformationParser: AppRouteInformationParser(),
     );
   }
