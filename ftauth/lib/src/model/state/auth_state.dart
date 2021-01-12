@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/model/user/user.dart';
 
+/// The state of authorization for the app.
 abstract class AuthState extends Equatable {
   const AuthState();
 

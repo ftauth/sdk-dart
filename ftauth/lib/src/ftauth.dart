@@ -20,7 +20,7 @@ class FTAuthImpl {
 
   /// Yields a stream of state objects representing the user's authenticated
   /// status.
-  Stream<AuthState> get authStates => _config.authorizer.authState;
+  Stream<AuthState> get authStates => _config.authorizer.authStates;
 
   /// Initialize the FTAuth library.
   ///

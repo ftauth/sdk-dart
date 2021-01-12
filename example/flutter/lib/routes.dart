@@ -90,7 +90,7 @@ class AppRouterDelegate extends RouterDelegate<RouteInfo>
   RouteInfo _routeInfo = HomeRouteInfo();
 
   AppRouterDelegate(this._config) {
-    _config.authState.listen((state) {
+    _config.authStates.listen((state) {
       final showAuthScreen = state is! AuthSignedIn;
       if (showAuthScreen) {
         _routeInfo = AuthRouteInfo.empty();
@@ -104,7 +104,7 @@ class AppRouterDelegate extends RouterDelegate<RouteInfo>
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: FTAuth.of(context).authState,
+      stream: FTAuth.of(context).authStates,
       initialData: const AuthLoading(),
       builder: (context, snapshot) {
         final state = snapshot.data;

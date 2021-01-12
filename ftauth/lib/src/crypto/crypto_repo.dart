@@ -1,39 +1,33 @@
 import 'dart:convert';
 
 import 'package:ftauth/src/storage/storage_repo.dart';
-import 'package:webcrypto/webcrypto.dart';
+import 'crypto_repo_stub.dart';
+
+export 'crypto_repo_stub.dart';
 
 abstract class CryptoRepo {
-  static final CryptoRepo instance = CryptoRepoImpl(StorageRepo.instance);
+  static CryptoRepo instance = CryptoRepoImpl();
 
   static const privateStorageKey = 'private_key';
   static const publicStorageKey = 'public_key';
 
-  Future<Map<String, dynamic>> loadSigningKey();
-}
+  final StorageRepo _storageRepo;
 
-class CryptoRepoImpl extends CryptoRepo {
-  final StorageRepo storageRepo;
+  CryptoRepo([StorageRepo? storageRepo])
+      : _storageRepo = storageRepo ?? StorageRepo.instance;
 
-  CryptoRepoImpl(this.storageRepo);
+  Future<Map<String, dynamic>> generatePrivateKey();
+  Future<Map<String, dynamic>> generatePublicKey();
 
-  @override
   Future<Map<String, dynamic>> loadSigningKey() async {
-    var json = await storageRepo.getString(CryptoRepo.privateStorageKey);
+    var json = await _storageRepo.getString(privateStorageKey);
     if (json != null) {
       return (jsonDecode(json) as Map).cast<String, dynamic>();
     }
-    final key = await RsaPssPrivateKey.generateKey(
-      2048,
-      BigInt.from(65537),
-      Hash.sha256,
-    );
-    final privateKey = await key.privateKey.exportJsonWebKey();
-    final publicKey = await key.privateKey.exportJsonWebKey();
-    await storageRepo.setString(
-        CryptoRepo.privateStorageKey, jsonEncode(privateKey));
-    await storageRepo.setString(
-        CryptoRepo.publicStorageKey, jsonEncode(publicKey));
+    final privateKey = await generatePrivateKey();
+    final publicKey = await generatePublicKey();
+    await _storageRepo.setString(privateStorageKey, jsonEncode(privateKey));
+    await _storageRepo.setString(publicStorageKey, jsonEncode(publicKey));
     return privateKey;
   }
 }

@@ -24,8 +24,18 @@ abstract class Authorizer {
   final _authStateController = StreamController<AuthState>.broadcast();
 
   AuthState? _latestAuthState;
+
+  /// Ensures that [_init()] is only called once.
   Future<AuthState>? _initStateFuture;
-  Stream<AuthState> get authState async* {
+
+  /// Returns the stream of authorization states.
+  ///
+  /// Possible [AuthState] values include:
+  /// * [AuthLoading]: Information is refreshing or being retrieved.
+  /// * [AuthSignedIn]: User is logged in with valid credentials.
+  /// * [AuthSignedOut]: User is logged out or has expired credentials.
+  /// * [AuthFailure]: An error occurred during the login process.
+  Stream<AuthState> get authStates async* {
     if (_latestAuthState == null) {
       _initStateFuture ??= _initState();
       _latestAuthState = await _initStateFuture!;
@@ -65,9 +75,6 @@ abstract class Authorizer {
       final access = await JsonWebToken.decodeAndVerify(accessToken, keyStore);
       final refresh =
           await JsonWebToken.decodeAndVerify(refreshToken, keyStore);
-
-      print('Access claims: ${access.claims.toJson()}');
-      print('Refresh claims: ${refresh.claims.toJson()}');
 
       if (access.claims.expiry.isAfter(DateTime.now()) ||
           refresh.claims.expiry.isAfter(DateTime.now())) {
@@ -172,9 +179,9 @@ abstract class Authorizer {
     }
 
     final state = _generateState();
-    await _storageRepo.setString('state', state);
-
     final codeVerifier = oauth2.AuthorizationCodeGrant.createCodeVerifier();
+
+    await _storageRepo.setString('state', state);
     await _storageRepo.setString('code_verifier', codeVerifier);
 
     _authCodeGrant = oauth2.AuthorizationCodeGrant(

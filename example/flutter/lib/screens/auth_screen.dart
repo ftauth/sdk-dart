@@ -16,7 +16,7 @@ class AuthScreen extends StatelessWidget {
       ),
       body: Center(
         child: StreamBuilder(
-          stream: FTAuth.of(context).authState,
+          stream: FTAuth.of(context).authStates,
           initialData: const AuthLoading(),
           builder: (context, snapshot) {
             final state = snapshot.data;

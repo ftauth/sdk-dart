@@ -17,6 +17,7 @@ dependencies:
   url_launcher: ^5.7.2
   uni_links: ^0.4.0
   flutter_secure_storage: ^3.3.5
+  webcrypto: ^0.2.2
 
 dependency_overrides:
   http:

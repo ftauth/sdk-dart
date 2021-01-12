@@ -5,7 +5,9 @@ import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/authorizer/authorizer.dart';
 import 'package:ftauth/src/config_loader/config_loader.dart';
 import 'package:ftauth/src/model/model.dart';
+import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
 
 part 'config.g.dart';
 
@@ -17,7 +19,9 @@ const _defaultScopes = ['default'];
   fieldRename: FieldRename.snake,
   createToJson: false,
 )
-class FTAuthConfig with EquatableMixin implements Authorizer {
+class FTAuthConfig extends http.BaseClient
+    with EquatableMixin
+    implements Authorizer {
   static final ConfigLoader _configLoader = ConfigLoader();
 
   final Uri gatewayUrl;
@@ -91,7 +95,9 @@ class FTAuthConfig with EquatableMixin implements Authorizer {
   }
 
   @override
+  @visibleForTesting
   Future<String> getAuthorizationUrl() {
+    // ignore: invalid_use_of_visible_for_testing_member
     return authorizer.getAuthorizationUrl();
   }
 
@@ -101,5 +107,14 @@ class FTAuthConfig with EquatableMixin implements Authorizer {
   }
 
   @override
-  Stream<AuthState> get authState => authorizer.authState;
+  Stream<AuthState> get authStates => authorizer.authStates;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    final state = await authStates.first;
+    if (state is AuthSignedIn) {
+      return state.client.send(request);
+    }
+    throw AuthException('User not authenticated');
+  }
 }

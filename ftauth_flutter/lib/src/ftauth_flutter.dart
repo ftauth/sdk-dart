@@ -10,6 +10,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uni_links/uni_links.dart';
 
+import 'crypto_repo.dart';
 import 'exception.dart';
 import 'flutter_authorizer.dart';
 
@@ -78,7 +79,7 @@ class FTAuth extends InheritedWidget {
     // Create a secure encryption key on mobile clients.
     Uint8List encryptionKey;
     if (!kIsWeb) {
-      final secureStorage = const FlutterSecureStorage();
+      const secureStorage = FlutterSecureStorage();
       var containsEncryptionKey = await secureStorage.containsKey(key: 'key');
       if (containsEncryptionKey) {
         final encodedKey = await secureStorage.read(key: 'key');
@@ -86,9 +87,13 @@ class FTAuth extends InheritedWidget {
       } else {
         encryptionKey = Hive.generateSecureKey();
         await secureStorage.write(
-            key: 'key', value: base64Url.encode(encryptionKey));
+          key: 'key',
+          value: base64Url.encode(encryptionKey),
+        );
       }
     }
+
+    ftauth.CryptoRepo.instance = FlutterCryptoRepo();
 
     return ftauth.FTAuth.init(
       config,
