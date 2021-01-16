@@ -16,5 +16,5 @@ jobs:
         with:
           channel: dev
 
-      - run: bash ftauth/scripts/test.sh
+      - run: bash scripts/test.sh
         working-directory: ftauth
