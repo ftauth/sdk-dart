@@ -1,3 +1,5 @@
+@TestOn('vm')
+
 import 'package:test/test.dart';
 import 'package:ftauth/src/path_provider/path_provider_io.dart';
 

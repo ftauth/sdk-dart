@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:ftauth/src/storage/storage_repo.dart';
 import 'crypto_repo_stub.dart';
 
-export 'crypto_repo_stub.dart';
+export 'crypto_repo_stub.dart'
+    if (dart.library.html) 'js/crypto_repo_js.dart'
+    if (dart.library.io) 'crypto_repo_io.dart';
 
 abstract class CryptoRepo {
   static CryptoRepo instance = CryptoRepoImpl();

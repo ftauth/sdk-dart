@@ -4,20 +4,19 @@ import 'package:http/http.dart' as http;
 /// An HTTP client which adds DPoP proofs to requests.
 class DPoPClient extends http.BaseClient {
   final DPoPRepo dPoPRepo;
-  final http.Client? client;
+  final http.Client client;
 
-  DPoPClient(this.dPoPRepo, {this.client});
+  DPoPClient(this.dPoPRepo, {http.Client? client}) : client = http.Client();
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final proof = await dPoPRepo.createProof(
-      request.method,
-      request.url,
-    );
-    request.headers['Authorization'] = 'DPoP $proof';
-    if (client != null) {
-      return client!.send(request);
+    if (request.url.path.endsWith('/token')) {
+      final proof = await dPoPRepo.createProof(
+        request.method,
+        request.url,
+      );
+      request.headers['DPoP'] = proof;
     }
-    return request.send();
+    return client.send(request);
   }
 }

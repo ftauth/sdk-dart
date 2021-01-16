@@ -1,29 +1,10 @@
 import 'package:ftauth/src/crypto/crypto_repo.dart';
-import 'package:ftauth/src/storage/storage_repo.dart';
-import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class FakeStorageRepo extends Fake implements StorageRepo {
-  final memCache = <String, String>{};
-
-  @override
-  Future<void> setString(String key, String value) async {
-    memCache[key] = value;
-  }
-
-  @override
-  String? getString(String key) {
-    return memCache[key];
-  }
-
-  @override
-  Future<void> deleteKey(String key) async {
-    memCache.remove(key);
-  }
-}
+import '../../mock/storage_repo.dart';
 
 void main() {
-  final storageRepo = FakeStorageRepo();
+  final storageRepo = MockStorageRepo();
   final cryptoRepo = CryptoRepoImpl(storageRepo);
 
   group('CryptoRepo | ', () {

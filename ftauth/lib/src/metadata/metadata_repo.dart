@@ -1,10 +1,10 @@
 import 'package:ftauth/ftauth.dart';
-import 'package:jose/jose.dart';
+import 'package:ftauth/src/jwt/keyset.dart';
 
 abstract class MetadataRepo {
   Future<AuthorizationServerMetadata> loadServerMetadata({bool force});
   Future<AuthorizationServerMetadata> updateServerMetadata(
     AuthorizationServerMetadata metadata,
   );
-  Future<JsonWebKeyStore> loadKeyStore();
+  Future<JsonWebKeySet> loadKeySet();
 }

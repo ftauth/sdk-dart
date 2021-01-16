@@ -1,7 +1,10 @@
-import 'dart:convert';
-
 import 'package:ftauth/src/crypto/crypto_repo.dart';
-import 'package:jose/jose.dart';
+import 'package:ftauth/src/jwt/alg.dart';
+import 'package:ftauth/src/jwt/claims.dart';
+import 'package:ftauth/src/jwt/header.dart';
+import 'package:ftauth/src/jwt/key.dart';
+import 'package:ftauth/src/jwt/token.dart';
+import 'package:ftauth/src/jwt/type.dart';
 import 'package:uuid/uuid.dart';
 
 import 'dpop_repo.dart';
@@ -15,28 +18,26 @@ class DPoPRepoImpl extends DPoPRepo {
   Future<String> createProof(String httpMethod, Uri httpUri) async {
     final jwk = await cryptoRepo.loadSigningKey();
     final signingKey = JsonWebKey.fromJson(jwk);
-    final header = JoseHeader.fromJson({
-      'typ': 'dpop+jwt',
-      'alg': '',
-      'jwk': jwk,
-    });
+
+    final header = JsonWebHeader(
+      type: TokenType.DPoP,
+      algorithm: Algorithm.HMACSHA256,
+      jwk: signingKey,
+    );
+    // Strip query parameters & fragments
     final htu = Uri(
       scheme: httpUri.scheme,
       host: httpUri.host,
       path: httpUri.path,
     ).toString();
-    final claims = JsonWebTokenClaims.fromJson({
-      'jti': Uuid().v4(),
-      'htm': httpMethod,
-      'htu': htu,
-      'iat': DateTime.now().millisecondsSinceEpoch,
-    });
+    final claims = JsonWebClaims(
+      jwtId: Uuid().v4(),
+      httpMethod: httpMethod,
+      httpUri: htu,
+      issuedAt: DateTime.now(),
+    );
 
-    final headerStr = header.toBase64EncodedString();
-    final payload = claims.toBase64EncodedString();
-
-    final body = '$headerStr.$payload';
-    final signature = signingKey.sign(utf8.encode(body));
-    return '$body.' + base64Url.encode(signature);
+    return JsonWebToken(header: header, claims: claims)
+        .encodeBase64(signingKey);
   }
 }

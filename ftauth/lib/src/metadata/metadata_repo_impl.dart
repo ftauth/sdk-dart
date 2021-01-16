@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:ftauth/ftauth.dart';
+import 'package:ftauth/src/jwt/keyset.dart';
 import 'package:http/http.dart' as http;
-import 'package:jose/jose.dart';
 
 import 'metadata_repo.dart';
 
@@ -10,7 +10,7 @@ class MetadataRepoImpl extends MetadataRepo {
   final FTAuthConfig _config;
 
   AuthorizationServerMetadata? _cached;
-  JsonWebKeyStore? _keyStore;
+  JsonWebKeySet? _keySet;
 
   MetadataRepoImpl(this._config);
 
@@ -48,22 +48,21 @@ class MetadataRepoImpl extends MetadataRepo {
   }
 
   @override
-  Future<JsonWebKeyStore> loadKeyStore() async {
+  Future<JsonWebKeySet> loadKeySet() async {
     if (_cached == null) {
       await loadServerMetadata();
     }
 
-    if (_keyStore == null) {
-      _keyStore = JsonWebKeyStore();
+    if (_keySet == null) {
       final path = '${_config.gatewayUrl}/jwks.json';
       final res = await http.get(Uri.parse(path));
       if (res.statusCode != 200) {
         throw ApiException.get(path, res.statusCode, res.body);
       }
       final json = (jsonDecode(res.body) as Map).cast<String, dynamic>();
-      _keyStore!.addKeySet(JsonWebKeySet.fromJson(json));
+      _keySet = JsonWebKeySet.fromJson(json);
     }
 
-    return _keyStore!;
+    return _keySet!;
   }
 }

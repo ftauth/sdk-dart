@@ -1,7 +1,10 @@
-import 'package:jose/jose.dart';
+import 'package:ftauth/src/dpop/dpop_repo.dart';
+import 'package:ftauth/src/http/dpop_client.dart';
+import 'package:ftauth/src/jwt/keyset.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
 
+import 'jwt/token.dart';
 import 'model/user/user.dart';
 
 /// A user's access and refresh tokens plus metadata needed to access services.
@@ -9,59 +12,57 @@ class Credentials implements oauth2.Credentials {
   final Uri _tokenEndpoint;
   final JsonWebToken _accessToken;
   final JsonWebToken _refreshToken;
-  final JsonWebKeyStore _keyStore;
+  final JsonWebKeySet _keySet;
   final List<String> _scopes;
 
   Credentials(
     this._accessToken,
     this._refreshToken,
     this._tokenEndpoint,
-    this._keyStore,
+    this._keySet,
     this._scopes,
   );
 
-  static Future<Credentials> fromOAuthCredentials(
+  static Credentials fromOAuthCredentials(
     oauth2.Credentials creds,
-    JsonWebKeyStore keyStore,
+    JsonWebKeySet keySet,
     List<String> scopes,
-  ) async {
-    final accessToken = await JsonWebToken.decodeAndVerify(
-      creds.accessToken,
-      keyStore,
-    );
-    final refreshToken = await JsonWebToken.decodeAndVerify(
-      creds.refreshToken,
-      keyStore,
-    );
+  ) {
+    final accessToken = JsonWebToken.parse(creds.accessToken);
+    accessToken.verify(keySet);
+
+    final refreshToken = JsonWebToken.parse(creds.refreshToken);
+    refreshToken.verify(keySet);
+
     return Credentials(
       accessToken,
       refreshToken,
       creds.tokenEndpoint,
-      keyStore,
+      keySet,
       scopes,
     );
   }
 
   User get user {
-    final userInfo =
-        _accessToken.claims.getTyped<Map<String, dynamic>>('userInfo');
-    return User.fromJson(userInfo);
+    return _accessToken.user!;
   }
 
   @override
-  String get accessToken => _accessToken.toCompactSerialization();
+  String get accessToken => _accessToken.raw;
 
   @override
-  bool get canRefresh => _refreshToken.claims.expiry.isAfter(DateTime.now());
+  bool get canRefresh =>
+      _refreshToken.claims.expiration!.isAfter(DateTime.now());
 
   @override
-  DateTime get expiration => _accessToken.claims.expiry;
+  DateTime get expiration => _accessToken.claims.expiration!;
 
   @override
   String? get idToken => null;
 
   @override
-  bool get isExpired => _accessToken.claims.expiry.isBefore(DateTime.now());
+  bool get isExpired =>
+      _accessToken.claims.expiration!.isBefore(DateTime.now());
 
   @override
   Future<Credentials> refresh({
@@ -79,13 +80,13 @@ class Credentials implements oauth2.Credentials {
     ).refresh(
       identifier: identifier,
       secret: secret,
-      httpClient: httpClient,
+      httpClient: DPoPClient(DPoPRepo.instance),
     );
-    return fromOAuthCredentials(creds, _keyStore, _scopes);
+    return fromOAuthCredentials(creds, _keySet, _scopes);
   }
 
   @override
-  String get refreshToken => _refreshToken.toCompactSerialization();
+  String get refreshToken => _refreshToken.raw;
 
   @override
   List<String> get scopes => _scopes;

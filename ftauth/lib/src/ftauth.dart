@@ -18,10 +18,6 @@ class FTAuthImpl {
 
   FTAuthImpl._();
 
-  /// Yields a stream of state objects representing the user's authenticated
-  /// status.
-  Stream<AuthState> get authStates => _config.authorizer.authStates;
-
   /// Initialize the FTAuth library.
   ///
   /// It is required to call either `init` for server and web applications or
@@ -30,6 +26,7 @@ class FTAuthImpl {
     FTAuthConfig config, {
     Uint8List? encryptionKey,
     Authorizer? authorizer,
+    StorageRepo? storageRepo,
   }) async {
     const pathProvider = PathProvider();
 
@@ -42,6 +39,7 @@ class FTAuthImpl {
     _config = config;
     _config.authorizer = authorizer ?? AuthorizerImpl(_config);
 
-    await StorageRepo.instance.init(encryptionKey: encryptionKey);
+    await (storageRepo ?? StorageRepo.instance)
+        .init(encryptionKey: encryptionKey);
   }
 }

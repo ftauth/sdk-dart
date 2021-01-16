@@ -1,9 +1,12 @@
+import 'package:ftauth/src/jwt/claims.dart';
+import 'package:ftauth/src/jwt/token.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';
 
 @JsonSerializable(
   fieldRename: FieldRename.snake,
+  includeIfNull: false,
 )
 class User {
   final String id;
@@ -25,4 +28,21 @@ class User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+/// Helper for retrieving a [User] object from a JSON Web Token without
+/// polluting the jwt pacakage.
+extension UserInfoClaims on JsonWebClaims {
+  User? get user {
+    if (userInfo != null) {
+      return User.fromJson(userInfo!);
+    }
+    return null;
+  }
+}
+
+/// Helper for retrieving a [User] object from a JSON Web Token without
+/// polluting the jwt pacakage.
+extension UserInfoToken on JsonWebToken {
+  User? get user => claims.user;
 }
