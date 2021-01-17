@@ -100,7 +100,7 @@ class FTAuthConfig extends http.BaseClient
   }
 
   @override
-  Future<Client> exchangeAuthorizationCode(Map<String, String> parameters) {
+  Future<Client?> exchangeAuthorizationCode(Map<String, String> parameters) {
     return authorizer.exchangeAuthorizationCode(parameters);
   }
 

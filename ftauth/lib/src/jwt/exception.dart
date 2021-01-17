@@ -9,8 +9,8 @@ class MissingParameterExeception implements Exception {
   }
 }
 
-class VerificationException implements Exception {
-  const VerificationException();
+class InvalidSignatureException implements Exception {
+  const InvalidSignatureException();
 
   @override
   String toString() => 'Signature does not match key';

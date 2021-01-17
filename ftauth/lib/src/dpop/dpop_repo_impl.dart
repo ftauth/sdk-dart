@@ -1,6 +1,8 @@
 import 'package:ftauth/src/crypto/crypto_repo.dart';
+import 'package:ftauth/src/crypto/crypto_key.dart';
 import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/claims.dart';
+import 'package:ftauth/src/jwt/crypto.dart';
 import 'package:ftauth/src/jwt/header.dart';
 import 'package:ftauth/src/jwt/key.dart';
 import 'package:ftauth/src/jwt/token.dart';
@@ -37,7 +39,7 @@ class DPoPRepoImpl extends DPoPRepo {
       issuedAt: DateTime.now(),
     );
 
-    return JsonWebToken(header: header, claims: claims)
-        .encodeBase64(signingKey);
+    return await JsonWebToken(header: header, claims: claims)
+        .encodeBase64(signingKey.privateKey!);
   }
 }

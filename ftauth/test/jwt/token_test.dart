@@ -8,6 +8,7 @@ import 'package:ftauth/src/jwt/key.dart';
 import 'package:ftauth/src/jwt/token.dart';
 import 'package:ftauth/src/jwt/type.dart';
 import 'package:ftauth/src/jwt/util.dart';
+import 'package:ftauth/src/crypto/crypto_key.dart';
 import 'package:test/test.dart';
 
 class _TestCase {
@@ -61,9 +62,9 @@ void main() {
         expect(token, expected);
       });
 
-      test('encode $i', () {
+      test('encode $i', () async {
         final jwk = JsonWebKey.fromJson(jsonDecode(tests[i].key));
-        final jwt = tests[i].token.encodeBase64(jwk);
+        final jwt = await tests[i].token.encodeBase64(jwk.privateKey!);
         expect(jwt, tests[i].json);
       });
     }

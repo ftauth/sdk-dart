@@ -13,6 +13,10 @@ Future<void> main() async {
 
   await FTAuth.initFlutter(config: config);
 
+  config.authStates.listen((state) {
+    print('State change: $state');
+  });
+
   runApp(
     FTAuth(
       config: config,

@@ -9,6 +9,7 @@ import 'package:ftauth/src/jwt/token.dart';
 import 'package:ftauth/src/metadata/metadata_repo.dart';
 import 'package:ftauth/src/metadata/metadata_repo_impl.dart';
 import 'package:ftauth/src/storage/storage_repo.dart';
+import 'package:ftauth/src/crypto/crypto_key.dart';
 import 'package:meta/meta.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
@@ -52,6 +53,8 @@ abstract class Authorizer {
     _authStateController.add(state);
   }
 
+  late final void Function(dynamic e) _onRefreshError;
+
   oauth2.AuthorizationCodeGrant? _authCodeGrant;
 
   Authorizer(
@@ -59,18 +62,33 @@ abstract class Authorizer {
     StorageRepo? storageRepo,
     MetadataRepo? metadataRepo,
   })  : _metadataRepo = metadataRepo ?? MetadataRepoImpl(_config),
-        _storageRepo = storageRepo ?? StorageRepo.instance;
+        _storageRepo = storageRepo ?? StorageRepo.instance {
+    _onRefreshError = (e) {
+      if (e is http.ClientException) {
+        e = ApiException('', e.uri.toString(), 0, e.message);
+      }
+      _addState(AuthFailure.fromException(e));
+    };
+  }
 
   http.Client get _authClient {
     final baseClient = DPoPClient(DPoPRepo.instance);
     return InlineClient(
       send: (http.BaseRequest request) async {
+        Exception? _e;
         try {
           return await baseClient.send(request);
+        } on http.ClientException catch (e) {
+          _e = e;
+          throw ApiException(request.method, request.url.toString(), 0);
         } on Exception catch (e) {
-          final state = AuthFailure('${e.runtimeType}', e.toString());
-          _addState(state);
-          throw AuthException(state.toString());
+          _e = e;
+          rethrow;
+        } finally {
+          if (_e != null) {
+            final state = AuthFailure.fromException(e);
+            _addState(state);
+          }
         }
       },
     );
@@ -97,10 +115,16 @@ abstract class Authorizer {
       if (accessTokenEnc != null && refreshTokenEnc != null) {
         final keyStore = await _metadataRepo.loadKeySet();
         final accessToken = JsonWebToken.parse(accessTokenEnc);
-        accessToken.verify(keyStore);
+        await accessToken.verify(
+          keyStore,
+          verifierFactory: (key) => key.cryptoKey,
+        );
 
         final refreshToken = JsonWebToken.parse(refreshTokenEnc);
-        refreshToken.verify(keyStore);
+        await refreshToken.verify(
+          keyStore,
+          verifierFactory: (key) => key.cryptoKey,
+        );
 
         if (accessToken.claims.expiration!.isAfter(DateTime.now()) ||
             refreshToken.claims.expiration!.isAfter(DateTime.now())) {
@@ -110,6 +134,7 @@ abstract class Authorizer {
             _config.tokenUri,
             keyStore,
             _config.scopes,
+            onError: _onRefreshError,
           );
           final client = Client(
             credentials: credentials,
@@ -168,6 +193,7 @@ abstract class Authorizer {
         client.credentials,
         keyStore,
         _config.scopes,
+        onError: _onRefreshError,
       );
 
       // Save keys to storage
@@ -232,7 +258,7 @@ abstract class Authorizer {
         .toString();
   }
 
-  Future<Client> exchangeAuthorizationCode(
+  Future<Client?> exchangeAuthorizationCode(
       Map<String, String> parameters) async {
     await (_initStateFuture ??= init());
 
@@ -242,33 +268,38 @@ abstract class Authorizer {
 
     _addState(const AuthLoading());
 
-    final client =
-        await _authCodeGrant!.handleAuthorizationResponse(parameters);
-    final keyStore = await _metadataRepo.loadKeySet();
-    final credentials = await Credentials.fromOAuthCredentials(
-      client.credentials,
-      keyStore,
-      _config.scopes,
-    );
+    try {
+      final client =
+          await _authCodeGrant!.handleAuthorizationResponse(parameters);
+      final keyStore = await _metadataRepo.loadKeySet();
+      final credentials = await Credentials.fromOAuthCredentials(
+        client.credentials,
+        keyStore,
+        _config.scopes,
+        onError: _onRefreshError,
+      );
 
-    print('Got accessToken: ' + credentials.accessToken);
-    print('Got refreshToken: ' + credentials.refreshToken);
+      print('Got accessToken: ' + credentials.accessToken);
+      print('Got refreshToken: ' + credentials.refreshToken);
 
-    await _storageRepo.setString('access_token', credentials.accessToken);
-    await _storageRepo.setString('refresh_token', credentials.refreshToken);
+      await _storageRepo.setString('access_token', credentials.accessToken);
+      await _storageRepo.setString('refresh_token', credentials.refreshToken);
 
-    final newClient = Client(
-      credentials: credentials,
-      clientId: _config.clientId,
-      httpClient: _authClient,
-    );
+      final newClient = Client(
+        credentials: credentials,
+        clientId: _config.clientId,
+        httpClient: _authClient,
+      );
 
-    _addState(AuthSignedIn(newClient, credentials.user));
+      _addState(AuthSignedIn(newClient, credentials.user));
 
-    await _storageRepo.deleteKey('state');
-    await _storageRepo.deleteKey('code_verifier');
+      await _storageRepo.deleteKey('state');
+      await _storageRepo.deleteKey('code_verifier');
 
-    return newClient;
+      return newClient;
+    } catch (e) {
+      _addState(AuthFailure('${e.runtimeType}', e.toString()));
+    }
   }
 
   Future<void> logout() async {

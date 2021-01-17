@@ -1,6 +1,7 @@
 import 'package:ftauth/src/dpop/dpop_repo.dart';
 import 'package:ftauth/src/http/dpop_client.dart';
 import 'package:ftauth/src/jwt/keyset.dart';
+import 'package:ftauth/src/crypto/crypto_key.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
 
@@ -14,25 +15,28 @@ class Credentials implements oauth2.Credentials {
   final JsonWebToken _refreshToken;
   final JsonWebKeySet _keySet;
   final List<String> _scopes;
+  final Function(dynamic e) _onError;
 
   Credentials(
     this._accessToken,
     this._refreshToken,
     this._tokenEndpoint,
     this._keySet,
-    this._scopes,
-  );
+    this._scopes, {
+    required Function(dynamic e) onError,
+  }) : _onError = onError;
 
-  static Credentials fromOAuthCredentials(
+  static Future<Credentials> fromOAuthCredentials(
     oauth2.Credentials creds,
     JsonWebKeySet keySet,
-    List<String> scopes,
-  ) {
+    List<String> scopes, {
+    required Function(dynamic e) onError,
+  }) async {
     final accessToken = JsonWebToken.parse(creds.accessToken);
-    accessToken.verify(keySet);
+    await accessToken.verify(keySet, verifierFactory: (key) => key.cryptoKey);
 
     final refreshToken = JsonWebToken.parse(creds.refreshToken);
-    refreshToken.verify(keySet);
+    await refreshToken.verify(keySet, verifierFactory: (key) => key.cryptoKey);
 
     return Credentials(
       accessToken,
@@ -40,6 +44,7 @@ class Credentials implements oauth2.Credentials {
       creds.tokenEndpoint,
       keySet,
       scopes,
+      onError: onError,
     );
   }
 
@@ -65,24 +70,28 @@ class Credentials implements oauth2.Credentials {
       _accessToken.claims.expiration!.isBefore(DateTime.now());
 
   @override
-  Future<Credentials> refresh({
+  Future<Credentials?> refresh({
     required String identifier,
     String? secret,
     Iterable<String>? newScopes,
     bool basicAuth = true,
     http.Client? httpClient,
   }) async {
-    final creds = await oauth2.Credentials(
-      accessToken,
-      refreshToken: refreshToken,
-      tokenEndpoint: _tokenEndpoint,
-      scopes: scopes,
-    ).refresh(
-      identifier: identifier,
-      secret: secret,
-      httpClient: DPoPClient(DPoPRepo.instance),
-    );
-    return fromOAuthCredentials(creds, _keySet, _scopes);
+    try {
+      final creds = await oauth2.Credentials(
+        accessToken,
+        refreshToken: refreshToken,
+        tokenEndpoint: _tokenEndpoint,
+        scopes: scopes,
+      ).refresh(
+        identifier: identifier,
+        secret: secret,
+        httpClient: DPoPClient(DPoPRepo.instance),
+      );
+      return fromOAuthCredentials(creds!, _keySet, _scopes, onError: _onError);
+    } catch (e) {
+      _onError(e);
+    }
   }
 
   @override

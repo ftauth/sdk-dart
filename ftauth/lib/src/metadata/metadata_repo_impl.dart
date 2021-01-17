@@ -55,12 +55,16 @@ class MetadataRepoImpl extends MetadataRepo {
 
     if (_keySet == null) {
       final path = '${_config.gatewayUrl}/jwks.json';
-      final res = await http.get(Uri.parse(path));
-      if (res.statusCode != 200) {
-        throw ApiException.get(path, res.statusCode, res.body);
+      try {
+        final res = await http.get(Uri.parse(path));
+        if (res.statusCode != 200) {
+          throw ApiException.get(path, res.statusCode, res.body);
+        }
+        final json = (jsonDecode(res.body) as Map).cast<String, dynamic>();
+        _keySet = JsonWebKeySet.fromJson(json);
+      } on http.ClientException catch (e) {
+        throw ApiException.get(path, 0, e.toString());
       }
-      final json = (jsonDecode(res.body) as Map).cast<String, dynamic>();
-      _keySet = JsonWebKeySet.fromJson(json);
     }
 
     return _keySet!;

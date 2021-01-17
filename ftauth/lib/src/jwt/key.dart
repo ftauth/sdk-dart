@@ -4,6 +4,7 @@ import 'package:ftauth/src/jwt/exception.dart';
 import 'package:ftauth/src/jwt/token.dart';
 import 'package:ftauth/src/jwt/util.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pem/pem.dart';
 
 import 'alg.dart';
 import 'ecdsa.dart';
@@ -12,13 +13,11 @@ import 'key_type.dart';
 import 'key_use.dart';
 import 'key_ops.dart';
 import 'rsa.dart';
-import 'signer.dart';
-import 'verifier.dart';
 
 part 'key.g.dart';
 
 @serialize
-class JsonWebKey extends Equatable implements Signer, Verifier {
+class JsonWebKey extends Equatable {
   @JsonKey(ignore: true)
   late final bool isPrivate;
 
@@ -104,9 +103,6 @@ class JsonWebKey extends Equatable implements Signer, Verifier {
   @JsonKey(name: 'oth')
   final List<OtherPrime>? otherPrimes;
 
-  late final Verifier? _verifier;
-  late final Signer? _signer;
-
   JsonWebKey({
     required this.keyType,
     this.publicKeyUse,
@@ -133,10 +129,6 @@ class JsonWebKey extends Equatable implements Signer, Verifier {
   }) : _algorithm = algorithm {
     isPrivate = _hasPrivateKeyInfo();
     assertValid();
-    _verifier = _createVerifier();
-    if (isPrivate) {
-      _signer = _createSigner();
-    }
   }
 
   Algorithm _inferAlgorithm() {
@@ -199,6 +191,11 @@ class JsonWebKey extends Equatable implements Signer, Verifier {
     return map;
   }
 
+  static JsonWebKey? fromPem(String pem) {
+    final keyData = PemCodec(PemLabel.privateKey).decode(pem);
+    return null;
+  }
+
   bool _hasPrivateKeyInfo() {
     switch (keyType) {
       case KeyType.EllipticCurve:
@@ -243,73 +240,47 @@ class JsonWebKey extends Equatable implements Signer, Verifier {
     }
   }
 
-  @override
-  List<int> sign(List<int> bytes) {
-    if (!isPrivate || _signer == null) {
-      throw StateError('No private key information included.');
-    }
+  // @override
+  // List<int> sign(List<int> bytes) {
+  //   if (!isPrivate || _signer == null) {
+  //     throw StateError('No private key information included.');
+  //   }
 
-    return _signer!.sign(bytes);
-  }
+  //   return _signer!.sign(bytes);
+  // }
 
-  @override
-  void verify(JsonWebToken token) {
-    _verifier?.verify(token);
-  }
+  // @override
+  // void verify(JsonWebToken token) {
+  //   _verifier?.verify(token);
+  // }
 
-  Verifier? _createVerifier() {
-    switch (algorithm) {
-      case Algorithm.HMACSHA256:
-        return _HmacVerifier(sha256, k!);
-      case Algorithm.HMACSHA384:
-        return _HmacVerifier(sha384, k!);
-      case Algorithm.HMACSHA512:
-        return _HmacVerifier(sha512, k!);
-      default:
-        // TODO: Uncomment
-        // throw UnsupportedError('Unsupported algorithm: $algorithm');
-        break;
-    }
-  }
+  // Verifier? _createVerifier() {
+  //   switch (algorithm) {
+  //     case Algorithm.HMACSHA256:
+  //       return _HmacVerifier(sha256, k!);
+  //     case Algorithm.HMACSHA384:
+  //       return _HmacVerifier(sha384, k!);
+  //     case Algorithm.HMACSHA512:
+  //       return _HmacVerifier(sha512, k!);
+  //     default:
+  //       // TODO: Uncomment
+  //       // throw UnsupportedError('Unsupported algorithm: $algorithm');
+  //       break;
+  //   }
+  // }
 
-  Signer? _createSigner() {
-    switch (algorithm) {
-      case Algorithm.HMACSHA256:
-        return _HmacSigner(sha256, k!);
-      case Algorithm.HMACSHA384:
-        return _HmacSigner(sha384, k!);
-      case Algorithm.HMACSHA512:
-        return _HmacSigner(sha512, k!);
-      default:
-        // TODO: Uncomment
-        // throw UnsupportedError('Unsupported algorithm: $algorithm');
-        break;
-    }
-  }
-}
-
-class _HmacVerifier extends Verifier {
-  final Hmac hmac;
-
-  _HmacVerifier(Hash hash, List<int> key) : hmac = Hmac(hash, key);
-
-  @override
-  void verify(JsonWebToken token) {
-    final signed = hmac.convert(token.encodeUnsigned().codeUnits);
-    final signature = token.signature;
-    if (signed.bytes != signature) {
-      throw const VerificationException();
-    }
-  }
-}
-
-class _HmacSigner extends Signer {
-  final Hmac hmac;
-
-  _HmacSigner(Hash hash, List<int> key) : hmac = Hmac(hash, key);
-
-  @override
-  List<int> sign(List<int> bytes) {
-    return hmac.convert(bytes).bytes;
-  }
+  // Signer? _createSigner() {
+  //   switch (algorithm) {
+  //     case Algorithm.HMACSHA256:
+  //       return _HmacSigner(sha256, k!);
+  //     case Algorithm.HMACSHA384:
+  //       return _HmacSigner(sha384, k!);
+  //     case Algorithm.HMACSHA512:
+  //       return _HmacSigner(sha512, k!);
+  //     default:
+  //       // TODO: Uncomment
+  //       // throw UnsupportedError('Unsupported algorithm: $algorithm');
+  //       break;
+  //   }
+  // }
 }

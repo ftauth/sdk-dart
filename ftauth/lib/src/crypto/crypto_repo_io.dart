@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:crypto_keys/crypto_keys.dart';
 import 'package:ftauth/src/jwt/key.dart';
 import 'package:ftauth/src/storage/storage_repo.dart';
 

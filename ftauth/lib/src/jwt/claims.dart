@@ -133,17 +133,8 @@ class JsonWebClaims extends Equatable {
 
   void assertValid(TokenType type) {
     if (type == TokenType.JWT) {
+      // TODO: Define general JWT requirements
       return;
-    }
-
-    if (issuer == null) {
-      throw MissingParameterExeception('iss');
-    }
-    if (subject == null) {
-      throw MissingParameterExeception('sub');
-    }
-    if (audience == null) {
-      throw MissingParameterExeception('aud');
     }
     if (issuedAt == null) {
       throw MissingParameterExeception('iat');
@@ -152,6 +143,15 @@ class JsonWebClaims extends Equatable {
       case TokenType.JWT:
         break;
       case TokenType.Access:
+        if (issuer == null) {
+          throw MissingParameterExeception('iss');
+        }
+        if (subject == null) {
+          throw MissingParameterExeception('sub');
+        }
+        if (audience == null) {
+          throw MissingParameterExeception('aud');
+        }
         if (expiration == null) {
           throw MissingParameterExeception('exp');
         }
@@ -180,15 +180,15 @@ class JsonWebClaims extends Equatable {
 @serialize
 class ConfirmationClaim extends Equatable {
   @JsonKey(name: 'jwk')
-  final JsonWebKey key;
+  final JsonWebKey? key;
 
   @JsonKey(name: 'jkt')
-  final String sha256Thumbprint;
+  final String? sha256Thumbprint;
 
   ConfirmationClaim({
-    required this.key,
-    required this.sha256Thumbprint,
-  });
+    this.key,
+    this.sha256Thumbprint,
+  }) : assert(key != null || sha256Thumbprint != null);
 
   @override
   List<Object?> get props => [key, sha256Thumbprint];

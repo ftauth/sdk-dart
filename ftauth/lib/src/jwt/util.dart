@@ -53,7 +53,7 @@ class Base64UrlUintEncoder extends Converter<BigInt?, String?> {
   /// Encode a BigInt into bytes using big-endian encoding.
   /// It encodes the integer to a minimal twos-compliment integer as defined by
   /// ASN.1
-  Uint8List encodeBigInt(BigInt number) {
+  static Uint8List encodeBigInt(BigInt number) {
     if (number == BigInt.zero) {
       return Uint8List.fromList([0]);
     }
@@ -157,10 +157,13 @@ class _StripPaddingDecoder extends Converter<String, String> {
 
 DateTime? decodeDateTime(int? json) {
   if (json == null) return null;
-  return DateTime.fromMillisecondsSinceEpoch(json);
+  return DateTime.fromMillisecondsSinceEpoch(json * 1000);
 }
 
-int? encodeDateTime(DateTime? dt) => dt?.millisecondsSinceEpoch;
+int? encodeDateTime(DateTime? dt) {
+  if (dt == null) return null;
+  return (dt.millisecondsSinceEpoch / 1000).truncate();
+}
 
 List<int>? symmetricKeyFromJson(String? json) {
   if (json == null) return null;

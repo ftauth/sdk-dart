@@ -18,14 +18,12 @@
 library common;
 
 import 'dart:async';
-import 'package:jose/jose.dart' show JsonWebKey;
+import 'package:ftauth/src/jwt/key.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart' as js_util;
 import 'dart:typed_data';
 import 'dart:convert' show jsonDecode;
 import 'dart:html' show DomException;
-// import 'jsonwebkey.dart' show JsonWebKey;
-// export 'jsonwebkey.dart' show JsonWebKey;
 export 'dart:html' show DomException;
 
 /// Minimal interface for promises as returned from the browsers WebCrypto API.

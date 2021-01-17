@@ -35,6 +35,9 @@ class HomeScreen extends StatelessWidget {
                 return FutureBuilder<String>(
                   future: retrieveUserInfo(FTAuth.of(context)),
                   builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    }
                     if (!snapshot.hasData) {
                       return const CircularProgressIndicator();
                     }

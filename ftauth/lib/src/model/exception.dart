@@ -20,6 +20,9 @@ class ApiException implements Exception {
 
   @override
   String toString() {
+    if (statusCode == 401) {
+      return '$method $path: Unauthorized';
+    }
     return "$method $path: $statusCode - '$body'";
   }
 }

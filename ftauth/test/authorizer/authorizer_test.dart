@@ -4,6 +4,11 @@ import 'package:test/test.dart';
 import '../mock/metadata_repo.dart';
 import '../mock/storage_repo.dart';
 
+const _accessToken =
+    'eyJ0eXAiOiJhdCtqd3QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJkaWxsb25ueXMiLCJjbGllbnRfaWQiOiJlZTFkZTVhZC1jNGE4LTQxNWMtOGZmNi03NjljYTBmZDNiZjEiLCJleHAiOjE2MTA4MzY2NjgsImlhdCI6MTYxMDgzMzA2OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwianRpIjoiOTI0OTdkMGQtOWE2MS00NzM5LTk3MjktM2RjMzc2YTNmYzFjIiwic2NvcGUiOiJkZWZhdWx0Iiwic3ViIjoiZWUxZGU1YWQtYzRhOC00MTVjLThmZjYtNzY5Y2EwZmQzYmYxIiwidXNlckluZm8iOnsiaWQiOiJkaWxsb25ueXMiLCJ1c2VybmFtZSI6IiIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJlbWFpbCI6IiIsInBob25lX251bWJlciI6IiIsInByb3ZpZGVyIjoiIn19.ryi-Lq_0u1B-NkPeY6znN7dypPG68SwPGMhXdVm655gN32MPcS5LGycP0F-9qW-nstYKP9n9xwxDcX-GTidaHFfogk74CkwXydTjGq9DkaPQMdYdYbJ0Se6pcSu4AM6m6yc4JQorOYfdnlm24mXJtua8PBa48rQKfgdRx-ZYPFicvGhUkqduztz0s9bVIa6ZKQS11wWrsZGTeBZbkqj4DBmpNXJe4JvgUQh06eaVMWyhZ2dRSLSsHXeKx6C2c8gsSw9-xKqMgR3Ija8pvpfQQ9_CKofmaz0WEbdCXxRE_ymXGAHuLygOl0aNrmdEy6EpG6IcgFMhQO9KurJ4KHcfGA';
+const _refreshToken =
+    'eyJ0eXAiOiJhdCtqd3QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5MjQ5N2QwZC05YTYxLTQ3MzktOTcyOS0zZGMzNzZhM2ZjMWMiLCJjbGllbnRfaWQiOiJlZTFkZTVhZC1jNGE4LTQxNWMtOGZmNi03NjljYTBmZDNiZjEiLCJleHAiOjE2MTA5MTk0NjgsImlhdCI6MTYxMDgzMzA2OCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwianRpIjoiODgyNjY5ZTEtNGM5My00MDIxLTkyOTMtZDI5ZWFjNGVjYzlmIiwic2NvcGUiOiJkZWZhdWx0Iiwic3ViIjoiZWUxZGU1YWQtYzRhOC00MTVjLThmZjYtNzY5Y2EwZmQzYmYxIiwidXNlckluZm8iOnsiaWQiOiJkaWxsb25ueXMiLCJ1c2VybmFtZSI6IiIsImZpcnN0X25hbWUiOiIiLCJsYXN0X25hbWUiOiIiLCJlbWFpbCI6IiIsInBob25lX251bWJlciI6IiIsInByb3ZpZGVyIjoiIn19.m4CBZrPkoYxqyYjZ0eIEZ3hk4OCfcwU-m1JCSmqD_v-xdhbW4r-yzg1-0XF6Nn7fKi4-j2tzNsuCIQdyyeCk490BOahhQlhhUiQKDudGSFCFUQrkx6xAlYkfslsUKrbGfq4qHH5JGNpm1lY6aN9928oiLkEAc6YS-m8uJrJ5-VC5VHeijioX8sWVIMldblUgAeEN_F4eHEF7tkVAQ1cVDMhmTPR9of2ZLS4csTi38BqE0BEdwZjDeAA_14VeSVyiocPxUEr9nz5ckYmQvVf-brHBD08Z5SSiKmukghIV33q7Qa9keqE8mWtNUphyl9D909ivAjLkcEk8AktHZF-kMQ';
+
 void main() {
   final storageRepo = MockStorageRepo();
   storageRepo.init();
@@ -125,8 +130,8 @@ void main() {
         metadataRepo: mockMetadataRepo,
       );
 
-      await storageRepo.setString('access_token', 'token');
-      await storageRepo.setString('refresh_token', 'token');
+      await storageRepo.setString('access_token', _accessToken);
+      await storageRepo.setString('refresh_token', _refreshToken);
 
       final authState = await authorizer.init();
       expect(authState, isA<AuthSignedIn>());

@@ -22,7 +22,10 @@ class JsonWebHeader extends Equatable {
   final String? contentType;
 
   @JsonKey(
-      name: 'alg', fromJson: AlgorithmX.fromJson, toJson: AlgorithmX.toJson)
+    name: 'alg',
+    fromJson: AlgorithmX.fromJson,
+    toJson: AlgorithmX.toJson,
+  )
   final Algorithm algorithm;
 
   @JsonKey(name: 'jwu')

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:ftauth/src/jwt/key.dart';
 
-import 'key.dart';
+import 'crypto.dart';
 import 'header.dart';
 import 'claims.dart';
 import 'util.dart';
@@ -69,9 +70,9 @@ class JsonWebToken with EquatableMixin {
     }
   }
 
-  String encodeBase64(JsonWebKey privateKey) {
+  Future<String> encodeBase64(PrivateKey privateKey) async {
     final unsigned = encodeUnsigned();
-    final signed = privateKey.sign(unsigned.codeUnits);
+    final signed = await privateKey.sign(unsigned.codeUnits);
 
     final signature = base64RawUrl.encode(signed);
     _signature = signature.codeUnits;
@@ -85,11 +86,15 @@ class JsonWebToken with EquatableMixin {
     return '$header.$payload';
   }
 
-  void verify(JsonWebKeySet keySet) {
+  Future<void> verify(
+    JsonWebKeySet keySet, {
+    required Verifier Function(JsonWebKey) verifierFactory,
+  }) async {
     final key = keySet.keys.firstWhere(
       (key) => header.keyId != null && key.keyId == header.keyId,
       orElse: () => keySet.keys.first,
     );
-    key.verify(this);
+    final verifier = verifierFactory(key);
+    await verifier.verify(encodeUnsigned().codeUnits, signature);
   }
 }

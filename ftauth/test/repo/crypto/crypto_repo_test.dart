@@ -7,6 +7,10 @@ void main() {
   final storageRepo = MockStorageRepo();
   final cryptoRepo = CryptoRepoImpl(storageRepo);
 
+  setUp(() async {
+    await storageRepo.init();
+  });
+
   group('CryptoRepo | ', () {
     test('successfully generates and stores RSA key', () async {
       expect(storageRepo.getString(CryptoRepo.publicStorageKey), isNull);
