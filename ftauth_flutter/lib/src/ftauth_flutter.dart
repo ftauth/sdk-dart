@@ -4,11 +4,9 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ftauth/ftauth.dart' as ftauth;
+import 'package:ftauth_flutter/src/storage/secure_storage_io.dart';
 import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:uni_links/uni_links.dart';
 
 import 'crypto_repo.dart';
 import 'exception.dart';
@@ -24,7 +22,7 @@ const _configPath = 'assets/config.json';
 /// import 'package:ftauth_flutter/ftauth_flutter.dart';
 ///
 /// Future<void> main() async {
-///   final config = FTAuthFTAuthConfig(
+///   final config = FTAuthConfig(
 ///     gatewayUrl: 'http://localhost:8000',
 ///   );
 ///
@@ -42,8 +40,8 @@ class FTAuth extends InheritedWidget {
   final ftauth.FTAuthConfig config;
 
   FTAuth({
-    @required this.config,
-    @required Widget child,
+    required this.config,
+    required Widget child,
   }) : super(child: child);
 
   /// Returns the FTAuth config provided to the Auth widget on creation.
@@ -58,8 +56,8 @@ class FTAuth extends InheritedWidget {
   bool updateShouldNotify(FTAuth old) => false;
 
   /// Sets up required configuration for using FTAuth.
-  static Future<void> initFlutter(
-      {ftauth.FTAuthConfig config, String configPath}) async {
+  static Future<ftauth.FTAuthConfig> initFlutter(
+      {ftauth.FTAuthConfig? config, String? configPath}) async {
     // Try to load config from file if not provided.
     if (config == null) {
       configPath ??= _configPath;
@@ -74,32 +72,26 @@ class FTAuth extends InheritedWidget {
       }
     }
 
-    await Hive.initFlutter();
-
     // Create a secure encryption key on mobile clients.
     Uint8List encryptionKey;
-    if (!kIsWeb) {
-      const secureStorage = FlutterSecureStorage();
-      var containsEncryptionKey = await secureStorage.containsKey(key: 'key');
-      if (containsEncryptionKey) {
-        final encodedKey = await secureStorage.read(key: 'key');
-        encryptionKey = base64Url.decode(encodedKey);
-      } else {
-        encryptionKey = Hive.generateSecureKey();
-        await secureStorage.write(
-          key: 'key',
-          value: base64Url.encode(encryptionKey),
-        );
-      }
+    const secureStorage = FlutterSecureStorage();
+    final storedEncryptionKey = await secureStorage.getData('key');
+    if (storedEncryptionKey == null) {
+      // TODO: Generate new key
+      encryptionKey = Uint8List.fromList([0]);
+    } else {
+      encryptionKey = storedEncryptionKey;
     }
 
     ftauth.CryptoRepo.instance = FlutterCryptoRepo();
 
-    return ftauth.FTAuth.init(
-      config,
+    await ftauth.FTAuth.init(
+      config!,
       encryptionKey: encryptionKey,
       authorizer: FlutterAuthorizer(config),
     );
+
+    return config;
   }
 }
 
@@ -113,7 +105,7 @@ extension AuthorizerX on ftauth.FTAuthConfig {
       throw AssertionError(
           'login should only be called for Flutter mobile clients. '
           'All other clients (web/desktop) should use authorize, followed by '
-          'exchangeAuthorizationCode.');
+          'exchange.');
     }
     await authorizer.authorize();
 

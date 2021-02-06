@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:ftauth/ftauth.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class FlutterAuthorizer extends Authorizer {
   FlutterAuthorizer(FTAuthConfig config) : super(config);
