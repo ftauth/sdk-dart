@@ -6,8 +6,8 @@ import 'routes.dart';
 
 Future<void> main() async {
   final config = FTAuthConfig(
-    gatewayUrl: 'https://519dc21e0d47.ngrok.io',
-    clientId: 'ee1de5ad-c4a8-415c-8ff6-769ca0fd3bf1',
+    gatewayUrl: 'https://bd72f19486b4.ngrok.io',
+    clientId: '1deddb6d-7957-40a1-a323-77725cecfa18',
     redirectUri: kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://auth',
   );
 

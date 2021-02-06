@@ -12,21 +12,13 @@ abstract class RouteInfo {
 class HomeRouteInfo extends RouteInfo {}
 
 class AuthRouteInfo extends RouteInfo {
-  final String code;
-  final String state;
+  final Map<String, String> parameters;
 
-  const AuthRouteInfo(this.code, this.state);
+  const AuthRouteInfo(this.parameters);
 
-  const AuthRouteInfo.empty()
-      : code = null,
-        state = null;
+  const AuthRouteInfo.empty() : parameters = const {};
 
-  bool get isEmpty => code == null && state == null;
-
-  Map<String, String> get parameters => {
-        'code': code,
-        'state': state,
-      };
+  bool get isEmpty => parameters.isEmpty;
 }
 
 class AuthRouteInfoParser extends RouteInformationParser<AuthRouteInfo> {
@@ -34,16 +26,9 @@ class AuthRouteInfoParser extends RouteInformationParser<AuthRouteInfo> {
   SynchronousFuture<AuthRouteInfo> parseRouteInformation(
       RouteInformation routeInformation) {
     final uri = Uri.parse(routeInformation.location);
-    if (uri.queryParameters.containsKey('code') &&
-        uri.queryParameters.containsKey('state')) {
-      return SynchronousFuture(
-        AuthRouteInfo(
-          uri.queryParameters['code'],
-          uri.queryParameters['state'],
-        ),
-      );
-    }
-    return SynchronousFuture(AuthRouteInfo.empty());
+    return SynchronousFuture(
+      AuthRouteInfo(uri.queryParameters),
+    );
   }
 
   @override

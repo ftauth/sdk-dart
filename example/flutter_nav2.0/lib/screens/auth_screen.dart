@@ -35,7 +35,7 @@ class AuthScreen extends StatelessWidget {
                 );
               case AuthFailure:
                 final message = (state as AuthFailure).toString();
-                return Text(message);
+                return Text(message, textAlign: TextAlign.center);
               default:
                 return const SizedBox.shrink();
             }
