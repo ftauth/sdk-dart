@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:ftauth/src/storage/storage_repo.dart';
 
 import '../crypto_repo.dart';

@@ -1,7 +1,5 @@
-import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ftauth/src/jwt/exception.dart';
-import 'package:ftauth/src/jwt/token.dart';
 import 'package:ftauth/src/jwt/util.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pem/pem.dart';

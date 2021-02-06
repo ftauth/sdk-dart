@@ -55,13 +55,23 @@ Map<String, dynamic> _$JsonWebClaimsToJson(JsonWebClaims instance) {
 
 ConfirmationClaim _$ConfirmationClaimFromJson(Map<String, dynamic> json) {
   return ConfirmationClaim(
-    key: JsonWebKey.fromJson(json['jwk'] as Map<String, dynamic>),
-    sha256Thumbprint: json['jkt'] as String,
+    key: json['jwk'] == null
+        ? null
+        : JsonWebKey.fromJson(json['jwk'] as Map<String, dynamic>),
+    sha256Thumbprint: json['jkt'] as String?,
   );
 }
 
-Map<String, dynamic> _$ConfirmationClaimToJson(ConfirmationClaim instance) =>
-    <String, dynamic>{
-      'jwk': instance.key,
-      'jkt': instance.sha256Thumbprint,
-    };
+Map<String, dynamic> _$ConfirmationClaimToJson(ConfirmationClaim instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('jwk', instance.key);
+  writeNotNull('jkt', instance.sha256Thumbprint);
+  return val;
+}

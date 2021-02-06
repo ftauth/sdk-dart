@@ -2,7 +2,6 @@ import 'package:ftauth/src/crypto/crypto_repo.dart';
 import 'package:ftauth/src/crypto/crypto_key.dart';
 import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/claims.dart';
-import 'package:ftauth/src/jwt/crypto.dart';
 import 'package:ftauth/src/jwt/header.dart';
 import 'package:ftauth/src/jwt/key.dart';
 import 'package:ftauth/src/jwt/token.dart';
@@ -24,14 +23,16 @@ class DPoPRepoImpl extends DPoPRepo {
     final header = JsonWebHeader(
       type: TokenType.DPoP,
       algorithm: Algorithm.HMACSHA256,
-      jwk: signingKey,
+      // jwk: signingKey.publicKey, // TODO: fix, public key should be used here
     );
+
     // Strip query parameters & fragments
     final htu = Uri(
       scheme: httpUri.scheme,
       host: httpUri.host,
       path: httpUri.path,
     ).toString();
+
     final claims = JsonWebClaims(
       jwtId: Uuid().v4(),
       httpMethod: httpMethod,

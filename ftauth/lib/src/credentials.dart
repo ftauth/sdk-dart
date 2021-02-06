@@ -88,7 +88,7 @@ class Credentials implements oauth2.Credentials {
         secret: secret,
         httpClient: DPoPClient(DPoPRepo.instance),
       );
-      return fromOAuthCredentials(creds!, _keySet, _scopes, onError: _onError);
+      return fromOAuthCredentials(creds, _keySet, _scopes, onError: _onError);
     } catch (e) {
       _onError(e);
     }

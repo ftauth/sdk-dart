@@ -9,24 +9,18 @@ environment:
 dependencies:
   json_annotation: ^4.0.0-nullsafety.0
   equatable: ^2.0.0-nullsafety.0
-  hive: ^1.4.4+1
-  oauth2:
-    git:
-      url: https://github.com/dnys1/oauth2.git
-      ref: nullsafety
-  uuid: ^2.2.2
+  hive: ^1.6.0-nullsafety.0
+  oauth2: ^1.6.3
+  uuid: ^3.0.0-nullsafety.0
   js: ^0.6.3-nullsafety.3
-  crypto: ^3.0.0-nullsafety.0
+  crypto: ^3.0.0
   pem: ^1.0.1
   cryptography: ^2.0.0-nullsafety.2
 
 dependency_overrides:
-  http:
-    git:
-      url: https://github.com/dart-lang/http.git
-      ref: stronger-types
+  http: ^0.13.0-nullsafety.0
   http_parser: ^4.0.0-nullsafety
-  crypto: ^3.0.0-nullsafety.0
+  crypto: ^3.0.0
 
 dev_dependencies:
   pedantic: ^1.10.0-nullsafety.0

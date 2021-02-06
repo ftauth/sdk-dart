@@ -1,4 +1,3 @@
-import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/crypto.dart';
 import 'package:cryptography/cryptography.dart' as crypto;

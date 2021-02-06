@@ -1,4 +1,3 @@
-import 'package:ftauth/ftauth.dart' as ftauth;
 import 'package:test/test.dart';
 
 void main() {

@@ -16,6 +16,7 @@ class ClientInfo extends Equatable {
   final String? clientSecret;
   final DateTime? clientSecretExpiresAt;
   final List<String> redirectUris;
+  final bool isDevClient;
 
   @JsonKey(fromJson: _scopesFromJson)
   final List<String> scopes;
@@ -23,7 +24,7 @@ class ClientInfo extends Equatable {
   final String? logoUri;
   final List<String> grantTypes;
 
-  const ClientInfo({
+  ClientInfo({
     required this.clientId,
     this.clientName,
     required this.clientType,
@@ -34,7 +35,7 @@ class ClientInfo extends Equatable {
     this.jwksUri,
     this.logoUri,
     required this.grantTypes,
-  });
+  }) : isDevClient = redirectUris.contains('localhost');
 
   static List<String> _scopesFromJson(dynamic json) {
     final scopes = <String>[];
@@ -67,8 +68,7 @@ class ClientInfo extends Equatable {
       clientType: clientType ?? this.clientType,
       clientName: clientName ?? this.clientName,
       clientSecret: clientSecret ?? this.clientSecret,
-      clientSecretExpiresAt:
-          clientSecretExpiresAt ?? this.clientSecretExpiresAt,
+      clientSecretExpiresAt: clientSecretExpiresAt ?? this.clientSecretExpiresAt,
       redirectUris: redirectUris ?? this.redirectUris,
       scopes: scopes ?? this.scopes,
       jwksUri: jwksUri ?? this.jwksUri,
@@ -77,8 +77,7 @@ class ClientInfo extends Equatable {
     );
   }
 
-  factory ClientInfo.fromJson(Map<String, dynamic> json) =>
-      _$ClientInfoFromJson(json);
+  factory ClientInfo.fromJson(Map<String, dynamic> json) => _$ClientInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ClientInfoToJson(this);
 

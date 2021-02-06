@@ -29,7 +29,7 @@ abstract class Authorizer {
 
   AuthState? _latestAuthState;
 
-  /// Ensures that [_init()] is only called once.
+  /// Ensures that `_init` is only called once.
   Future<AuthState>? _initStateFuture;
 
   /// Returns the stream of authorization states.
@@ -53,7 +53,12 @@ abstract class Authorizer {
     _authStateController.add(state);
   }
 
-  late final void Function(dynamic e) _onRefreshError;
+  void _onRefreshError(dynamic e) {
+    if (e is http.ClientException) {
+      e = ApiException('', e.uri.toString(), 0, e.message);
+    }
+    _addState(AuthFailure.fromException(e));
+  }
 
   oauth2.AuthorizationCodeGrant? _authCodeGrant;
 
@@ -62,14 +67,7 @@ abstract class Authorizer {
     StorageRepo? storageRepo,
     MetadataRepo? metadataRepo,
   })  : _metadataRepo = metadataRepo ?? MetadataRepoImpl(_config),
-        _storageRepo = storageRepo ?? StorageRepo.instance {
-    _onRefreshError = (e) {
-      if (e is http.ClientException) {
-        e = ApiException('', e.uri.toString(), 0, e.message);
-      }
-      _addState(AuthFailure.fromException(e));
-    };
-  }
+        _storageRepo = storageRepo ?? StorageRepo.instance;
 
   http.Client get _authClient {
     final baseClient = DPoPClient(DPoPRepo.instance);
@@ -86,7 +84,7 @@ abstract class Authorizer {
           rethrow;
         } finally {
           if (_e != null) {
-            final state = AuthFailure.fromException(e);
+            final state = AuthFailure.fromException(_e);
             _addState(state);
           }
         }
@@ -228,6 +226,17 @@ abstract class Authorizer {
     return base64Url.encode(bytes);
   }
 
+  String _createCodeVerifier() {
+    const length = 128;
+    const characterSet =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~';
+    var codeVerifier = '';
+    for (var i = 0; i < length; i++) {
+      codeVerifier += characterSet[Random().nextInt(characterSet.length)];
+    }
+    return codeVerifier;
+  }
+
   @visibleForTesting
   Future<String> getAuthorizationUrl() async {
     if (_config.clientType == ClientType.confidential) {
@@ -237,7 +246,7 @@ abstract class Authorizer {
     }
 
     final state = _generateState();
-    final codeVerifier = oauth2.AuthorizationCodeGrant.createCodeVerifier();
+    final codeVerifier = _createCodeVerifier();
 
     await _storageRepo.setString('state', state);
     await _storageRepo.setString('code_verifier', codeVerifier);
@@ -258,12 +267,27 @@ abstract class Authorizer {
         .toString();
   }
 
+  AuthFailure _buildError(String? error, {required String code, String? uri}) {
+    return AuthFailure(
+      code,
+      error ?? '' + (uri == null ? '' : '\nFor more information, visit $uri'),
+    );
+  }
+
   Future<Client?> exchangeAuthorizationCode(
       Map<String, String> parameters) async {
     await (_initStateFuture ??= init());
 
     if (_authCodeGrant == null) {
       throw StateError('Must call authorize first.');
+    }
+
+    if (parameters.containsKey('error')) {
+      final errorCode = parameters['error'];
+      final error = parameters['error_description'];
+      final errorUri = parameters['error_uri'];
+      _addState(_buildError(error, code: errorCode!, uri: errorUri));
+      return null;
     }
 
     _addState(const AuthLoading());

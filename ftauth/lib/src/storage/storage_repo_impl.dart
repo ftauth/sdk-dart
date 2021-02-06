@@ -19,7 +19,7 @@ class StorageRepoImpl extends StorageRepo {
   }
 
   @override
-  String getString(String key) {
+  Future<String?> getString(String key) async {
     return _box.get(key);
   }
 
@@ -31,5 +31,10 @@ class StorageRepoImpl extends StorageRepo {
   @override
   Future<void> deleteKey(String key) {
     return _box.delete(key);
+  }
+
+  @override
+  Future<void> clear() {
+    return _box.clear();
   }
 }

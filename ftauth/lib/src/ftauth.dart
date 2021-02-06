@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:ftauth/src/model/state/auth_state.dart';
+import 'package:ftauth/src/demo/demo.dart';
 import 'package:ftauth/src/storage/storage_repo.dart';
-import 'package:ftauth/src/storage/storage_repo_impl.dart';
 import 'package:hive/hive.dart';
 
 import 'path_provider/path_provider.dart';
 import 'authorizer/authorizer.dart';
 import 'model/config/config.dart';
+
+const _isDemo = bool.fromEnvironment('demo', defaultValue: false);
 
 /// The main utility class. It is generally not necessary to work with this
 /// class directly.
@@ -37,7 +38,11 @@ class FTAuthImpl {
       Hive.init(hivePath);
     }
     _config = config;
-    _config.authorizer = authorizer ?? AuthorizerImpl(_config);
+    if (_isDemo) {
+      _config.authorizer = DemoAuthorizer();
+    } else {
+      _config.authorizer = authorizer ?? AuthorizerImpl(_config);
+    }
 
     await (storageRepo ?? StorageRepo.instance)
         .init(encryptionKey: encryptionKey);

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/claims.dart';
