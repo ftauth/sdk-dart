@@ -6,6 +6,7 @@ import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/dpop/dpop_repo.dart';
 import 'package:ftauth/src/http/inline_client.dart';
 import 'package:ftauth/src/jwt/token.dart';
+import 'package:ftauth/src/jwt/util.dart';
 import 'package:ftauth/src/metadata/metadata_repo.dart';
 import 'package:ftauth/src/metadata/metadata_repo_impl.dart';
 import 'package:ftauth/src/storage/storage_repo.dart';
@@ -16,11 +17,7 @@ import 'package:http/http.dart' as http;
 
 import '../http/dpop_client.dart';
 
-export 'authorizer_stub.dart'
-    if (dart.library.io) 'authorizer_io.dart'
-    if (dart.library.html) 'authorizer_html.dart';
-
-abstract class Authorizer {
+class Authorizer {
   final FTAuthConfig _config;
   final MetadataRepo _metadataRepo;
   final StorageRepo _storageRepo;
@@ -92,15 +89,6 @@ abstract class Authorizer {
     );
   }
 
-  // Platform-specific implementations
-
-  @protected
-  Future<void> launchUrl(String url) {
-    throw UnimplementedError();
-  }
-
-  // Common implementations
-
   @visibleForTesting
   Future<AuthState> init() async {
     if (_initStateFuture != null) {
@@ -168,53 +156,95 @@ abstract class Authorizer {
     }
   }
 
-  Future<void> authorize() async {
+  Future<Client> loginWithUsernameAndPassword(
+    String username,
+    String password,
+  ) async {
+    _addState(const AuthLoading());
+
+    final client = await oauth2.resourceOwnerPasswordGrant(
+      _config.authorizationUri,
+      username,
+      password,
+      identifier: _config.clientId,
+      secret: _config.clientSecret ?? '',
+      scopes: _config.scopes,
+      httpClient: _authClient,
+    );
+
+    final keyStore = await _metadataRepo.loadKeySet();
+    final credentials = await Credentials.fromOAuthCredentials(
+      client.credentials,
+      keyStore,
+      _config.scopes,
+      onError: _onRefreshError,
+    );
+
+    await _storageRepo.setString('access_token', credentials.accessToken);
+    await _storageRepo.setString('refresh_token', credentials.refreshToken);
+
+    final newClient = Client(
+      credentials: credentials,
+      clientId: _config.clientId,
+      httpClient: _authClient,
+    );
+
+    _addState(AuthSignedIn(newClient, credentials.user));
+
+    return newClient;
+  }
+
+  Future<Client> loginWithCredentials() async {
+    if (_config.clientType == ClientType.public) {
+      throw AssertionError(
+          'Public clients should call authorize, followed by exchange.');
+    }
+    if (_config.clientSecret != null) {
+      throw AssertionError(
+          'Client secret must be provided for confidential clients.');
+    }
+
+    _addState(const AuthLoading());
+
+    final client = await oauth2.clientCredentialsGrant(
+      _config.authorizationUri,
+      _config.clientId,
+      _config.clientSecret!,
+      scopes: _config.scopes,
+      httpClient: _authClient,
+    );
+    final keyStore = await _metadataRepo.loadKeySet();
+    final credentials = await Credentials.fromOAuthCredentials(
+      client.credentials,
+      keyStore,
+      _config.scopes,
+      onError: _onRefreshError,
+    );
+
+    // Save keys to storage
+    await _storageRepo.setString('access_token', credentials.accessToken);
+    await _storageRepo.setString('refresh_token', credentials.refreshToken);
+
+    final newClient = Client(
+      credentials: credentials,
+      clientId: _config.clientId,
+      httpClient: _authClient,
+    );
+
+    _addState(AuthSignedIn(newClient, credentials.user));
+
+    return newClient;
+  }
+
+  Future<String> authorize() async {
     await (_initStateFuture ??= init());
 
-    if (_config.clientType == ClientType.confidential) {
-      if (_config.clientSecret != null) {
-        throw AssertionError(
-            'Client secret must be provided for confidential clients.');
-      }
-
-      _addState(const AuthLoading());
-
-      final client = await oauth2.clientCredentialsGrant(
-        _config.authorizationUri,
-        _config.clientId,
-        _config.clientSecret!,
-        scopes: _config.scopes,
-        httpClient: _authClient,
-      );
-      final keyStore = await _metadataRepo.loadKeySet();
-      final credentials = await Credentials.fromOAuthCredentials(
-        client.credentials,
-        keyStore,
-        _config.scopes,
-        onError: _onRefreshError,
-      );
-
-      // Save keys to storage
-      await _storageRepo.setString('access_token', credentials.accessToken);
-      await _storageRepo.setString('refresh_token', credentials.refreshToken);
-
-      final newClient = Client(
-        credentials: credentials,
-        clientId: _config.clientId,
-        httpClient: _authClient,
-      );
-
-      _addState(AuthSignedIn(newClient, credentials.user));
-    } else {
-      _addState(const AuthLoading());
-
-      final authorizationUrl = await getAuthorizationUrl();
-      await launchUrl(authorizationUrl);
-    }
+    _addState(const AuthLoading());
+    return getAuthorizationUrl();
   }
 
   String _generateState() {
-    const _stateLength = 8;
+    const _stateLength = 16;
 
     final random = Random.secure();
     final bytes = <int>[];
@@ -223,7 +253,7 @@ abstract class Authorizer {
       bytes.add(value);
     }
 
-    return base64Url.encode(bytes);
+    return base64RawUrl.encode(bytes);
   }
 
   String _createCodeVerifier() {
@@ -274,8 +304,7 @@ abstract class Authorizer {
     );
   }
 
-  Future<Client?> exchangeAuthorizationCode(
-      Map<String, String> parameters) async {
+  Future<Client> exchange(Map<String, String> parameters) async {
     await (_initStateFuture ??= init());
 
     if (_authCodeGrant == null) {
@@ -283,11 +312,11 @@ abstract class Authorizer {
     }
 
     if (parameters.containsKey('error')) {
-      final errorCode = parameters['error'];
-      final error = parameters['error_description'];
+      final error = parameters['error']!;
+      final errorDesc = parameters['error_description'];
       final errorUri = parameters['error_uri'];
-      _addState(_buildError(error, code: errorCode!, uri: errorUri));
-      return null;
+      _addState(_buildError(errorDesc, code: error, uri: errorUri));
+      throw AuthException(error);
     }
 
     _addState(const AuthLoading());
@@ -323,6 +352,7 @@ abstract class Authorizer {
       return newClient;
     } catch (e) {
       _addState(AuthFailure('${e.runtimeType}', e.toString()));
+      rethrow;
     }
   }
 

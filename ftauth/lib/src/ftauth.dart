@@ -41,7 +41,11 @@ class FTAuthImpl {
     if (_isDemo) {
       _config.authorizer = DemoAuthorizer();
     } else {
-      _config.authorizer = authorizer ?? AuthorizerImpl(_config);
+      _config.authorizer = authorizer ??
+          Authorizer(
+            _config,
+            storageRepo: storageRepo ?? StorageRepo.instance,
+          );
     }
 
     await (storageRepo ?? StorageRepo.instance)

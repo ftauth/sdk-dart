@@ -83,22 +83,25 @@ class DemoAuthorizer implements Authorizer {
   }
 
   @override
-  Future<void> authorize() async {
+  Future<Client> loginWithCredentials() async {
     await (_initStateFuture ??= init());
 
     _addAuthState(const AuthLoading());
     await Future<void>.delayed(const Duration(seconds: 2));
-    _addAuthState(AuthSignedIn(_DemoClient(), demoUser));
+    final client = _DemoClient();
+    _addAuthState(AuthSignedIn(client, demoUser));
+    return client;
   }
 
   @override
-  Future<Client?> exchangeAuthorizationCode(
-      Map<String, String> parameters) async {
+  Future<Client> exchange(Map<String, String> parameters) async {
     await (_initStateFuture ??= init());
 
     _addAuthState(const AuthLoading());
     await Future<void>.delayed(const Duration(seconds: 2));
-    _addAuthState(AuthSignedIn(_DemoClient(), demoUser));
+    final client = _DemoClient();
+    _addAuthState(AuthSignedIn(client, demoUser));
+    return client;
   }
 
   @override
@@ -116,13 +119,19 @@ class DemoAuthorizer implements Authorizer {
   }
 
   @override
-  Future<void> launchUrl(String url) {
-    throw UnimplementedError();
+  Future<void> logout() async {
+    _addAuthState(const AuthSignedOut());
   }
 
   @override
-  Future<void> logout() async {
-    _addAuthState(const AuthSignedOut());
+  Future<Client> loginWithUsernameAndPassword(
+      String username, String password) {
+    return loginWithCredentials();
+  }
+
+  @override
+  Future<String> authorize() {
+    throw UnimplementedError();
   }
 }
 

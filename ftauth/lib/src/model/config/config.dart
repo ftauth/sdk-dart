@@ -95,13 +95,13 @@ class FTAuthConfig extends http.BaseClient
   }
 
   @override
-  Future<void> authorize() {
+  Future<String> authorize() {
     return authorizer.authorize();
   }
 
   @override
-  Future<Client?> exchangeAuthorizationCode(Map<String, String> parameters) {
-    return authorizer.exchangeAuthorizationCode(parameters);
+  Future<Client> exchange(Map<String, String> parameters) {
+    return authorizer.exchange(parameters);
   }
 
   @override
@@ -109,11 +109,6 @@ class FTAuthConfig extends http.BaseClient
   Future<String> getAuthorizationUrl() {
     // ignore: invalid_use_of_visible_for_testing_member
     return authorizer.getAuthorizationUrl();
-  }
-
-  @override
-  Future<void> launchUrl(String url) {
-    return authorizer.launchUrl(url);
   }
 
   @override
@@ -152,5 +147,16 @@ class FTAuthConfig extends http.BaseClient
       return state.client.send(request);
     }
     throw AuthException('User not authenticated');
+  }
+
+  @override
+  Future<Client> loginWithCredentials() {
+    return authorizer.loginWithCredentials();
+  }
+
+  @override
+  Future<Client> loginWithUsernameAndPassword(
+      String username, String password) {
+    return authorizer.loginWithUsernameAndPassword(username, password);
   }
 }
