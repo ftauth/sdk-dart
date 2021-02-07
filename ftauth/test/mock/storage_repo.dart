@@ -11,7 +11,7 @@ class MockStorageRepo extends StorageRepo {
   }
 
   @override
-  String? getString(String key) {
+  Future<String?> getString(String key) async {
     return _inMemStorage[key];
   }
 
@@ -25,7 +25,8 @@ class MockStorageRepo extends StorageRepo {
     _inMemStorage[key] = value;
   }
 
-  void clear() {
+  @override
+  Future<void> clear() async {
     _inMemStorage = {};
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:ftauth/ftauth.dart';
-import 'package:pem/pem.dart';
 
 import 'ssl_repo.dart';
 
@@ -32,7 +31,7 @@ class SSLRepositoryImpl extends SSLRepository {
     final context = SecurityContext(
         withTrustedRoots: this.withTrustedRoots ?? withTrustedRoots);
     if (cert != null) {
-      certBytes = PemCodec(PemLabel.certificate).decode(cert);
+      certBytes = cert.codeUnits;
     }
     context.setTrustedCertificatesBytes(certBytes!);
     String hostname;
@@ -57,10 +56,7 @@ class SSLRepositoryImpl extends SSLRepository {
     final context = SecurityContext(
         withTrustedRoots: this.withTrustedRoots ?? withTrustedRoots);
     if (certs != null) {
-      certBytes = [];
-      for (var cert in certs) {
-        certBytes.add(PemCodec(PemLabel.certificate).decode(cert));
-      }
+      certBytes = certs.map((cert) => cert.codeUnits).toList();
     }
     for (var bytes in certBytes!) {
       context.setTrustedCertificatesBytes(bytes);

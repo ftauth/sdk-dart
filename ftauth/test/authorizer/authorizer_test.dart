@@ -30,7 +30,7 @@ void main() {
 
   group('getAuthorizationUrl', () {
     test('with valid public config', () async {
-      final authorizer = AuthorizerImpl(
+      final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
         metadataRepo: mockMetadataRepo,
@@ -75,7 +75,7 @@ void main() {
         scopes: ['default'],
       );
 
-      final authorizer = AuthorizerImpl(
+      final authorizer = Authorizer(
         config,
         storageRepo: storageRepo,
         metadataRepo: mockMetadataRepo,
@@ -90,7 +90,7 @@ void main() {
 
   group('initState', () {
     test('nothing in storage', () async {
-      final authorizer = AuthorizerImpl(
+      final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
         metadataRepo: mockMetadataRepo,
@@ -107,7 +107,7 @@ void main() {
     });
 
     test('state/code verifier in storage', () async {
-      final authorizer = AuthorizerImpl(
+      final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
         metadataRepo: mockMetadataRepo,
@@ -124,7 +124,7 @@ void main() {
     });
 
     test('access/refresh token in storage', () async {
-      final authorizer = AuthorizerImpl(
+      final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
         metadataRepo: mockMetadataRepo,

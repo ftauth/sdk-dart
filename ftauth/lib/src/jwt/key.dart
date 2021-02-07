@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:ftauth/src/jwt/exception.dart';
 import 'package:ftauth/src/jwt/util.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:pem/pem.dart';
 
 import 'alg.dart';
 import 'ecdsa.dart';
@@ -187,11 +186,6 @@ class JsonWebKey extends Equatable {
       map.remove('alg');
     }
     return map;
-  }
-
-  static JsonWebKey? fromPem(String pem) {
-    final keyData = PemCodec(PemLabel.privateKey).decode(pem);
-    return null;
   }
 
   bool _hasPrivateKeyInfo() {

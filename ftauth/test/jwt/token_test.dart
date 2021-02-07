@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
 import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/claims.dart';
 import 'package:ftauth/src/jwt/header.dart';
@@ -23,6 +24,8 @@ class _TestCase {
 }
 
 void main() {
+  EquatableConfig.stringify = true;
+
   group('JsonWebToken', () {
     final tests = <_TestCase>[
       () {
@@ -38,7 +41,8 @@ void main() {
             ),
             claims: JsonWebClaims(
               issuer: 'joe',
-              expiration: DateTime.fromMillisecondsSinceEpoch(1300819380),
+              expiration:
+                  DateTime.fromMillisecondsSinceEpoch(1300819380 * 1000),
               customClaims: {
                 'http://example.com/is_root': true,
               },

@@ -1,3 +1,5 @@
+@Skip('Waiting on crypto impl')
+
 import 'package:ftauth/src/crypto/crypto_repo.dart';
 import 'package:test/test.dart';
 

@@ -36,7 +36,6 @@ class CryptoRepoImpl extends CryptoRepo {
     }
 
     final pem = out.substring(out.indexOf(rsaHeader));
-    final privateKey = JsonWebKey.fromPem(pem);
     return {};
   }
 
