@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.ftauth.ftauth_flutter_example">
+    package="io.ftauth.example">
    <application
-        android:label="ftauth_flutter_example"
+        android:label="example"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

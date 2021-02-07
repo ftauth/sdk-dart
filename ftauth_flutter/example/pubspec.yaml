@@ -1,4 +1,4 @@
-name: ftauth_flutter_example
+name: example
 description: Demonstrates how to use the ftauth_flutter plugin.
 
 # The following line prevents the package from being accidentally published to
@@ -6,7 +6,7 @@ description: Demonstrates how to use the ftauth_flutter plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.10.0 <3.0.0"
 
 dependencies:
   flutter:

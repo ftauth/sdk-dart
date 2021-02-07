@@ -1,12 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  final config = FTAuthConfig(
+    gatewayUrl: 'https://7602aa8d005e.ngrok.io',
+    clientId: '3cf9a7ac-9198-469e-92a7-cc2f15d8b87d',
+    clientType: ClientType.public,
+    redirectUri: kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://auth',
+  );
+
+  await FTAuth.initFlutter(config: config);
+
+  runApp(
+    FTAuth(
+      config: config,
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -15,8 +26,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
   @override
   void initState() {
     super.initState();
@@ -30,14 +39,10 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: RaisedButton(
+          child: ElevatedButton(
             child: Text('Login'),
             onPressed: () {
-              if (kIsWeb) {
-                FTAuth.of(context).authorize();
-              } else {
-                FTAuth.of(context).login();
-              }
+              FTAuth.of(context).login();
             },
           ),
         ),

@@ -1,4 +1,4 @@
-# ftauth_flutter_example
+# example
 
 Demonstrates how to use the ftauth_flutter plugin.
 

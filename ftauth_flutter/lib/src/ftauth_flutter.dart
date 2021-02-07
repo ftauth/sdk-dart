@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ftauth/ftauth.dart' as ftauth;
-import 'package:ftauth_flutter/src/storage/secure_storage_io.dart';
-import 'package:hive/hive.dart';
+import 'package:ftauth_flutter/src/storage/secure_storage.dart';
+import 'package:webcrypto/webcrypto.dart';
 
 import 'crypto_repo.dart';
 import 'exception.dart';
 import 'flutter_authorizer.dart';
 
-const _configPath = 'assets/config.json';
+const _configPath = 'assets/ftauth_config.json';
 
 /// A widget meant to wrap a top-level MaterialApp to provide an FTAuth
 /// config to all decendant widgets, making login/authorize calls simpler.
@@ -26,7 +25,7 @@ const _configPath = 'assets/config.json';
 ///     gatewayUrl: 'http://localhost:8000',
 ///   );
 ///
-///   await FTAuth.initFlutter(config);
+///   await FTAuth.initFlutter(config: config);
 ///
 ///   runApp(
 ///     FTAuth(
@@ -49,7 +48,7 @@ class FTAuth extends InheritedWidget {
   /// Make sure to wrap your top-level [MaterialApp] in an [FTAuth] widget to have
   /// access to it later.
   static ftauth.FTAuthConfig of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<FTAuth>().config;
+    return context.dependOnInheritedWidgetOfExactType<FTAuth>()!.config;
   }
 
   @override
@@ -58,6 +57,8 @@ class FTAuth extends InheritedWidget {
   /// Sets up required configuration for using FTAuth.
   static Future<ftauth.FTAuthConfig> initFlutter(
       {ftauth.FTAuthConfig? config, String? configPath}) async {
+    WidgetsFlutterBinding.ensureInitialized();
+
     // Try to load config from file if not provided.
     if (config == null) {
       configPath ??= _configPath;
@@ -74,11 +75,11 @@ class FTAuth extends InheritedWidget {
 
     // Create a secure encryption key on mobile clients.
     Uint8List encryptionKey;
-    const secureStorage = FlutterSecureStorage();
+    const secureStorage = FlutterSecureStorage.instance;
     final storedEncryptionKey = await secureStorage.getData('key');
     if (storedEncryptionKey == null) {
-      // TODO: Generate new key
-      encryptionKey = Uint8List.fromList([0]);
+      encryptionKey = Uint8List(32);
+      fillRandomBytes(encryptionKey);
     } else {
       encryptionKey = storedEncryptionKey;
     }
@@ -89,6 +90,7 @@ class FTAuth extends InheritedWidget {
       config!,
       encryptionKey: encryptionKey,
       authorizer: FlutterAuthorizer(config),
+      storageRepo: FlutterSecureStorage.instance,
     );
 
     return config;
@@ -101,20 +103,6 @@ extension AuthorizerX on ftauth.FTAuthConfig {
   ///
   /// Flutter web and desktop applications must follow the two step process.
   Future<ftauth.Client> login() async {
-    if (kIsWeb) {
-      throw AssertionError(
-          'login should only be called for Flutter mobile clients. '
-          'All other clients (web/desktop) should use authorize, followed by '
-          'exchange.');
-    }
-    await authorizer.authorize();
-
-    final redirect = await getLinksStream().firstWhere(
-      (url) => url.startsWith(redirectUri.toString()),
-    );
-
-    final queryParams = Uri.parse(redirect).queryParameters;
-
-    return authorizer.exchangeAuthorizationCode(queryParams);
+    return (authorizer as FlutterAuthorizer).login();
   }
 }

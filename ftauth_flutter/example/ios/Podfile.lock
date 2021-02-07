@@ -6,35 +6,47 @@ PODS:
     - FTAuth/Common
   - integration_test (0.0.1):
     - Flutter
+  - path_provider (0.0.1):
+    - Flutter
+  - url_launcher (0.0.1):
+    - Flutter
   - webcrypto (0.1.1):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - FTAuth/Common (from `../../../../sdk-mobile/ios`)
+  - FTAuth/Common (from `../../../../sdk-ios`)
   - ftauth_flutter (from `.symlinks/plugins/ftauth_flutter/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
   - webcrypto (from `.symlinks/plugins/webcrypto/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
   FTAuth:
-    :path: "../../../../sdk-mobile/ios"
+    :path: "../../../../sdk-ios"
   ftauth_flutter:
     :path: ".symlinks/plugins/ftauth_flutter/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  url_launcher:
+    :path: ".symlinks/plugins/url_launcher/ios"
   webcrypto:
     :path: ".symlinks/plugins/webcrypto/ios"
 
 SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  FTAuth: 7327161d5899031cac35b06b25aca3ff4c10aea9
+  FTAuth: 8719d30c80107388164e0dc31b927259947609a7
   ftauth_flutter: fb7178bd9a4af8534eea39b49b93bac5fd63e385
-  integration_test: 5ed24a436eb7ec17b6a13046e9bf7ca4a404e59e
+  integration_test: 6eb66a19f7104200dcfdd62bc0077e1b09686e4f
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   webcrypto: ac37b97f415c7114abb8af22d58048b5cbcb23d3
 
-PODFILE CHECKSUM: eb00967f13bc90d101c2be0dfa4e09d47064099d
+PODFILE CHECKSUM: 645e4e09ff05aca2d487068a05f127dc45a8b87c
 
 COCOAPODS: 1.10.0

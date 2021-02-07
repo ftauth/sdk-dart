@@ -1,24 +1,26 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:ftauth/ftauth.dart';
+import 'package:ftauth_flutter/src/storage/secure_storage.dart';
 
 class FlutterAuthorizer extends Authorizer {
-  FlutterAuthorizer(FTAuthConfig config) : super(config);
+  static const _channel = MethodChannel('ftauth_flutter');
 
-  @override
-  Future<void> launchUrl(String url) async {
-    if (await canLaunch(url) || _platformOverride) {
-      await launch(url, webOnlyWindowName: '_self');
+  FlutterAuthorizer(FTAuthConfig config)
+      : super(
+          config,
+          storageRepo: FlutterSecureStorage.instance,
+        );
+
+  Future<Client> login() async {
+    final url = await authorize();
+
+    final Map<String, String>? queryParams =
+        await _channel.invokeMapMethod<String, String>('login', url);
+
+    if (queryParams == null) {
+      throw PlatformException(code: 'LOGIN_FAILED');
     }
-  }
 
-  /// `canLaunch` will return `false` on Android if incorrectly configured.
-  ///
-  // TODO: Fix Android.
-  bool get _platformOverride {
-    // Do not import dart:io on Web
-    if (kIsWeb) return false;
-    return Platform.isAndroid;
+    return exchange(queryParams);
   }
 }

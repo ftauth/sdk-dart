@@ -84,7 +84,7 @@ packages:
       name: fixnum
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0-nullsafety.0"
+    version: "1.0.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -117,19 +117,17 @@ packages:
   http:
     dependency: transitive
     description:
-      path: "."
-      ref: stronger-types
-      resolved-ref: "688402b71cec43d8a153e5c6330c81994d9edcb3"
-      url: "https://github.com/dart-lang/http.git"
-    source: git
-    version: "0.13.0-nullsafety.0"
+      name: http
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.2"
   http_parser:
     dependency: transitive
     description:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0-nullsafety"
+    version: "3.1.4"
   js:
     dependency: transitive
     description:
@@ -161,12 +159,10 @@ packages:
   oauth2:
     dependency: transitive
     description:
-      path: "."
-      ref: nullsafety
-      resolved-ref: "77a4ee36a2bbd3035ac708ec0b35405252226aa4"
-      url: "https://github.com/dnys1/oauth2.git"
-    source: git
-    version: "2.0.0-nullsafety.0"
+      name: oauth2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.6.3"
   path:
     dependency: transitive
     description:
@@ -180,7 +176,7 @@ packages:
       name: pedantic
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.0-nullsafety.3"
+    version: "1.10.0"
   pem:
     dependency: transitive
     description:
