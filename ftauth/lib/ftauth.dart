@@ -4,6 +4,7 @@
 library ftauth;
 
 import 'src/ftauth.dart';
+export 'src/ftauth.dart';
 
 export 'src/http/client.dart';
 export 'src/credentials.dart';

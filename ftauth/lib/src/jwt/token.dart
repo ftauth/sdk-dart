@@ -31,10 +31,16 @@ class JsonWebToken with EquatableMixin {
     required this.header,
     required this.claims,
     List<int>? signature,
-  })  : _raw = raw,
-        _signature = signature {
+  }) : _signature = signature {
     header.assertValid();
     claims.assertValid(header.type);
+
+    // Add the raw value if we can.
+    if (_signature == null) {
+      _raw = raw;
+    } else {
+      _raw = raw ?? '${encodeUnsigned()}.${base64RawUrl.encode(_signature!)}';
+    }
   }
 
   @override
@@ -70,7 +76,7 @@ class JsonWebToken with EquatableMixin {
     }
   }
 
-  Future<String> encodeBase64(PrivateKey privateKey) async {
+  Future<String> encodeBase64(Signer privateKey) async {
     final unsigned = encodeUnsigned();
     final signed = await privateKey.sign(unsigned.codeUnits);
 

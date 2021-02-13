@@ -96,7 +96,7 @@ void main() {
         metadataRepo: mockMetadataRepo,
       );
 
-      final authState = await authorizer.init();
+      final authState = await authorizer.authStates.first;
       expect(authState, AuthSignedOut());
       expect(
         authorizer.authStates,
@@ -113,7 +113,7 @@ void main() {
         metadataRepo: mockMetadataRepo,
       );
 
-      final authState = await authorizer.init();
+      final authState = await authorizer.authStates.first;
       expect(authState, AuthSignedOut());
       expect(
         authorizer.authStates,
@@ -133,7 +133,7 @@ void main() {
       await storageRepo.setString('access_token', _accessToken);
       await storageRepo.setString('refresh_token', _refreshToken);
 
-      final authState = await authorizer.init();
+      final authState = await authorizer.authStates.first;
       expect(authState, isA<AuthSignedIn>());
       expect(
         authorizer.authStates,

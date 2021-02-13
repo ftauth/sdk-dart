@@ -29,7 +29,7 @@ class StorageRepoImpl extends StorageRepo {
   }
 
   @override
-  Future<void> deleteKey(String key) {
+  Future<void> delete(String key) {
     return _box.delete(key);
   }
 

@@ -7,61 +7,41 @@ import 'package:ftauth/ftauth.dart' as ftauth;
 import 'package:ftauth_flutter/src/storage/secure_storage.dart';
 import 'package:webcrypto/webcrypto.dart';
 
-import 'crypto_repo.dart';
 import 'exception.dart';
 import 'flutter_authorizer.dart';
 
-const _configPath = 'assets/ftauth_config.json';
+/// The default configuration path.
+const kConfigPath = 'assets/ftauth_config.json';
 
-/// A widget meant to wrap a top-level MaterialApp to provide an FTAuth
-/// config to all decendant widgets, making login/authorize calls simpler.
-///
-///
-/// ```
-/// import 'package:ftauth_flutter/ftauth_flutter.dart';
-///
-/// Future<void> main() async {
-///   final config = FTAuthConfig(
-///     gatewayUrl: 'http://localhost:8000',
-///   );
-///
-///   await FTAuth.initFlutter(config: config);
-///
-///   runApp(
-///     FTAuth(
-///       config: config,
-///       child: MyApp(),
-///     ),
-///   );
-/// }
-/// ```
-class FTAuth extends InheritedWidget {
-  final ftauth.FTAuthConfig config;
-
-  FTAuth({
-    required this.config,
-    required Widget child,
-  }) : super(child: child);
-
-  /// Returns the FTAuth config provided to the Auth widget on creation.
+extension FTAuthFlutter on ftauth.FTAuthImpl {
+  /// Initializes the FTAuth instance.
   ///
-  /// Make sure to wrap your top-level [MaterialApp] in an [FTAuth] widget to have
-  /// access to it later.
-  static ftauth.FTAuthConfig of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<FTAuth>()!.config;
-  }
-
-  @override
-  bool updateShouldNotify(FTAuth old) => false;
-
-  /// Sets up required configuration for using FTAuth.
-  static Future<ftauth.FTAuthConfig> initFlutter(
-      {ftauth.FTAuthConfig? config, String? configPath}) async {
+  /// Must be called before any other methods are called. Typically, this is
+  /// done in the main method, before all Flutter actions.
+  ///
+  /// ```
+  /// Future<void> main() async {
+  ///   final config = FTAuthConfig(
+  ///     gatewayUrl: 'https://7602aa8d005e.ngrok.io',
+  ///     clientId: '3cf9a7ac-9198-469e-92a7-cc2f15d8b87d',
+  ///     clientType: ClientType.public,
+  ///     redirectUri: kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://auth',
+  ///   );
+  ///
+  ///   await FTAuth.initFlutter(config: config);
+  ///
+  ///   runApp(MyApp());
+  /// }
+  /// ```
+  Future<void> initFlutter({
+    ftauth.FTAuthConfig? config,
+    String? configPath,
+  }) async {
     WidgetsFlutterBinding.ensureInitialized();
 
     // Try to load config from file if not provided.
     if (config == null) {
-      configPath ??= _configPath;
+      configPath ??= kConfigPath;
       try {
         config = await rootBundle.loadStructuredData(configPath, (value) async {
           final configJson =
@@ -84,24 +64,22 @@ class FTAuth extends InheritedWidget {
       encryptionKey = storedEncryptionKey;
     }
 
-    ftauth.CryptoRepo.instance = FlutterCryptoRepo();
+    // TODO: Use webcrypto?
+    // ftauth.CryptoRepo.instance = FlutterCryptoRepo();
+    ftauth.CryptoRepo.instance = ftauth.CryptoRepoImpl(secureStorage);
 
-    await ftauth.FTAuth.init(
+    return ftauth.FTAuth.init(
       config!,
       encryptionKey: encryptionKey,
       authorizer: FlutterAuthorizer(config),
       storageRepo: FlutterSecureStorage.instance,
     );
-
-    return config;
   }
-}
 
-extension AuthorizerX on ftauth.FTAuthConfig {
   /// A convenience method for mobile Flutter clients to login and retrieve
   /// an FTAuth client in one step.
   ///
-  /// Flutter web and desktop applications must follow the two step process.
+  /// Flutter Web applications must still call [exchange] after being redirected.
   Future<ftauth.Client> login() async {
     return (authorizer as FlutterAuthorizer).login();
   }

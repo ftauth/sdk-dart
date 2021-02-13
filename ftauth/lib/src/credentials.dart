@@ -33,10 +33,10 @@ class Credentials implements oauth2.Credentials {
     required Function(dynamic e) onError,
   }) async {
     final accessToken = JsonWebToken.parse(creds.accessToken);
-    await accessToken.verify(keySet, verifierFactory: (key) => key.cryptoKey);
+    await accessToken.verify(keySet, verifierFactory: (key) => key.verifier);
 
     final refreshToken = JsonWebToken.parse(creds.refreshToken);
-    await refreshToken.verify(keySet, verifierFactory: (key) => key.cryptoKey);
+    await refreshToken.verify(keySet, verifierFactory: (key) => key.verifier);
 
     return Credentials(
       accessToken,

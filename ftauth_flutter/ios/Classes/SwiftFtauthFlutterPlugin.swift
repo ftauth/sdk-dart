@@ -31,82 +31,47 @@ public class SwiftFtauthFlutterPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "storageInit":
-        result(FlutterMethodNotImplemented)
+        // No-op
+        result(nil)
     case "storageGet":
         guard let key = call.arguments as? String else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
+            result(FTAuthError(errorCode: .invalidArguments).flutterError)
             return
         }
         do {
             let data = try keystore.get(key.data(using: .utf8))
             result(data)
         } catch {
-            switch error as? Keystore.KeystoreError {
-            case .access(let details):
-                result(FlutterError(code: "KEYSTORE_ACCESS", message: "Could not access keystore", details: details))
-            case .keyNotFound(_):
-                result(nil)
-            case .unknown(let details):
-                result(FlutterError(code: "KEYSTORE_UNKNOWN", message: "An unknown error occurred", details: details))
-            default:
-                result(FlutterError(code: "UNKNOWN", message: "An unknown error occurred", details: nil))
-            }
+            handleKeystoreError(error: error, result: result)
         }
     case "storageSet":
         guard let map = call.arguments as? [String: String], let key = map["key"], let value = map["value"] else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
+            result(FTAuthError(errorCode: .invalidArguments).flutterError)
             return
         }
         do {
             try keystore.save(key.data(using: .utf8)!, value: value.data(using: .utf8)!)
             result(nil)
         } catch {
-            switch error as? Keystore.KeystoreError {
-            case .access(let details):
-                result(FlutterError(code: "KEYSTORE_ACCESS", message: "Could not access keystore", details: details))
-            case .keyNotFound(_):
-                result(FlutterError(code: "INVALID_ARGUMENTS", message: "Nil key was passed", details: nil))
-            case .unknown(let details):
-                result(FlutterError(code: "KEYSTORE_UNKNOWN", message: "An unknown error occurred", details: details))
-            default:
-                result(FlutterError(code: "UNKNOWN", message: "An unknown error occurred", details: nil))
-            }
+            handleKeystoreError(error: error, result: result)
         }
     case "storageDelete":
         guard let key = call.arguments as? String else {
-            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid arguments", details: nil))
+            result(FTAuthError(errorCode: .invalidArguments).flutterError)
             return
         }
         do {
             try keystore.delete(key.data(using: .utf8))
             result(nil)
         } catch {
-            switch error as? Keystore.KeystoreError {
-            case .access(let details):
-                result(FlutterError(code: "KEYSTORE_ACCESS", message: "Could not access keystore", details: details))
-            case .keyNotFound(_):
-                result(nil)
-            case .unknown(let details):
-                result(FlutterError(code: "KEYSTORE_UNKNOWN", message: "An unknown error occurred", details: details))
-            default:
-                result(FlutterError(code: "UNKNOWN", message: "An unknown error occurred", details: nil))
-            }
+            handleKeystoreError(error: error, result: result)
         }
     case "storageClear":
         do {
             try keystore.clear()
             result(nil)
         } catch {
-            switch error as? Keystore.KeystoreError {
-            case .access(let details):
-                result(FlutterError(code: "KEYSTORE_ACCESS", message: "Could not access keystore", details: details))
-            case .keyNotFound(_):
-                result(nil)
-            case .unknown(let details):
-                result(FlutterError(code: "KEYSTORE_UNKNOWN", message: "An unknown error occurred", details: details))
-            default:
-                result(FlutterError(code: "UNKNOWN", message: "An unknown error occurred", details: nil))
-            }
+            handleKeystoreError(error: error, result: result)
         }
     case "login":
         DispatchQueue.global(qos: .userInitiated).async { [unowned self] in
@@ -119,27 +84,26 @@ public class SwiftFtauthFlutterPlugin: NSObject, FlutterPlugin {
     }
   }
     
-    func handleLoginReponse(queryParams: [String: String]?, error: Error?, result: FlutterResult) {
-        if let error = error {
-            switch error as? AuthenticationError {
-            case .auth(let error, let errorDescription, let errorURI):
-                result(FlutterError(code: "AUTH_EXCEPTION", message: error, details: [
-                    "description": errorDescription,
-                    "uri": errorURI,
-                ]))
-            case .cancelled:
-                result(FlutterError(code: "AUTH_CANCELLED", message: "The login process was cancelled", details: nil))
-            case .unknown(let details):
-                result(FlutterError(code: "AUTH_UNKNOWN", message: "An unknown error occurred", details: details))
-            default:
-                result(FlutterError(code: "AUTH_UNKNOWN", message: "An unknown error occurred", details: nil))
-            }
-            
+    func handleKeystoreError(error: Error, result: FlutterResult) {
+        guard let keystoreError = error as? Keystore.KeystoreError else {
+            result(FTAuthError(errorCode: .unknown, details: error.localizedDescription).flutterError)
             return
         }
+        result(keystoreError.flutterError)
+    }
+    
+    func handleLoginReponse(queryParams: [String: String]?, error: Error?, result: FlutterResult) {
+        if let error = error {
+            guard let authError = error as? AuthenticationError else {
+                result(FTAuthError(errorCode: .authUnknown, details: error.localizedDescription).flutterError)
+                return
+            }
+            result(authError.flutterError)
+        }
+        
         
         guard let queryParams = queryParams else {
-            result(FlutterError(code: "AUTH_UNKNOWN", message: "An unknown error occurred", details: nil))
+            result(FTAuthError(errorCode: .authUnknown).flutterError)
             return
         }
         

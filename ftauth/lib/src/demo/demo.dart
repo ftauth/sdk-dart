@@ -68,9 +68,12 @@ class DemoAuthorizer implements Authorizer {
   final _authStateController = StreamController<AuthState>.broadcast();
 
   @override
+  http.Client get httpClient => http.Client();
+
+  @override
   Stream<AuthState> get authStates async* {
     if (_latestAuthState == null) {
-      _initStateFuture ??= init();
+      _initStateFuture ??= initialize();
       _latestAuthState = await _initStateFuture!;
     }
     yield _latestAuthState!;
@@ -84,7 +87,7 @@ class DemoAuthorizer implements Authorizer {
 
   @override
   Future<Client> loginWithCredentials() async {
-    await (_initStateFuture ??= init());
+    await (_initStateFuture ??= initialize());
 
     _addAuthState(const AuthLoading());
     await Future<void>.delayed(const Duration(seconds: 2));
@@ -95,7 +98,7 @@ class DemoAuthorizer implements Authorizer {
 
   @override
   Future<Client> exchange(Map<String, String> parameters) async {
-    await (_initStateFuture ??= init());
+    await (_initStateFuture ??= initialize());
 
     _addAuthState(const AuthLoading());
     await Future<void>.delayed(const Duration(seconds: 2));
@@ -110,7 +113,7 @@ class DemoAuthorizer implements Authorizer {
   }
 
   @override
-  Future<AuthState> init() async {
+  Future<AuthState> initialize() async {
     if (_initStateFuture != null) {
       return _initStateFuture!;
     }

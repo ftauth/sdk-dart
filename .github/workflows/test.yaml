@@ -1,20 +1,100 @@
-name: Run Tests
+name: Test
 
-# Run this everytime a new commit is pushed to the repo
-on: push
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
-  dart-test:
-    name: Run Tests
-    runs-on: ubuntu-latest
+  ftauth:
+    name: FTAuth
+    strategy:
+      matrix:
+        # Test on multiple Dart versions to ensure
+        # regressions do not occur - and to give a heads
+        # up for upcoming breaking changes.
+        dart-sdk: [stable, beta, dev]
+        os: [ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@main
+        with:
+          sdk: ${{ matrix.dart-sdk }}
+      - name: Cache Pubcache
+        uses: actions/cache@v2
+        env:
+          cache-name: pubcache
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('web/admin/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+      - name: Test
+        run: make ftauth-test
+  
+  ftauth-flutter:
+    name: FTAuth Flutter
+    strategy:
+      matrix:
+        # Test on multiple Flutter versions to ensure
+        # regressions do not occur - and to give a heads
+        # up for upcoming breaking changes.
+        flutter-version: [stable, beta, dev]
+        os: [ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Setup Flutter
         uses: subosito/flutter-action@v1
         with:
-          channel: dev
-
-      - run: bash script/test.sh
-        working-directory: ftauth
+          channel: ${{ matrix.flutter-version }}
+      - name: Cache Pubcache
+        uses: actions/cache@v2
+        env:
+          cache-name: pubcache
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+      - name: Test SDK
+        run: make ftauth_flutter-test
+  
+  examples:
+    name: Examples
+    strategy:
+      matrix:
+        # Test on multiple Flutter versions to ensure
+        # regressions do not occur - and to give a heads
+        # up for upcoming breaking changes.
+        flutter-version: [stable, beta, dev]
+        os: [ubuntu-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: ${{ matrix.flutter-version }}
+      - name: Cache Pubcache
+        uses: actions/cache@v2
+        env:
+          cache-name: pubcache
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+      - name: Test SDK
+        run: make examples-test

@@ -35,6 +35,9 @@ class AuthException implements Exception {
   factory AuthException.uninitialized() =>
       AuthException('Authentication has not been initialized.');
 
+  factory AuthException.unauthenticated() =>
+      AuthException('User is not authenticated');
+
   static const unknown = AuthException('An unknown error occurred.');
 
   @override

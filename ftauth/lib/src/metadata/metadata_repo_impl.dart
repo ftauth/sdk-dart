@@ -8,11 +8,12 @@ import 'metadata_repo.dart';
 
 class MetadataRepoImpl extends MetadataRepo {
   final FTAuthConfig _config;
+  final http.Client _httpClient;
 
   AuthorizationServerMetadata? _cached;
   JsonWebKeySet? _keySet;
 
-  MetadataRepoImpl(this._config);
+  MetadataRepoImpl(this._config, this._httpClient);
 
   @override
   Future<AuthorizationServerMetadata> loadServerMetadata({
@@ -21,7 +22,7 @@ class MetadataRepoImpl extends MetadataRepo {
     if (_cached == null || force) {
       final path =
           '${_config.gatewayUrl}/.well-known/oauth-authorization-server';
-      final res = await http.get(Uri.parse(path));
+      final res = await _httpClient.get(Uri.parse(path));
       if (res.statusCode != 200) {
         throw ApiException.get(path, res.statusCode, res.body);
       } else {
@@ -37,7 +38,7 @@ class MetadataRepoImpl extends MetadataRepo {
     AuthorizationServerMetadata metadata,
   ) async {
     final path = '${_config.gatewayUrl}/.well-known/oauth-authorization-server';
-    final res = await http.put(Uri.parse(path), body: metadata.toJson());
+    final res = await _httpClient.put(Uri.parse(path), body: metadata.toJson());
     if (res.statusCode != 200) {
       throw ApiException.put(path, res.statusCode, res.body);
     } else {
@@ -56,7 +57,7 @@ class MetadataRepoImpl extends MetadataRepo {
     if (_keySet == null) {
       final path = '${_config.gatewayUrl}/jwks.json';
       try {
-        final res = await http.get(Uri.parse(path));
+        final res = await _httpClient.get(Uri.parse(path));
         if (res.statusCode != 200) {
           throw ApiException.get(path, res.statusCode, res.body);
         }

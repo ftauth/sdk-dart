@@ -6,7 +6,8 @@ class DPoPClient extends http.BaseClient {
   final DPoPRepo dPoPRepo;
   final http.Client client;
 
-  DPoPClient(this.dPoPRepo, {http.Client? client}) : client = http.Client();
+  DPoPClient(this.dPoPRepo, {http.Client? client})
+      : client = client ?? http.Client();
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {

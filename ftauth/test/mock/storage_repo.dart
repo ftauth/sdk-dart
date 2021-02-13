@@ -6,7 +6,7 @@ class MockStorageRepo extends StorageRepo {
   late Map<String, String> _inMemStorage;
 
   @override
-  Future<void> deleteKey(String key) async {
+  Future<void> delete(String key) async {
     _inMemStorage.remove(key);
   }
 

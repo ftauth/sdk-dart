@@ -1,147 +1,118 @@
+import 'dart:typed_data';
+
+import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/crypto.dart';
-import 'package:cryptography/cryptography.dart' as crypto;
-import 'package:ftauth/src/jwt/exception.dart';
 import 'package:ftauth/src/jwt/key.dart';
-import 'package:ftauth/src/jwt/util.dart';
+import 'package:pointycastle/digests/sha256.dart';
+import 'package:pointycastle/digests/sha384.dart';
+import 'package:pointycastle/digests/sha512.dart';
+import 'package:pointycastle/pointycastle.dart' as pc;
 
-class RsaPrivateKey extends PrivateKey {
-  final crypto.SignatureAlgorithm alg;
-  final crypto.RsaKeyPairData _data;
+class RsaPrivateKey implements Signer, Verifier {
+  final pc.Digest digest;
+  final pc.RSAPrivateKey _privateKey;
 
-  RsaPrivateKey({
-    required this.alg,
-    required BigInt n,
-    required BigInt e,
-    required BigInt d,
-    required BigInt p,
-    required BigInt q,
-    required BigInt dp,
-    required BigInt dq,
-    required BigInt qi,
-  }) : _data = crypto.RsaKeyPairData(
-          e: Base64UrlUintEncoder.encodeBigInt(e),
-          n: Base64UrlUintEncoder.encodeBigInt(n),
-          d: Base64UrlUintEncoder.encodeBigInt(d),
-          p: Base64UrlUintEncoder.encodeBigInt(p),
-          q: Base64UrlUintEncoder.encodeBigInt(q),
-          dp: Base64UrlUintEncoder.encodeBigInt(dp),
-          dq: Base64UrlUintEncoder.encodeBigInt(dq),
-          qi: Base64UrlUintEncoder.encodeBigInt(qi),
-        );
+  RsaPrivateKey(this.digest, this._privateKey);
 
   factory RsaPrivateKey.fromJwk(JsonWebKey jwk) {
     if (!jwk.isPrivate) {
       throw ArgumentError('Invalid private RSA key');
     }
-    crypto.SignatureAlgorithm alg;
+    pc.Digest digest;
     switch (jwk.algorithm) {
-      case Algorithm.RSASHA256:
-        alg = crypto.RsaSsaPkcs1v15(crypto.Sha256());
-        break;
-      case Algorithm.RSASHA384:
-        alg = crypto.RsaSsaPkcs1v15(crypto.Sha384());
-        break;
-      case Algorithm.RSASHA512:
-        alg = crypto.RsaSsaPkcs1v15(crypto.Sha512());
-        break;
       case Algorithm.PSSSHA256:
-        alg = crypto.RsaPss(crypto.Sha256());
+        digest = SHA256Digest();
         break;
       case Algorithm.PSSSHA384:
-        alg = crypto.RsaPss(crypto.Sha384());
+        digest = SHA384Digest();
         break;
       case Algorithm.PSSSHA512:
-        alg = crypto.RsaPss(crypto.Sha512());
+        digest = SHA512Digest();
         break;
       default:
-        throw UnsupportedError('Invalid RSA algorithm: ${jwk.algorithm}');
+        throw UnsupportedError('Unsupported RSA algorithm: ${jwk.algorithm}');
     }
     return RsaPrivateKey(
-      alg: alg,
-      n: jwk.n!,
-      e: jwk.e!,
-      d: jwk.d!,
-      p: jwk.p!,
-      q: jwk.q!,
-      dp: jwk.dp!,
-      dq: jwk.dq!,
-      qi: jwk.qi!,
-    );
-  }
-
-  @override
-  RsaPublicKey get publicKey => throw UnimplementedError();
-
-  @override
-  Future<List<int>> sign(List<int> bytes) async {
-    final signature = await alg.sign(bytes, keyPair: _data);
-    return signature.bytes;
-  }
-
-  @override
-  Future<bool> verify(List<int> bytes, List<int> expected) async {
-    return alg.verify(
-      bytes,
-      signature: crypto.Signature(
-        expected,
-        publicKey: await _data.extractPublicKey(),
+      digest,
+      pc.RSAPrivateKey(
+        jwk.e!,
+        jwk.d!,
+        jwk.p!,
+        jwk.q!,
       ),
     );
   }
+
+  pc.RSAPublicKey get publicKey {
+    return pc.RSAPublicKey(_privateKey.modulus!, _privateKey.publicExponent!);
+  }
+
+  @override
+  Future<List<int>> sign(List<int> bytes) async {
+    return _privateKey.sign(digest, bytes);
+  }
+
+  @override
+  Future<void> verify(List<int> bytes, List<int> expected) async {
+    return publicKey.verify(bytes, expected);
+  }
 }
 
-class RsaPublicKey extends PublicKey {
-  final crypto.SignatureAlgorithm alg;
-  final crypto.RsaPublicKey _key;
+class RsaPublicKey implements Verifier {
+  final pc.Digest digest;
+  final pc.RSAPublicKey _publicKey;
 
-  RsaPublicKey({
-    required this.alg,
-    required BigInt n,
-    required BigInt e,
-  }) : _key = crypto.RsaPublicKey(
-          e: Base64UrlUintEncoder.encodeBigInt(e),
-          n: Base64UrlUintEncoder.encodeBigInt(n),
-        );
+  RsaPublicKey(this.digest, this._publicKey);
 
   factory RsaPublicKey.fromJwk(JsonWebKey jwk) {
-    crypto.SignatureAlgorithm alg;
+    pc.Digest digest;
     switch (jwk.algorithm) {
-      case Algorithm.RSASHA256:
-        alg = crypto.RsaSsaPkcs1v15(crypto.Sha256());
-        break;
-      case Algorithm.RSASHA384:
-        alg = crypto.RsaSsaPkcs1v15(crypto.Sha384());
-        break;
-      case Algorithm.RSASHA512:
-        alg = crypto.RsaSsaPkcs1v15(crypto.Sha512());
-        break;
       case Algorithm.PSSSHA256:
-        alg = crypto.RsaPss(crypto.Sha256());
+        digest = SHA256Digest();
         break;
       case Algorithm.PSSSHA384:
-        alg = crypto.RsaPss(crypto.Sha384());
+        digest = SHA384Digest();
         break;
       case Algorithm.PSSSHA512:
-        alg = crypto.RsaPss(crypto.Sha512());
+        digest = SHA512Digest();
         break;
       default:
-        throw UnsupportedError('Invalid RSA algorithm: ${jwk.algorithm}');
+        throw UnsupportedError('Unsupported RSA algorithm: ${jwk.algorithm}');
     }
     return RsaPublicKey(
-      alg: alg,
-      n: jwk.n!,
-      e: jwk.e!,
+      digest,
+      pc.RSAPublicKey(jwk.n!, jwk.e!),
     );
   }
 
   @override
   Future<void> verify(List<int> bytes, List<int> expected) async {
-    if (!await alg.verify(
-      bytes,
-      signature: crypto.Signature(expected, publicKey: _key),
-    )) {
-      throw const InvalidSignatureException();
-    }
+    return _publicKey.verify(bytes, expected);
+  }
+}
+
+extension RSAVerifier on pc.RSAPublicKey {
+  Future<void> verify(List<int> bytes, List<int> expected) async {}
+}
+
+extension RSASigner on pc.RSAPrivateKey {
+  Future<List<int>> sign(
+    pc.Digest digest,
+    List<int> bytes,
+  ) async {
+    final signer = pc.Signer('${digest.algorithmName}/PSS');
+
+    signer.init(
+      true,
+      pc.ParametersWithSaltConfiguration(
+        pc.PrivateKeyParameter<pc.RSAPrivateKey>(this),
+        CryptoRepo.instance.secureRandom,
+        20,
+      ),
+    );
+    return (signer.generateSignature(Uint8List.fromList(bytes))
+            as pc.PSSSignature)
+        .bytes;
   }
 }

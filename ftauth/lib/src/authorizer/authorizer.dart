@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:ftauth/ftauth.dart';
@@ -16,10 +15,11 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
 
 import '../http/dpop_client.dart';
+import 'keys.dart';
 
 class Authorizer {
   final FTAuthConfig _config;
-  final MetadataRepo _metadataRepo;
+  late final MetadataRepo _metadataRepo;
   final StorageRepo _storageRepo;
 
   final _authStateController = StreamController<AuthState>.broadcast();
@@ -35,10 +35,10 @@ class Authorizer {
   /// * [AuthLoading]: Information is refreshing or being retrieved.
   /// * [AuthSignedIn]: User is logged in with valid credentials.
   /// * [AuthSignedOut]: User is logged out or has expired credentials.
-  /// * [AuthFailure]: An error occurred during the login process.
+  /// * [AuthFailure]: An error has occurred during authentication or during an HTTP request.
   Stream<AuthState> get authStates async* {
     if (_latestAuthState == null) {
-      _initStateFuture ??= init();
+      _initStateFuture ??= _init();
       _latestAuthState = await _initStateFuture!;
     }
     yield _latestAuthState!;
@@ -63,10 +63,11 @@ class Authorizer {
     this._config, {
     StorageRepo? storageRepo,
     MetadataRepo? metadataRepo,
-  })  : _metadataRepo = metadataRepo ?? MetadataRepoImpl(_config),
-        _storageRepo = storageRepo ?? StorageRepo.instance;
+  }) : _storageRepo = storageRepo ?? StorageRepo.instance {
+    _metadataRepo = metadataRepo ?? MetadataRepoImpl(_config, httpClient);
+  }
 
-  http.Client get _authClient {
+  http.Client get httpClient {
     final baseClient = DPoPClient(DPoPRepo.instance);
     return InlineClient(
       send: (http.BaseRequest request) async {
@@ -89,27 +90,26 @@ class Authorizer {
     );
   }
 
-  @visibleForTesting
-  Future<AuthState> init() async {
+  Future<AuthState> _init() async {
     if (_initStateFuture != null) {
       return _initStateFuture!;
     }
     try {
-      final accessTokenEnc = await _storageRepo.getString('access_token');
-      final refreshTokenEnc = await _storageRepo.getString('refresh_token');
+      final accessTokenEnc = await _storageRepo.getString(keyAccessToken);
+      final refreshTokenEnc = await _storageRepo.getString(keyRefreshToken);
 
       if (accessTokenEnc != null && refreshTokenEnc != null) {
         final keyStore = await _metadataRepo.loadKeySet();
         final accessToken = JsonWebToken.parse(accessTokenEnc);
         await accessToken.verify(
           keyStore,
-          verifierFactory: (key) => key.cryptoKey,
+          verifierFactory: (key) => key.verifier,
         );
 
         final refreshToken = JsonWebToken.parse(refreshTokenEnc);
         await refreshToken.verify(
           keyStore,
-          verifierFactory: (key) => key.cryptoKey,
+          verifierFactory: (key) => key.verifier,
         );
 
         if (accessToken.claims.expiration!.isAfter(DateTime.now()) ||
@@ -129,21 +129,22 @@ class Authorizer {
 
           return AuthSignedIn(client, credentials.user);
         } else {
-          await _storageRepo.deleteKey('access_token');
-          await _storageRepo.deleteKey('refresh_token');
+          await _storageRepo.delete(keyAccessToken);
+          await _storageRepo.delete(keyRefreshToken);
         }
       }
 
-      final state = await _storageRepo.getString('state');
-      final codeVerifier = await _storageRepo.getString('code_verifier');
+      final state = await _storageRepo.getString(keyState);
+      final codeVerifier = await _storageRepo.getString(keyCodeVerifier);
 
       if (state != null && codeVerifier != null) {
         _authCodeGrant = oauth2.AuthorizationCodeGrant(
           _config.clientId,
           _config.authorizationUri,
           _config.tokenUri,
+          secret: '',
           codeVerifier: codeVerifier,
-          httpClient: _authClient,
+          httpClient: httpClient,
         );
 
         // Generate URL to advance internal code grant state.
@@ -169,7 +170,7 @@ class Authorizer {
       identifier: _config.clientId,
       secret: _config.clientSecret ?? '',
       scopes: _config.scopes,
-      httpClient: _authClient,
+      httpClient: httpClient,
     );
 
     final keyStore = await _metadataRepo.loadKeySet();
@@ -180,13 +181,13 @@ class Authorizer {
       onError: _onRefreshError,
     );
 
-    await _storageRepo.setString('access_token', credentials.accessToken);
-    await _storageRepo.setString('refresh_token', credentials.refreshToken);
+    await _storageRepo.setString(keyAccessToken, credentials.accessToken);
+    await _storageRepo.setString(keyRefreshToken, credentials.refreshToken);
 
     final newClient = Client(
       credentials: credentials,
       clientId: _config.clientId,
-      httpClient: _authClient,
+      httpClient: httpClient,
     );
 
     _addState(AuthSignedIn(newClient, credentials.user));
@@ -211,7 +212,7 @@ class Authorizer {
       _config.clientId,
       _config.clientSecret!,
       scopes: _config.scopes,
-      httpClient: _authClient,
+      httpClient: httpClient,
     );
     final keyStore = await _metadataRepo.loadKeySet();
     final credentials = await Credentials.fromOAuthCredentials(
@@ -222,13 +223,13 @@ class Authorizer {
     );
 
     // Save keys to storage
-    await _storageRepo.setString('access_token', credentials.accessToken);
-    await _storageRepo.setString('refresh_token', credentials.refreshToken);
+    await _storageRepo.setString(keyAccessToken, credentials.accessToken);
+    await _storageRepo.setString(keyRefreshToken, credentials.refreshToken);
 
     final newClient = Client(
       credentials: credentials,
       clientId: _config.clientId,
-      httpClient: _authClient,
+      httpClient: httpClient,
     );
 
     _addState(AuthSignedIn(newClient, credentials.user));
@@ -237,7 +238,7 @@ class Authorizer {
   }
 
   Future<String> authorize() async {
-    await (_initStateFuture ??= init());
+    await (_initStateFuture ??= _init());
 
     _addState(const AuthLoading());
     return getAuthorizationUrl();
@@ -262,7 +263,8 @@ class Authorizer {
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~';
     var codeVerifier = '';
     for (var i = 0; i < length; i++) {
-      codeVerifier += characterSet[Random().nextInt(characterSet.length)];
+      codeVerifier +=
+          characterSet[Random.secure().nextInt(characterSet.length)];
     }
     return codeVerifier;
   }
@@ -278,15 +280,16 @@ class Authorizer {
     final state = _generateState();
     final codeVerifier = _createCodeVerifier();
 
-    await _storageRepo.setString('state', state);
-    await _storageRepo.setString('code_verifier', codeVerifier);
+    await _storageRepo.setString(keyState, state);
+    await _storageRepo.setString(keyCodeVerifier, codeVerifier);
 
     _authCodeGrant = oauth2.AuthorizationCodeGrant(
       _config.clientId,
       _config.authorizationUri,
       _config.tokenUri,
+      secret: '',
       codeVerifier: codeVerifier,
-      httpClient: _authClient,
+      httpClient: httpClient,
     );
     return _authCodeGrant!
         .getAuthorizationUrl(
@@ -305,7 +308,7 @@ class Authorizer {
   }
 
   Future<Client> exchange(Map<String, String> parameters) async {
-    await (_initStateFuture ??= init());
+    await (_initStateFuture ??= _init());
 
     if (_authCodeGrant == null) {
       throw StateError('Must call authorize first.');
@@ -332,22 +335,19 @@ class Authorizer {
         onError: _onRefreshError,
       );
 
-      print('Got accessToken: ' + credentials.accessToken);
-      print('Got refreshToken: ' + credentials.refreshToken);
-
-      await _storageRepo.setString('access_token', credentials.accessToken);
-      await _storageRepo.setString('refresh_token', credentials.refreshToken);
+      await _storageRepo.setString(keyAccessToken, credentials.accessToken);
+      await _storageRepo.setString(keyRefreshToken, credentials.refreshToken);
 
       final newClient = Client(
         credentials: credentials,
         clientId: _config.clientId,
-        httpClient: _authClient,
+        httpClient: httpClient,
       );
 
       _addState(AuthSignedIn(newClient, credentials.user));
 
-      await _storageRepo.deleteKey('state');
-      await _storageRepo.deleteKey('code_verifier');
+      await _storageRepo.delete(keyState);
+      await _storageRepo.delete(keyCodeVerifier);
 
       return newClient;
     } catch (e) {
@@ -357,10 +357,10 @@ class Authorizer {
   }
 
   Future<void> logout() async {
-    await _storageRepo.deleteKey('state');
-    await _storageRepo.deleteKey('code_verifier');
-    await _storageRepo.deleteKey('access_token');
-    await _storageRepo.deleteKey('refresh_token');
+    await _storageRepo.delete(keyState);
+    await _storageRepo.delete(keyCodeVerifier);
+    await _storageRepo.delete(keyAccessToken);
+    await _storageRepo.delete(keyRefreshToken);
     _addState(AuthSignedOut());
   }
 }

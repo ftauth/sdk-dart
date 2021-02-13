@@ -1,47 +1,95 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:ftauth/src/authorizer/keys.dart';
+import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/key.dart';
+import 'package:ftauth/src/jwt/key_type.dart';
+import 'package:ftauth/src/jwt/key_use.dart';
 import 'package:ftauth/src/storage/storage_repo.dart';
+import 'package:pointycastle/digests/sha256.dart';
+import 'package:pointycastle/key_generators/rsa_key_generator.dart';
+import 'package:pointycastle/pointycastle.dart' hide Algorithm;
+import 'package:pointycastle/random/fortuna_random.dart';
+import 'package:uuid/uuid.dart';
 
 import 'crypto_repo.dart';
+import 'rsa.dart';
 
 class CryptoRepoImpl extends CryptoRepo {
-  Map<String, dynamic>? _privateKey;
-  Map<String, dynamic>? _publicKey;
+  final StorageRepo _storageRepo;
 
-  CryptoRepoImpl([StorageRepo? storageRepo]) : super(storageRepo);
+  CryptoRepoImpl([StorageRepo? storageRepo])
+      : _storageRepo = storageRepo ?? StorageRepo.instance;
 
-  @override
-  Future<Map<String, dynamic>> generatePrivateKey() async {
-    final findOpenSSL = await Process.run('which', ['openssl']);
-    final openSSLAvailable = findOpenSSL.exitCode == 0;
+  Future<RSAPrivateKey> _generatePrivateKey({int bitLength = 4096}) async {
+    final keyGen = RSAKeyGenerator()
+      ..init(ParametersWithRandom(
+          RSAKeyGeneratorParameters(BigInt.parse('65537'), bitLength, 64),
+          secureRandom));
 
-    if (!openSSLAvailable) {
-      throw ProcessException('which', ['openssl'], 'openssl binary not found.');
+    final pair = keyGen.generateKeyPair();
+    final privateKey = pair.privateKey as RSAPrivateKey;
+    await _savePrivateKey(privateKey);
+    return privateKey;
+  }
+
+  Future<void> _savePrivateKey(RSAPrivateKey privateKey) async {
+    final privateJWK = JsonWebKey(
+      keyType: KeyType.RSA,
+      algorithm: Algorithm.PSSSHA256,
+      publicKeyUse: PublicKeyUse.signature,
+      keyId: Uuid().v4(),
+      n: privateKey.n,
+      e: privateKey.exponent,
+      d: privateKey.privateExponent,
+      p: privateKey.p,
+      q: privateKey.q,
+    );
+    await _storageRepo.setString(
+      keyPrivateKey,
+      jsonEncode(privateJWK.toJson()),
+    );
+  }
+
+  Future<JsonWebKey> _loadJWK() async {
+    var json = await _storageRepo.getString(keyPrivateKey);
+    if (json == null) {
+      await _generatePrivateKey();
     }
+    json = await _storageRepo.getString(keyPrivateKey);
+    return JsonWebKey.fromJson(
+      (jsonDecode(json!) as Map).cast<String, dynamic>(),
+    );
+  }
 
-    final genProc = await Process.run('openssl', ['genrsa', '2048']);
-    if (genProc.exitCode != 0) {
-      throw ProcessException('openssl', ['genrsa', '2048'], genProc.stderr);
-    }
-
-    final out = (genProc.stdout as String);
-    const rsaHeader = '-----BEGIN RSA PRIVATE KEY-----';
-    if (!out.contains(rsaHeader)) {
-      throw ProcessException(
-        'openssl',
-        ['genrsa', '2048'],
-        'Unknown output: ${genProc.stdout}',
+  Future<RSAPrivateKey> _loadSigningKey() async {
+    var json = await _storageRepo.getString(keyPrivateKey);
+    if (json != null) {
+      final jwk = JsonWebKey.fromJson(
+        (jsonDecode(json) as Map).cast<String, dynamic>(),
+      );
+      return RSAPrivateKey(
+        jwk.n!,
+        jwk.d!,
+        jwk.p!,
+        jwk.q!,
       );
     }
-
-    final pem = out.substring(out.indexOf(rsaHeader));
-    return {};
+    final privateKey = await _generatePrivateKey();
+    return privateKey;
   }
 
   @override
-  Future<Map<String, dynamic>> generatePublicKey() {
-    // TODO: implement generatePublicKey
-    throw UnimplementedError();
+  Future<List<int>> sign(List<int> block) async {
+    final privateKey = await _loadSigningKey();
+    return privateKey.sign(SHA256Digest(), block);
+  }
+
+  @override
+  Future<JsonWebKey> get publicKey async {
+    final privateJWK = await _loadJWK();
+    return privateJWK.publicKey;
   }
 }

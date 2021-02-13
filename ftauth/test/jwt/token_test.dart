@@ -67,7 +67,7 @@ void main() {
 
       test('encode $i', () async {
         final jwk = JsonWebKey.fromJson(jsonDecode(tests[i].key));
-        final jwt = await tests[i].token.encodeBase64(jwk.privateKey!);
+        final jwt = await tests[i].token.encodeBase64(jwk.signer);
         expect(jwt, tests[i].json);
       });
     }

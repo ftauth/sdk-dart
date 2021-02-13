@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:ftauth/ftauth.dart';
+import 'package:ftauth_flutter/src/exception.dart';
 
 class FlutterSecureStorage extends StorageRepo {
   const FlutterSecureStorage._();
@@ -11,20 +12,28 @@ class FlutterSecureStorage extends StorageRepo {
   static const MethodChannel _channel = const MethodChannel('ftauth_flutter');
 
   @override
-  Future<void> deleteKey(String key) async {
+  Future<void> delete(String key) async {
     await _channel.invokeMethod<void>('storageDelete', key);
   }
 
   @override
   Future<String?> getString(String key) async {
-    final data = await _channel.invokeMethod<Uint8List?>('storageGet', key);
-    if (data != null) {
-      return utf8.decode(data);
+    final data = await getData(key);
+    if (data == null) {
+      return null;
     }
+    return utf8.decode(data);
   }
 
-  Future<Uint8List?> getData(String key) {
-    return _channel.invokeMethod<Uint8List?>('storageGet', key);
+  Future<Uint8List?> getData(String key) async {
+    try {
+      return await _channel.invokeMethod<Uint8List?>('storageGet', key);
+    } on PlatformException catch (e) {
+      if (e.code == PlatformExceptionCodes.keyNotFound) {
+        return null;
+      }
+      rethrow;
+    }
   }
 
   @override

@@ -10,6 +10,6 @@ abstract class StorageRepo {
   Future<void> init({Uint8List? encryptionKey});
   Future<String?> getString(String key);
   Future<void> setString(String key, String value);
-  Future<void> deleteKey(String key);
+  Future<void> delete(String key);
   Future<void> clear();
 }

@@ -66,9 +66,6 @@ extension AlgorithmX on Algorithm {
       case Algorithm.HMACSHA256:
       case Algorithm.HMACSHA384:
       case Algorithm.HMACSHA512:
-      case Algorithm.RSASHA256:
-      case Algorithm.RSASHA384:
-      case Algorithm.RSASHA512:
       case Algorithm.ECDSASHA256:
       case Algorithm.ECDSASHA384:
       case Algorithm.ECDSASHA512:
@@ -76,6 +73,9 @@ extension AlgorithmX on Algorithm {
       case Algorithm.PSSSHA384:
       case Algorithm.PSSSHA512:
         return true;
+      case Algorithm.RSASHA256:
+      case Algorithm.RSASHA384:
+      case Algorithm.RSASHA512:
       case Algorithm.None:
         return false;
     }
