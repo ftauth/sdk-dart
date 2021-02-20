@@ -17,8 +17,6 @@ dependencies:
   ftauth:
     path: ../ftauth
 
-  webcrypto: ^0.5.0-null-safety.0
-
 dependency_overrides:
   crypto: ^3.0.0
   typed_data: ^1.3.0

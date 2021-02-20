@@ -1,7 +1,7 @@
 abstract class Signer {
-  Future<List<int>> sign(List<int> bytes);
+  Future<List<int>> sign(List<int> data);
 }
 
 abstract class Verifier {
-  Future<void> verify(List<int> bytes, List<int> expected);
+  Future<void> verify(List<int> data, List<int> signature);
 }

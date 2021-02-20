@@ -60,7 +60,7 @@ class JsonWebHeader extends Equatable {
     this.x509CertChain,
     this.x509sha1Thumbprint,
     this.x509sha256Thumbprint,
-  }) : assert(algorithm.isValid);
+  });
 
   @override
   List<Object?> get props => [

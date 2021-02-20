@@ -1,9 +1,6 @@
 import 'dart:convert';
 
-import 'dart:typed_data';
-
-var _byteMask = BigInt.from(0xff);
-final negativeFlag = BigInt.from(0x80);
+import 'package:pointycastle/src/utils.dart';
 
 Map<String, dynamic> decodeBase64(String base64) {
   final json = utf8.decode(base64RawUrl.decode(base64));
@@ -43,42 +40,9 @@ class Base64UrlUintEncoder extends Converter<BigInt?, String?> {
       return null;
     }
 
-    final bytes = encodeBigInt(input);
+    final bytes = encodeBigIntAsUnsigned(input);
 
     return base64RawUrl.encode(bytes);
-  }
-
-  /// Copied from https://github.com/bcgit/pc-dart/blob/master/lib/src/utils.dart
-  ///
-  /// Encode a BigInt into bytes using big-endian encoding.
-  /// It encodes the integer to a minimal twos-compliment integer as defined by
-  /// ASN.1
-  static Uint8List encodeBigInt(BigInt number) {
-    if (number == BigInt.zero) {
-      return Uint8List.fromList([0]);
-    }
-
-    int needsPaddingByte;
-    int rawSize;
-
-    if (number > BigInt.zero) {
-      rawSize = (number.bitLength + 7) >> 3;
-      needsPaddingByte =
-          ((number >> (rawSize - 1) * 8) & negativeFlag) == negativeFlag
-              ? 1
-              : 0;
-    } else {
-      needsPaddingByte = 0;
-      rawSize = (number.bitLength + 8) >> 3;
-    }
-
-    final size = rawSize + needsPaddingByte;
-    var result = Uint8List(size);
-    for (var i = 0; i < rawSize; i++) {
-      result[size - i - 1] = (number & _byteMask).toInt();
-      number = number >> 8;
-    }
-    return result;
   }
 }
 
@@ -92,32 +56,7 @@ class Base64UrlUintDecoder extends Converter<String?, BigInt?> {
     }
 
     final decoded = base64RawUrl.decode(input);
-    return decodeBigInt(decoded);
-  }
-
-  /// Copied from https://github.com/bcgit/pc-dart/blob/master/lib/src/utils.dart
-  ///
-  /// Decode a BigInt from bytes in big-endian encoding.
-  /// Twos compliment.
-  BigInt decodeBigInt(List<int> bytes) {
-    var negative = bytes.isNotEmpty && bytes[0] & 0x80 == 0x80;
-
-    BigInt result;
-
-    if (bytes.length == 1) {
-      result = BigInt.from(bytes[0]);
-    } else {
-      result = BigInt.zero;
-      for (var i = 0; i < bytes.length; i++) {
-        var item = bytes[bytes.length - i - 1];
-        result |= (BigInt.from(item) << (8 * i));
-      }
-    }
-    return result != BigInt.zero
-        ? negative
-            ? result.toSigned(result.bitLength)
-            : result
-        : BigInt.zero;
+    return decodeBigIntWithSign(1, decoded);
   }
 }
 

@@ -12,8 +12,3 @@ Scope _$ScopeFromJson(Map<String, dynamic> json) {
     json['ruleset'] as String,
   );
 }
-
-Map<String, dynamic> _$ScopeToJson(Scope instance) => <String, dynamic>{
-      'name': instance.name,
-      'ruleset': instance.ruleset,
-    };

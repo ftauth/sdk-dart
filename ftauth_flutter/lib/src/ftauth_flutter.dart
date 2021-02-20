@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ftauth/ftauth.dart' as ftauth;
 import 'package:ftauth_flutter/src/storage/secure_storage.dart';
-import 'package:webcrypto/webcrypto.dart';
 
 import 'exception.dart';
 import 'flutter_authorizer.dart';
@@ -56,23 +55,21 @@ extension FTAuthFlutter on ftauth.FTAuthImpl {
     // Create a secure encryption key on mobile clients.
     Uint8List encryptionKey;
     const secureStorage = FlutterSecureStorage.instance;
+    final cryptoRepo = ftauth.CryptoRepoImpl(secureStorage);
     final storedEncryptionKey = await secureStorage.getData('key');
     if (storedEncryptionKey == null) {
-      encryptionKey = Uint8List(32);
-      fillRandomBytes(encryptionKey);
+      encryptionKey = cryptoRepo.secureRandom.nextBytes(32);
     } else {
       encryptionKey = storedEncryptionKey;
     }
 
-    // TODO: Use webcrypto?
-    // ftauth.CryptoRepo.instance = FlutterCryptoRepo();
-    ftauth.CryptoRepo.instance = ftauth.CryptoRepoImpl(secureStorage);
+    ftauth.CryptoRepo.instance = cryptoRepo;
 
     return ftauth.FTAuth.init(
       config!,
       encryptionKey: encryptionKey,
       authorizer: FlutterAuthorizer(config),
-      storageRepo: FlutterSecureStorage.instance,
+      storageRepo: secureStorage,
     );
   }
 

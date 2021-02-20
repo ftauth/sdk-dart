@@ -92,13 +92,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0-nullsafety.3"
-  ffi:
-    dependency: transitive
-    description:
-      name: ffi
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0-nullsafety.1"
   file:
     dependency: transitive
     description:
@@ -158,14 +151,14 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.2"
+    version: "0.13.0-nullsafety.0"
   http_parser:
     dependency: transitive
     description:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.4"
+    version: "4.0.0-nullsafety"
   integration_test:
     dependency: "direct dev"
     description: flutter
@@ -202,10 +195,12 @@ packages:
   oauth2:
     dependency: transitive
     description:
-      name: oauth2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.6.3"
+      path: "."
+      ref: nullsafety
+      resolved-ref: c89f7436ce53a692bc29ea6c59d2d7a73e6de60a
+      url: "https://github.com/dnys1/oauth2.git"
+    source: git
+    version: "2.0.0-nullsafety.0"
   path:
     dependency: transitive
     description:
@@ -323,13 +318,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.5.0"
-  webcrypto:
-    dependency: transitive
-    description:
-      name: webcrypto
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.0-null-safety.0"
   webdriver:
     dependency: transitive
     description:
@@ -339,4 +327,4 @@ packages:
     version: "2.1.2"
 sdks:
   dart: ">=2.12.0-0.0 <3.0.0"
-  flutter: ">=1.24.0-10.2.pre"
+  flutter: ">=1.20.0"

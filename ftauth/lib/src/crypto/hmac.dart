@@ -8,15 +8,15 @@ class HmacKey implements Signer, Verifier {
   HmacKey(Hash hash, List<int> key) : hmac = Hmac(hash, key);
 
   @override
-  Future<List<int>> sign(List<int> bytes) async {
-    return hmac.convert(bytes).bytes;
+  Future<List<int>> sign(List<int> data) async {
+    return hmac.convert(data).bytes;
   }
 
   @override
-  Future<void> verify(List<int> bytes, List<int> expected) async {
-    final signed = hmac.convert(bytes);
-    if (signed.bytes != expected) {
-      throw const InvalidSignatureException();
+  Future<void> verify(List<int> data, List<int> signature) async {
+    final signed = hmac.convert(data);
+    if (signed.bytes != signature) {
+      throw const VerificationException();
     }
   }
 }

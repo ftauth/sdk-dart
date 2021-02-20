@@ -4,7 +4,7 @@ import 'package:ftauth_flutter/ftauth_flutter.dart';
 
 Future<void> main() async {
   final config = FTAuthConfig(
-    gatewayUrl: 'https://ea180f993c95.ngrok.io',
+    gatewayUrl: 'http://localhost:8000',
     clientId: '3cf9a7ac-9198-469e-92a7-cc2f15d8b87d',
     clientType: ClientType.public,
     redirectUri: kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://auth',

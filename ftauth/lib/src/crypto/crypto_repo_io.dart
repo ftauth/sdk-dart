@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:ftauth/src/authorizer/keys.dart';
@@ -11,7 +10,6 @@ import 'package:ftauth/src/storage/storage_repo.dart';
 import 'package:pointycastle/digests/sha256.dart';
 import 'package:pointycastle/key_generators/rsa_key_generator.dart';
 import 'package:pointycastle/pointycastle.dart' hide Algorithm;
-import 'package:pointycastle/random/fortuna_random.dart';
 import 'package:uuid/uuid.dart';
 
 import 'crypto_repo.dart';
@@ -23,7 +21,7 @@ class CryptoRepoImpl extends CryptoRepo {
   CryptoRepoImpl([StorageRepo? storageRepo])
       : _storageRepo = storageRepo ?? StorageRepo.instance;
 
-  Future<RSAPrivateKey> _generatePrivateKey({int bitLength = 4096}) async {
+  Future<RSAPrivateKey> _generatePrivateKey({int bitLength = 2048}) async {
     final keyGen = RSAKeyGenerator()
       ..init(ParametersWithRandom(
           RSAKeyGeneratorParameters(BigInt.parse('65537'), bitLength, 64),
@@ -91,5 +89,11 @@ class CryptoRepoImpl extends CryptoRepo {
   Future<JsonWebKey> get publicKey async {
     final privateJWK = await _loadJWK();
     return privateJWK.publicKey;
+  }
+
+  @override
+  Future<void> verify(List<int> data, List<int> signature) async {
+    final privateKey = await _loadSigningKey();
+    return RsaPrivateKey(SHA256Digest(), privateKey).verify(data, signature);
   }
 }

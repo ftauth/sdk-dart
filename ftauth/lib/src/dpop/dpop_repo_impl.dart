@@ -1,9 +1,11 @@
+import 'package:ftauth/jwt.dart';
 import 'package:ftauth/src/crypto/crypto_repo.dart';
 import 'package:ftauth/src/jwt/alg.dart';
 import 'package:ftauth/src/jwt/claims.dart';
 import 'package:ftauth/src/jwt/header.dart';
 import 'package:ftauth/src/jwt/token.dart';
 import 'package:ftauth/src/jwt/type.dart';
+import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
 import 'dpop_repo.dart';
@@ -13,21 +15,34 @@ class DPoPRepoImpl extends DPoPRepo {
 
   DPoPRepoImpl(this.cryptoRepo);
 
-  @override
-  Future<String> createProof(String httpMethod, Uri httpUri) async {
+  @visibleForTesting
+  Future<JsonWebToken> createToken(
+    String httpMethod,
+    Uri httpUri,
+  ) async {
     final publicKey = await cryptoRepo.publicKey;
 
     final header = JsonWebHeader(
       type: TokenType.DPoP,
-      algorithm: Algorithm.HMACSHA256,
+      algorithm: Algorithm.PSSSHA256,
       jwk: publicKey,
     );
 
-    // Strip query parameters & fragments
+    bool includePort;
+    if (httpUri.scheme == 'https') {
+      includePort = httpUri.port != 443;
+    } else if (httpUri.scheme == 'http') {
+      includePort = httpUri.port != 80;
+    } else {
+      includePort = true;
+    }
+
+    // Strip query parameters & fragments and include port, if needed
     final htu = Uri(
       scheme: httpUri.scheme,
       host: httpUri.host,
       path: httpUri.path,
+      port: includePort ? httpUri.port : null,
     ).toString();
 
     final claims = JsonWebClaims(
@@ -37,11 +52,12 @@ class DPoPRepoImpl extends DPoPRepo {
       issuedAt: DateTime.now(),
     );
 
-    final unsigned = JsonWebToken(header: header, claims: claims);
-    final signature =
-        await cryptoRepo.sign(unsigned.encodeUnsigned().codeUnits);
+    return JsonWebToken(header: header, claims: claims);
+  }
 
-    return JsonWebToken(header: header, claims: claims, signature: signature)
-        .raw;
+  @override
+  Future<String> createProof(String httpMethod, Uri httpUri) async {
+    final dpopToken = await createToken(httpMethod, httpUri);
+    return dpopToken.encodeBase64(cryptoRepo);
   }
 }

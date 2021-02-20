@@ -56,7 +56,7 @@ packages:
       name: equatable
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0-nullsafety.1"
+    version: "2.0.0-nullsafety.2"
   fake_async:
     dependency: transitive
     description:
@@ -64,13 +64,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0-nullsafety.3"
-  ffi:
-    dependency: transitive
-    description:
-      name: ffi
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0-nullsafety.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -106,14 +99,14 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.2"
+    version: "0.13.0-nullsafety.0"
   http_parser:
     dependency: transitive
     description:
       name: http_parser
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.4"
+    version: "4.0.0-nullsafety"
   js:
     dependency: transitive
     description:
@@ -127,7 +120,7 @@ packages:
       name: json_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.0-nullsafety.0"
+    version: "4.0.0"
   matcher:
     dependency: transitive
     description:
@@ -145,10 +138,12 @@ packages:
   oauth2:
     dependency: transitive
     description:
-      name: oauth2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.6.3"
+      path: "."
+      ref: nullsafety
+      resolved-ref: c89f7436ce53a692bc29ea6c59d2d7a73e6de60a
+      url: "https://github.com/dnys1/oauth2.git"
+    source: git
+    version: "2.0.0-nullsafety.0"
   path:
     dependency: transitive
     description:
@@ -230,7 +225,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0-nullsafety.0"
+    version: "3.0.0-nullsafety.1"
   vector_math:
     dependency: transitive
     description:
@@ -238,13 +233,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0-nullsafety.5"
-  webcrypto:
-    dependency: "direct main"
-    description:
-      name: webcrypto
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.0-null-safety.0"
 sdks:
   dart: ">=2.12.0-0.0 <3.0.0"
-  flutter: ">=1.24.0-10.2.pre"
+  flutter: ">=1.20.0"

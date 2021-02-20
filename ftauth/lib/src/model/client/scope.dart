@@ -2,7 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'scope.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(
+  createToJson: false,
+)
 class Scope {
   final String name;
   final String ruleset;

@@ -26,6 +26,8 @@ class JsonWebToken with EquatableMixin {
     throw StateError('Must encode first');
   }
 
+  String get encodedSignature => base64RawUrl.encode(signature);
+
   JsonWebToken({
     String? raw,
     required this.header,
@@ -39,7 +41,7 @@ class JsonWebToken with EquatableMixin {
     if (_signature == null) {
       _raw = raw;
     } else {
-      _raw = raw ?? '${encodeUnsigned()}.${base64RawUrl.encode(_signature!)}';
+      _raw = raw ?? '${encodeUnsigned()}.$encodedSignature';
     }
   }
 
@@ -48,7 +50,7 @@ class JsonWebToken with EquatableMixin {
         _raw,
         header,
         claims,
-        signature,
+        _signature,
       ];
 
   factory JsonWebToken.parse(String json) {
@@ -78,12 +80,9 @@ class JsonWebToken with EquatableMixin {
 
   Future<String> encodeBase64(Signer privateKey) async {
     final unsigned = encodeUnsigned();
-    final signed = await privateKey.sign(unsigned.codeUnits);
+    _signature = await privateKey.sign(unsigned.codeUnits);
 
-    final signature = base64RawUrl.encode(signed);
-    _signature = signature.codeUnits;
-
-    return _raw = '$unsigned.$signature';
+    return _raw = '$unsigned.$encodedSignature';
   }
 
   String encodeUnsigned() {

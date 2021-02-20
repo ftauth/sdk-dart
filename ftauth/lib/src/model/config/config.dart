@@ -12,8 +12,6 @@ const _defaultScopes = ['default'];
 
 /// Configuration of an FTAuth client, including identifiers and URLs needed
 /// to connect to a running FTAuth instance.
-///
-/// Most necessary functions are accesible via this object.
 @JsonSerializable(
   fieldRename: FieldRename.snake,
   createToJson: false,

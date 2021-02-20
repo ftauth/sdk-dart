@@ -122,9 +122,9 @@ class JsonWebClaims extends Equatable {
 
   Map<String, dynamic> toJson() {
     final map = _$JsonWebClaimsToJson(this);
-    final sortedKeys = [...map.keys, ...customClaims.keys]..sort();
+    final keys = [...map.keys, ...customClaims.keys]..sort();
     return {
-      for (final key in sortedKeys) key: map[key] ?? customClaims[key],
+      for (final key in keys) key: map[key] ?? customClaims[key],
     };
   }
 

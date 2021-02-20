@@ -232,14 +232,7 @@ class JsonWebKey extends Equatable {
       case KeyType.EllipticCurve:
         return d != null;
       case KeyType.RSA:
-        if (d == null) {
-          return false;
-        }
-        // Must include all parameters if one is included.
-        if ([p, q, dp, dq, qi].any((element) => element != null)) {
-          return ![p, q, dp, dq, qi].contains(null);
-        }
-        return true;
+        return d != null;
       case KeyType.Octet:
         return true;
     }

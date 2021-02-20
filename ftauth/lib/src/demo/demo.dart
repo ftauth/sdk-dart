@@ -25,16 +25,6 @@ class _DemoCreds implements Credentials {
   bool get isExpired => throw UnimplementedError();
 
   @override
-  Future<Credentials?> refresh(
-      {required String identifier,
-      String? secret,
-      Iterable<String>? newScopes,
-      bool basicAuth = true,
-      http.Client? httpClient}) {
-    throw UnimplementedError();
-  }
-
-  @override
   String get refreshToken => throw UnimplementedError();
 
   @override
@@ -50,6 +40,16 @@ class _DemoCreds implements Credentials {
 
   @override
   User get user => throw UnimplementedError();
+
+  @override
+  Future<Credentials> refresh(
+      {String? identifier,
+      String? secret,
+      Iterable<String>? newScopes,
+      bool basicAuth = true,
+      http.Client? httpClient}) {
+    throw UnimplementedError();
+  }
 }
 
 class _DemoClient extends Client {
@@ -112,7 +112,6 @@ class DemoAuthorizer implements Authorizer {
     throw UnimplementedError();
   }
 
-  @override
   Future<AuthState> initialize() async {
     if (_initStateFuture != null) {
       return _initStateFuture!;

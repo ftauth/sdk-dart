@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/jwt/key.dart';
 
@@ -13,4 +15,9 @@ class CryptoRepoImpl extends CryptoRepo {
 
   @override
   Future<JsonWebKey> get publicKey => throw UnimplementedError();
+
+  @override
+  Future<void> verify(List<int> data, List<int> signature) {
+    throw UnimplementedError();
+  }
 }

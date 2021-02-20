@@ -35,13 +35,13 @@ class Credentials implements oauth2.Credentials {
     final accessToken = JsonWebToken.parse(creds.accessToken);
     await accessToken.verify(keySet, verifierFactory: (key) => key.verifier);
 
-    final refreshToken = JsonWebToken.parse(creds.refreshToken);
+    final refreshToken = JsonWebToken.parse(creds.refreshToken!);
     await refreshToken.verify(keySet, verifierFactory: (key) => key.verifier);
 
     return Credentials(
       accessToken,
       refreshToken,
-      creds.tokenEndpoint,
+      creds.tokenEndpoint!,
       keySet,
       scopes,
       onError: onError,
@@ -70,8 +70,20 @@ class Credentials implements oauth2.Credentials {
       _accessToken.claims.expiration!.isBefore(DateTime.now());
 
   @override
-  Future<Credentials?> refresh({
-    required String identifier,
+  String get refreshToken => _refreshToken.raw;
+
+  @override
+  List<String> get scopes => _scopes;
+
+  @override
+  String toJson() => '';
+
+  @override
+  Uri get tokenEndpoint => _tokenEndpoint;
+
+  @override
+  Future<oauth2.Credentials> refresh({
+    String? identifier,
     String? secret,
     Iterable<String>? newScopes,
     bool basicAuth = true,
@@ -91,18 +103,7 @@ class Credentials implements oauth2.Credentials {
       return fromOAuthCredentials(creds, _keySet, _scopes, onError: _onError);
     } catch (e) {
       _onError(e);
+      return this;
     }
   }
-
-  @override
-  String get refreshToken => _refreshToken.raw;
-
-  @override
-  List<String> get scopes => _scopes;
-
-  @override
-  String toJson() => '';
-
-  @override
-  Uri get tokenEndpoint => _tokenEndpoint;
 }
