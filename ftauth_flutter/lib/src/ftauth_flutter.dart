@@ -52,22 +52,11 @@ extension FTAuthFlutter on ftauth.FTAuthImpl {
       }
     }
 
-    // Create a secure encryption key on mobile clients.
-    Uint8List encryptionKey;
     const secureStorage = FlutterSecureStorage.instance;
-    final cryptoRepo = ftauth.CryptoRepoImpl(secureStorage);
-    final storedEncryptionKey = await secureStorage.getData('key');
-    if (storedEncryptionKey == null) {
-      encryptionKey = cryptoRepo.secureRandom.nextBytes(32);
-    } else {
-      encryptionKey = storedEncryptionKey;
-    }
-
-    ftauth.CryptoRepo.instance = cryptoRepo;
+    ftauth.CryptoRepo.instance = ftauth.CryptoRepoImpl(secureStorage);
 
     return ftauth.FTAuth.init(
       config!,
-      encryptionKey: encryptionKey,
       authorizer: FlutterAuthorizer(config),
       storageRepo: secureStorage,
     );
