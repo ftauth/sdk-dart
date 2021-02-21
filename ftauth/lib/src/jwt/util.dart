@@ -41,8 +41,13 @@ class Base64UrlUintEncoder extends Converter<BigInt?, String?> {
     }
 
     final bytes = encodeBigIntAsUnsigned(input);
+    for (var i = 0; i < bytes.length; i++) {
+      if (bytes[i] > 0) {
+        return base64RawUrl.encode(bytes.sublist(i));
+      }
+    }
 
-    return base64RawUrl.encode(bytes);
+    return base64RawUrl.encode([0]);
   }
 }
 
@@ -51,7 +56,7 @@ class Base64UrlUintDecoder extends Converter<String?, BigInt?> {
 
   @override
   BigInt? convert(String? input) {
-    if (input == null) {
+    if (input == null || input == '') {
       return null;
     }
 
@@ -101,7 +106,7 @@ DateTime? decodeDateTime(int? json) {
 
 int? encodeDateTime(DateTime? dt) {
   if (dt == null) return null;
-  return (dt.millisecondsSinceEpoch / 1000).truncate();
+  return dt.millisecondsSinceEpoch ~/ 1000;
 }
 
 List<int>? symmetricKeyFromJson(String? json) {

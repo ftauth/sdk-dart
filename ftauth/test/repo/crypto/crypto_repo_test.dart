@@ -1,4 +1,3 @@
-import 'package:ftauth/jwt.dart';
 import 'package:ftauth/src/crypto/crypto_repo.dart';
 import 'package:test/test.dart';
 
@@ -14,7 +13,7 @@ void main() {
   });
 
   group('CryptoRepo |', () {
-    for (var i = 0; i < 1000; i++) {
+    for (var i = 0; i < 300; i++) {
       test('sign and verify successfully $i', () async {
         final signature = await cryptoRepo.sign(data);
         expect(cryptoRepo.verify(data, signature), completes);

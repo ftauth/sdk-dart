@@ -15,7 +15,7 @@ class DPoPRepoImpl extends DPoPRepo {
 
   DPoPRepoImpl(this.cryptoRepo);
 
-  @visibleForTesting
+  // @visibleForTesting
   Future<JsonWebToken> createToken(
     String httpMethod,
     Uri httpUri,

@@ -40,7 +40,7 @@ class CryptoRepoImpl extends CryptoRepo {
       publicKeyUse: PublicKeyUse.signature,
       keyId: Uuid().v4(),
       n: privateKey.n,
-      e: privateKey.exponent,
+      e: privateKey.publicExponent,
       d: privateKey.privateExponent,
       p: privateKey.p,
       q: privateKey.q,
