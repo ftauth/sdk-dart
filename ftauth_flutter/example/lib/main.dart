@@ -26,7 +26,11 @@ class MyApp extends StatelessWidget {
         body: Center(
           child: ElevatedButton(
             child: Text('Login'),
-            onPressed: () => FTAuth.login(),
+            onPressed: () async {
+              final client = await FTAuth.login();
+              print(client.credentials.accessToken);
+              print(client.credentials.refreshToken);
+            },
           ),
         ),
       ),

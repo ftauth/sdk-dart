@@ -1,4 +1,3 @@
-import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/dpop/dpop_repo.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,13 +12,11 @@ class DPoPClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     if (request.url.path.endsWith('/token')) {
-      final token = await dPoPRepo.createToken(
+      final proof = await dPoPRepo.createProof(
         request.method,
         request.url,
       );
-      request.headers['DPoP'] = await token.encodeBase64(CryptoRepo.instance);
-      print('Sending: ${token.header.jwk!.n.toString()}');
-      print('Sending: ${token.header.jwk!.e.toString()}');
+      request.headers['DPoP'] = proof;
     }
     return client.send(request);
   }

@@ -31,7 +31,7 @@ public class SwiftFtauthFlutterPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "storageInit":
-        // No-op
+        try? keystore.clear()
         result(nil)
     case "storageGet":
         guard let key = call.arguments as? String else {

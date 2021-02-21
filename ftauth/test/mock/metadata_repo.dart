@@ -6,7 +6,16 @@ import 'package:ftauth/src/model/server/metadata.dart';
 
 class MockMetadataRepo extends MetadataRepo {
   static const jwksJson = '''
-  {"keys":[{"kty":"RSA","alg":"RS256","n":"3Ax2o3178fqgLNjYaLg-qbySGSr06-U3W4yvh7hPdxDLZKhP6t0QKnquzhFlJaNgnO1UrWpYRhSBKhgrxq0tqANia8fuAMQRfAVmSLKSsljaMnvEty879z2c692dIv0pFWycW8GyeGepVGnL6Ir1zi8Y9QBQqv1qTl608-e7xmFr9aksPXwpiJNsk2jIXdVSKA0ekwady5ed6sl4UOPd8kzNlRisGspjIa_AFevqLRIYG1RINt6MKiiIn64_Ld3FKXxsGsWslPfUKw3J1QKWzM2h1R90njXaiB0ljKL-6yG7FCbRXbXCS392zxdzhpYJ_PqaotD_1G4RZGQsy2ZZwQ","e":"AQAB"}]}
+  {
+    "keys": [
+      {
+        "kty": "RSA",
+        "alg": "PS256",
+        "n": "3Ie9ws9wol7CvsePFUB3GW4If3uaj2JryX6p4fA0-sgZ63XCMb0ZSFXc0vbdThK71n0THFBjPsEuRUdjzcN26rlPxud0spWbSiAUdEzv7BLg1cKjzI2zWhFyZeci5GQALx-xkd04_x92TkbFt1t-xLH2DcQCLJ7iE6ezmLvdCI9QYqKq9vpesAehZKnCGHDA3ctPec__q-cC9flnr7Oi39ksMxNG-ECXCkB31Lpflr77YhLH5W6xKj8Q6FzE_YfbcN6It1FAqBIgeS9N8kQk_CJluxtPLJkZRQjmGq8SBpTcbaMZ_27XOUaZDD-aDcuddSPNN7W3g1w1NDbTRMKduoKr8VB7YDrCj2ywZAl9w_v_SS3OED16gI6t1EBBgxIp9ljnBd4vH37y7CTPpZOcKaheXV6Lp_bPCm8mFjzG4u2JoY1Mnfw0uvcP70VJm68-xa9yw8bdW7QsQ5tl8Ehyy9ea-XQmtmFoWUdGlrE6ZlNMQOmlW57BEXRmmpsZ4z9pHGHBQevAFb7ltIu0dQzyrtf7f7afzglIWIiRpcy_9rszXa-EykxKKf2FwQ84godmzWtpfKHJFy1MoKo_ZncMSUwlM3hnurBQMJ8pqhANQltCNK1MF4xFK2p-_BrDi2DdVQ0Bgu16w9E0dO26g1_osCXO3zi565pWfV8sEoSujRc",
+        "e": "AQAB"
+      }
+    ]
+  }
   ''';
 
   static const serverMetadataJson = '''
