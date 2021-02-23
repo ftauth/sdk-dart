@@ -31,7 +31,7 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  pod 'FTAuth/Common', :path => '../../../../sdk-ios'
+  pod 'FTAuth/Common', :git => 'https://github.com/ftauth/sdk-ios.git'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
