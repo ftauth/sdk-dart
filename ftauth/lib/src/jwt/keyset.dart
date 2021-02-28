@@ -14,8 +14,18 @@ class JsonWebKeySet extends Equatable {
   @override
   List<Object?> get props => [keys];
 
-  factory JsonWebKeySet.fromJson(Map<String, dynamic> json) =>
-      _$JsonWebKeySetFromJson(json);
+  factory JsonWebKeySet.fromJson(Map<String, dynamic> json) {
+    return JsonWebKeySet((json['keys'] as List<dynamic>)
+        .map((e) {
+          try {
+            return JsonWebKey.fromJson(e as Map<String, dynamic>);
+          } on Exception {
+            return null;
+          }
+        })
+        .whereType<JsonWebKey>()
+        .toList());
+  }
 
   Map<String, dynamic> toJson() => _$JsonWebKeySetToJson(this);
 }

@@ -24,7 +24,7 @@ class DPoPRepoImpl extends DPoPRepo {
 
     final header = JsonWebHeader(
       type: TokenType.DPoP,
-      algorithm: Algorithm.PSSSHA256,
+      algorithm: Algorithm.RSASHA256,
       jwk: publicKey,
     );
 

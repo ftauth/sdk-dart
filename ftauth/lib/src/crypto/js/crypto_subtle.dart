@@ -89,7 +89,7 @@ external Object exportKey(String format, CryptoKey key);
 /// algorithm, and key given as parameters.
 @JS('crypto.subtle.sign')
 external Object sign(
-  RsaPssParams algorithm,
+  String algorithm,
   CryptoKey privateKey,
   TypedData data,
 );
@@ -99,7 +99,7 @@ external Object sign(
 /// are also given as parameters.
 @JS('crypto.subtle.verify')
 external Object verify(
-  RsaPssParams algorithm,
+  String algorithm,
   CryptoKey publicKey,
   TypedData signature,
   TypedData data,

@@ -14,9 +14,9 @@ extension JWKCryptoKey on JsonWebKey {
         return HmacKey(sha384, k!);
       case Algorithm.HMACSHA512:
         return HmacKey(sha512, k!);
-      case Algorithm.PSSSHA256:
-      case Algorithm.PSSSHA384:
-      case Algorithm.PSSSHA512:
+      case Algorithm.RSASHA256:
+      case Algorithm.RSASHA384:
+      case Algorithm.RSASHA512:
         return RsaPublicKey.fromJwk(this);
       case Algorithm.ECDSASHA256:
         // TODO: Handle this case.
@@ -41,9 +41,9 @@ extension JWKCryptoKey on JsonWebKey {
         return HmacKey(sha384, k!);
       case Algorithm.HMACSHA512:
         return HmacKey(sha512, k!);
-      case Algorithm.PSSSHA256:
-      case Algorithm.PSSSHA384:
-      case Algorithm.PSSSHA512:
+      case Algorithm.RSASHA256:
+      case Algorithm.RSASHA384:
+      case Algorithm.RSASHA512:
         return RsaPrivateKey.fromJwk(this);
       case Algorithm.ECDSASHA256:
         // TODO: Handle this case.

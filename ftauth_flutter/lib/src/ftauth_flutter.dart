@@ -67,6 +67,10 @@ extension FTAuthFlutter on ftauth.FTAuthImpl {
   ///
   /// Flutter Web applications must still call [exchange] after being redirected.
   Future<ftauth.Client> login() async {
+    final state = await authStates.first;
+    if (state is ftauth.AuthSignedIn) {
+      return state.client;
+    }
     return (authorizer as FlutterAuthorizer).login();
   }
 }

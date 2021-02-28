@@ -29,20 +29,3 @@ class User {
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
-
-/// Helper for retrieving a [User] object from a JSON Web Token without
-/// polluting the jwt pacakage.
-extension UserInfoClaims on JsonWebClaims {
-  User? get user {
-    if (userInfo != null) {
-      return User.fromJson(userInfo!);
-    }
-    return null;
-  }
-}
-
-/// Helper for retrieving a [User] object from a JSON Web Token without
-/// polluting the jwt pacakage.
-extension UserInfoToken on JsonWebToken {
-  User? get user => claims.user;
-}

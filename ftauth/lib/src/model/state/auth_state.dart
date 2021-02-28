@@ -18,7 +18,7 @@ class AuthLoading extends AuthState {
 /// The user is logged in with the requested privileges.
 class AuthSignedIn extends AuthState {
   final Client client;
-  final User user;
+  final User? user;
 
   const AuthSignedIn(this.client, this.user);
 

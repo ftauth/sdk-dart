@@ -10,6 +10,7 @@ import 'package:ftauth/src/metadata/metadata_repo.dart';
 import 'package:ftauth/src/metadata/metadata_repo_impl.dart';
 import 'package:ftauth/src/storage/storage_repo.dart';
 import 'package:ftauth/src/crypto/crypto_key.dart';
+import 'package:ftauth/src/user/user_repo.dart';
 import 'package:meta/meta.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ import 'keys.dart';
 class Authorizer {
   final FTAuthConfig _config;
   late final MetadataRepo _metadataRepo;
+  late final http.Client? _baseClient;
   final StorageRepo _storageRepo;
 
   final _authStateController = StreamController<AuthState>.broadcast();
@@ -63,12 +65,14 @@ class Authorizer {
     this._config, {
     StorageRepo? storageRepo,
     MetadataRepo? metadataRepo,
+    http.Client? baseClient,
   }) : _storageRepo = storageRepo ?? StorageRepo.instance {
+    _baseClient = baseClient;
     _metadataRepo = metadataRepo ?? MetadataRepoImpl(_config, httpClient);
   }
 
   http.Client get httpClient {
-    final baseClient = DPoPClient(DPoPRepo.instance);
+    final baseClient = _baseClient ?? DPoPClient(DPoPRepo.instance);
     return InlineClient(
       send: (http.BaseRequest request) async {
         Exception? _e;
@@ -76,7 +80,12 @@ class Authorizer {
           return await baseClient.send(request);
         } on http.ClientException catch (e) {
           _e = e;
-          throw ApiException(request.method, request.url.toString(), 0);
+          throw ApiException(
+            request.method,
+            request.url.toString(),
+            0,
+            e.toString(),
+          );
         } on Exception catch (e) {
           _e = e;
           rethrow;
@@ -125,9 +134,13 @@ class Authorizer {
           final client = Client(
             credentials: credentials,
             clientId: _config.clientId,
+            httpClient: httpClient,
           );
 
-          return AuthSignedIn(client, credentials.user);
+          final userId = accessToken.claims.ftauthClaims!['user_id'] as String;
+          final user = await UserRepo(_config, client).getUserInfo(userId);
+
+          return AuthSignedIn(client, user);
         } else {
           await _storageRepo.delete(keyAccessToken);
           await _storageRepo.delete(keyRefreshToken);
@@ -190,7 +203,11 @@ class Authorizer {
       httpClient: httpClient,
     );
 
-    _addState(AuthSignedIn(newClient, credentials.user));
+    final accessToken = JsonWebToken.parse(client.credentials.accessToken);
+    final userId = accessToken.claims.ftauthClaims!['user_id'] as String;
+    final user = await UserRepo(_config, newClient).getUserInfo(userId);
+
+    _addState(AuthSignedIn(newClient, user));
 
     return newClient;
   }
@@ -232,7 +249,7 @@ class Authorizer {
       httpClient: httpClient,
     );
 
-    _addState(AuthSignedIn(newClient, credentials.user));
+    _addState(AuthSignedIn(newClient, null));
 
     return newClient;
   }
@@ -328,6 +345,9 @@ class Authorizer {
       final client =
           await _authCodeGrant!.handleAuthorizationResponse(parameters);
       final keyStore = await _metadataRepo.loadKeySet();
+      final accessToken = JsonWebToken.parse(client.credentials.accessToken);
+      final userId = accessToken.claims.ftauthClaims!['user_id'] as String;
+
       final credentials = await Credentials.fromOAuthCredentials(
         client.credentials,
         keyStore,
@@ -344,7 +364,9 @@ class Authorizer {
         httpClient: httpClient,
       );
 
-      _addState(AuthSignedIn(newClient, credentials.user));
+      final user = await UserRepo(_config, newClient).getUserInfo(userId);
+
+      _addState(AuthSignedIn(newClient, user));
 
       await _storageRepo.delete(keyState);
       await _storageRepo.delete(keyCodeVerifier);

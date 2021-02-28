@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:ftauth/src/authorizer/keys.dart';
 import 'package:ftauth/src/jwt/alg.dart';
@@ -36,7 +35,7 @@ class CryptoRepoImpl extends CryptoRepo {
   Future<void> _savePrivateKey(RSAPrivateKey privateKey) async {
     final privateJWK = JsonWebKey(
       keyType: KeyType.RSA,
-      algorithm: Algorithm.PSSSHA256,
+      algorithm: Algorithm.RSASHA256,
       publicKeyUse: PublicKeyUse.signature,
       keyId: Uuid().v4(),
       n: privateKey.n,

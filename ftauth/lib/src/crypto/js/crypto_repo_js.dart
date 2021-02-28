@@ -26,7 +26,7 @@ class CryptoRepoImpl extends CryptoRepo {
     }
 
     final params = subtle.RsaHashedKeyGenParams(
-      name: 'RSA-PSS',
+      name: 'RSASSA-PKCS1-v1_5',
       modulusLength: 2048,
       publicExponent: Uint8List.fromList([1, 0, 1]), // 65537
       hash: 'SHA-256',
@@ -66,10 +66,7 @@ class CryptoRepoImpl extends CryptoRepo {
     final keyPair = await _generateKeyPair();
 
     final promise = subtle.sign(
-      subtle.RsaPssParams(
-        name: 'RSA-PSS',
-        saltLength: _saltLength,
-      ),
+      'RSASSA-PKCS1-v1_5',
       keyPair.privateKey,
       Uint8List.fromList(data),
     );
@@ -88,7 +85,7 @@ class CryptoRepoImpl extends CryptoRepo {
   Future<void> verify(List<int> data, List<int> signature) async {
     final keyPair = await _generateKeyPair();
     final promise = subtle.verify(
-      subtle.RsaPssParams(name: 'RSA-PSS', saltLength: _saltLength),
+      'RSASSA-PKCS1-v1_5',
       keyPair.publicKey,
       Uint8List.fromList(signature),
       Uint8List.fromList(data),

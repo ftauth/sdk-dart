@@ -6,7 +6,6 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
 
 import 'jwt/token.dart';
-import 'model/user/user.dart';
 
 /// A user's access and refresh tokens plus metadata needed to access services.
 class Credentials implements oauth2.Credentials {
@@ -46,10 +45,6 @@ class Credentials implements oauth2.Credentials {
       scopes,
       onError: onError,
     );
-  }
-
-  User get user {
-    return _accessToken.user!;
   }
 
   @override

@@ -57,9 +57,6 @@ class JsonWebClaims extends Equatable {
   @JsonKey(name: 'cnf')
   final ConfirmationClaim? confirmation;
 
-  @JsonKey(name: 'client_id')
-  final String? clientId;
-
   @JsonKey(name: 'scope')
   final String? scope;
 
@@ -68,9 +65,6 @@ class JsonWebClaims extends Equatable {
 
   @JsonKey(name: 'htu')
   final String? httpUri;
-
-  @JsonKey(name: 'userInfo')
-  final Map<String, dynamic>? userInfo;
 
   @JsonKey(ignore: true)
   final Map<String, dynamic> customClaims;
@@ -85,11 +79,9 @@ class JsonWebClaims extends Equatable {
     this.jwtId,
     this.nonce,
     this.confirmation,
-    this.clientId,
     this.scope,
     this.httpMethod,
     this.httpUri,
-    this.userInfo,
     Map<String, dynamic>? customClaims,
   }) : customClaims = customClaims ?? {};
 
@@ -104,12 +96,13 @@ class JsonWebClaims extends Equatable {
         jwtId,
         nonce,
         confirmation,
-        clientId,
         scope,
         httpMethod,
         httpUri,
-        userInfo,
+        customClaims,
       ];
+
+  Map<String, dynamic>? get ftauthClaims => customClaims['https://ftauth.io'];
 
   factory JsonWebClaims.fromJson(Map<String, dynamic> json) {
     var instance = _$JsonWebClaimsFromJson(json);
@@ -154,9 +147,6 @@ class JsonWebClaims extends Equatable {
         }
         if (expiration == null) {
           throw MissingParameterExeception('exp');
-        }
-        if (clientId == null) {
-          throw MissingParameterExeception('client_id');
         }
         if (scope == null) {
           throw MissingParameterExeception('scope');

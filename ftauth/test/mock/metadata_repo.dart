@@ -8,12 +8,40 @@ class MockMetadataRepo extends MetadataRepo {
   static const jwksJson = '''
   {
     "keys": [
-      {
-        "kty": "RSA",
-        "alg": "PS256",
-        "n": "3Ie9ws9wol7CvsePFUB3GW4If3uaj2JryX6p4fA0-sgZ63XCMb0ZSFXc0vbdThK71n0THFBjPsEuRUdjzcN26rlPxud0spWbSiAUdEzv7BLg1cKjzI2zWhFyZeci5GQALx-xkd04_x92TkbFt1t-xLH2DcQCLJ7iE6ezmLvdCI9QYqKq9vpesAehZKnCGHDA3ctPec__q-cC9flnr7Oi39ksMxNG-ECXCkB31Lpflr77YhLH5W6xKj8Q6FzE_YfbcN6It1FAqBIgeS9N8kQk_CJluxtPLJkZRQjmGq8SBpTcbaMZ_27XOUaZDD-aDcuddSPNN7W3g1w1NDbTRMKduoKr8VB7YDrCj2ywZAl9w_v_SS3OED16gI6t1EBBgxIp9ljnBd4vH37y7CTPpZOcKaheXV6Lp_bPCm8mFjzG4u2JoY1Mnfw0uvcP70VJm68-xa9yw8bdW7QsQ5tl8Ehyy9ea-XQmtmFoWUdGlrE6ZlNMQOmlW57BEXRmmpsZ4z9pHGHBQevAFb7ltIu0dQzyrtf7f7afzglIWIiRpcy_9rszXa-EykxKKf2FwQ84godmzWtpfKHJFy1MoKo_ZncMSUwlM3hnurBQMJ8pqhANQltCNK1MF4xFK2p-_BrDi2DdVQ0Bgu16w9E0dO26g1_osCXO3zi565pWfV8sEoSujRc",
-        "e": "AQAB"
-      }
+        {
+            "kty": "RSA",
+            "use": "sig",
+            "key_ops": [
+                "verify"
+            ],
+            "alg": "PS256",
+            "kid": "318a4ed6-f73e-447f-a65f-fec5f30e4dbe",
+            "n": "6u4pJrjCBuQZr9hji5yBSwYYJDDxr2Cmlc1DarYCtLPVUTOHC3E3aQ2tc1Y3M5k4QxZfxeseCaUTi_VwYRTgfJpgEn-fwIA7_ofLwwD65bHHTz0JDjYNx2Kmxh9iQDDVJQi9vSm7bn1GBQuXAMvFaV1-vwpmRRo-QegTLQNp4rN76PDsp8a9_XF27JnrfLV7ewkI8wT_kIk5W3CEFMqnsiHdIUwt8XmG4XLw9lvHzJF0jZIfh-SHYbsrnE5YD4hOQZeF2mAWmIReBKMRIeb3D16foJz5-TY08fGXF7sFscHIFkErP7se-ujXFo14o_BRzVsyjbU-tTX4yKQjcbH4IZNIoUzZ1QgrwagJKgc7RAzmqPBKfKF749GY2e0BBhnh5JCExeYUZRduM77Gv1eFsJS_TsVQ82c0tpQe6wzpXwouDv5raem95bY4tJkOJDdqQ69HdWeJjbXMp8hVx2dvqfODyTRsI7LwmB4rTQmtjxHabdt0YNRC9iU0qc5TJFqj",
+            "e": "AQAB"
+        },
+        {
+            "kty": "EC",
+            "use": "sig",
+            "key_ops": [
+                "verify"
+            ],
+            "alg": "ES256",
+            "kid": "eea79918-47f9-40a9-bc3c-97fecde71081",
+            "crv": "P-256",
+            "x": "YYlOiAJR0Xjm_tnO1EL9s7N8V-_xtRxRZtvHJdDTbRk",
+            "y": "pSDpQtdCEdLPoA8V35E470kjf4QAfWLEf11ScE1UYmo"
+        },
+        {
+            "kty": "RSA",
+            "use": "sig",
+            "key_ops": [
+                "verify"
+            ],
+            "alg": "RS256",
+            "kid": "83c182e4-f969-4789-bea6-16940dd75e91",
+            "n": "6u4pJrjCBuQZr9hji5yBSwYYJDDxr2Cmlc1DarYCtLPVUTOHC3E3aQ2tc1Y3M5k4QxZfxeseCaUTi_VwYRTgfJpgEn-fwIA7_ofLwwD65bHHTz0JDjYNx2Kmxh9iQDDVJQi9vSm7bn1GBQuXAMvFaV1-vwpmRRo-QegTLQNp4rN76PDsp8a9_XF27JnrfLV7ewkI8wT_kIk5W3CEFMqnsiHdIUwt8XmG4XLw9lvHzJF0jZIfh-SHYbsrnE5YD4hOQZeF2mAWmIReBKMRIeb3D16foJz5-TY08fGXF7sFscHIFkErP7se-ujXFo14o_BRzVsyjbU-tTX4yKQjcbH4IZNIoUzZ1QgrwagJKgc7RAzmqPBKfKF749GY2e0BBhnh5JCExeYUZRduM77Gv1eFsJS_TsVQ82c0tpQe6wzpXwouDv5raem95bY4tJkOJDdqQ69HdWeJjbXMp8hVx2dvqfODyTRsI7LwmB4rTQmtjxHabdt0YNRC9iU0qc5TJFqj",
+            "e": "AQAB"
+        }
     ]
   }
   ''';

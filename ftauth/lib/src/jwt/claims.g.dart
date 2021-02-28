@@ -19,11 +19,9 @@ JsonWebClaims _$JsonWebClaimsFromJson(Map<String, dynamic> json) {
     confirmation: json['cnf'] == null
         ? null
         : ConfirmationClaim.fromJson(json['cnf'] as Map<String, dynamic>),
-    clientId: json['client_id'] as String?,
     scope: json['scope'] as String?,
     httpMethod: json['htm'] as String?,
     httpUri: json['htu'] as String?,
-    userInfo: json['userInfo'] as Map<String, dynamic>?,
   );
 }
 
@@ -45,11 +43,9 @@ Map<String, dynamic> _$JsonWebClaimsToJson(JsonWebClaims instance) {
   writeNotNull('jti', instance.jwtId);
   writeNotNull('nonce', instance.nonce);
   writeNotNull('cnf', instance.confirmation);
-  writeNotNull('client_id', instance.clientId);
   writeNotNull('scope', instance.scope);
   writeNotNull('htm', instance.httpMethod);
   writeNotNull('htu', instance.httpUri);
-  writeNotNull('userInfo', instance.userInfo);
   return val;
 }
 
