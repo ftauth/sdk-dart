@@ -1,4 +1,4 @@
-import 'package:ftauth/src/dpop/dpop_repo.dart';
+import 'package:ftauth/src/repo/dpop/dpop_repo.dart';
 import 'package:http/http.dart' as http;
 
 /// An HTTP client which adds DPoP proofs to requests.

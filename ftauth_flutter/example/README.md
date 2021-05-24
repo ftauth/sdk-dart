@@ -1,6 +1,6 @@
-# example
+# sso_module_example
 
-Demonstrates how to use the ftauth_flutter plugin.
+Demonstrates how to use the sso_module plugin.
 
 ## Getting Started
 

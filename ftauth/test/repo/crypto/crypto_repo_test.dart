@@ -1,7 +1,7 @@
-import 'package:ftauth/src/crypto/crypto_repo.dart';
+import 'package:ftauth/ftauth.dart';
 import 'package:test/test.dart';
 
-import '../../mock/storage_repo.dart';
+import '../../mock/mock_storage_repo.dart';
 
 void main() {
   final storageRepo = MockStorageRepo();

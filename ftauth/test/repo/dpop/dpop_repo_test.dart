@@ -1,8 +1,8 @@
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth/src/dpop/dpop_repo_impl.dart';
+import 'package:ftauth/src/repo/dpop/dpop_repo_impl.dart';
 import 'package:test/test.dart';
 
-import '../../mock/storage_repo.dart';
+import '../../mock/mock_storage_repo.dart';
 
 void main() {
   final storageRepo = MockStorageRepo();

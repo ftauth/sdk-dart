@@ -6,8 +6,9 @@ part of 'config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FTAuthConfig _$FTAuthConfigFromJson(Map<String, dynamic> json) {
-  return FTAuthConfig(
+Config _$ConfigFromJson(Map<String, dynamic> json) {
+  return Config(
+    provider: _$enumDecode(_$ProviderEnumMap, json['provider']),
     gatewayUrl: json['gateway_url'] as String,
     clientId: json['client_id'] as String,
     clientSecret: json['client_secret'] as String?,
@@ -17,6 +18,19 @@ FTAuthConfig _$FTAuthConfigFromJson(Map<String, dynamic> json) {
     grantTypes: (json['grant_types'] as List<dynamic>?)
         ?.map((e) => e as String)
         .toList(),
+    accessTokenFormat:
+        _$enumDecode(_$TokenFormatEnumMap, json['access_token_type']),
+    refreshTokenFormat:
+        _$enumDecode(_$TokenFormatEnumMap, json['refresh_token_type']),
+    authorizationUri: json['authorization_uri'] == null
+        ? null
+        : Uri.parse(json['authorization_uri'] as String),
+    tokenUri: json['token_uri'] == null
+        ? null
+        : Uri.parse(json['token_uri'] as String),
+    userInfoUri: json['user_info_uri'] == null
+        ? null
+        : Uri.parse(json['user_info_uri'] as String),
   );
 }
 
@@ -46,7 +60,17 @@ K _$enumDecode<K, V>(
   ).key;
 }
 
+const _$ProviderEnumMap = {
+  Provider.ftauth: 'ftauth',
+  Provider.generic: 'generic',
+};
+
 const _$ClientTypeEnumMap = {
   ClientType.public: 'public',
   ClientType.confidential: 'confidential',
+};
+
+const _$TokenFormatEnumMap = {
+  TokenFormat.JWT: 'JWT',
+  TokenFormat.custom: 'custom',
 };

@@ -4,12 +4,28 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:ftauth/ftauth.dart';
 import 'package:ftauth_flutter/src/exception.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FlutterSecureStorage extends StorageRepo {
-  const FlutterSecureStorage._();
-
-  static const instance = FlutterSecureStorage._();
+  // TODO: Add pigeon for IOSOptions
+  static const _iosKeychainService = 'com.medtronic.sso_module';
   static const MethodChannel _channel = const MethodChannel('ftauth_flutter');
+
+  late final SharedPreferences _ephemeralStorage;
+
+  /// iOS-only: App group specifies where to store Keychain items and thus,
+  /// which bundle IDs have access to them.
+  final String? appGroup;
+
+  FlutterSecureStorage({
+    this.appGroup,
+  });
+
+  @override
+  Future<void> init({Uint8List? encryptionKey}) async {
+    _ephemeralStorage = await SharedPreferences.getInstance();
+    return _channel.invokeMethod<void>('storageInit', encryptionKey);
+  }
 
   @override
   Future<void> delete(String key) async {
@@ -37,11 +53,6 @@ class FlutterSecureStorage extends StorageRepo {
   }
 
   @override
-  Future<void> init({Uint8List? encryptionKey}) {
-    return _channel.invokeMethod<void>('storageInit', encryptionKey);
-  }
-
-  @override
   Future<void> setString(String key, String value) async {
     return _channel.invokeMethod<void>('storageSet', <String, String>{
       'key': key,
@@ -52,5 +63,15 @@ class FlutterSecureStorage extends StorageRepo {
   @override
   Future<void> clear() {
     return _channel.invokeMethod<void>('storageClear');
+  }
+
+  @override
+  Future<String?> getEphemeralString(String key) async {
+    return _ephemeralStorage.getString(key);
+  }
+
+  @override
+  Future<void> setEphemeralString(String key, String value) async {
+    await _ephemeralStorage.setString(key, value);
   }
 }

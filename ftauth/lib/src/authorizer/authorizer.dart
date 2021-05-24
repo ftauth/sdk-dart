@@ -1,91 +1,97 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth/src/dpop/dpop_repo.dart';
 import 'package:ftauth/src/http/inline_client.dart';
-import 'package:ftauth/src/jwt/token.dart';
-import 'package:ftauth/src/jwt/util.dart';
-import 'package:ftauth/src/metadata/metadata_repo.dart';
-import 'package:ftauth/src/metadata/metadata_repo_impl.dart';
-import 'package:ftauth/src/storage/storage_repo.dart';
-import 'package:ftauth/src/crypto/crypto_key.dart';
-import 'package:ftauth/src/user/user_repo.dart';
+import 'package:ftauth/src/model/ssl/certificate.dart';
+import 'package:ftauth/src/repo/user/user_repo.dart';
 import 'package:meta/meta.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:http/http.dart' as http;
 
-import '../http/dpop_client.dart';
 import 'keys.dart';
 
-class Authorizer {
-  final FTAuthConfig _config;
-  late final MetadataRepo _metadataRepo;
-  late final http.Client? _baseClient;
+abstract class AuthorizerInterface {
+  Future<void> init();
+  Future<String> authorize();
+  Future<Client> exchange(Map<String, String> parameters);
+}
+
+/// Handles the generic OAuth flow by interfacing with native layer components and
+/// maintaining the state of the client.
+class Authorizer implements AuthorizerInterface, SSLPinningInterface {
+  /// The configuration for this authorizer. This may be updated throughout the
+  /// OAuth flow as new information is available.
+  final Config _config;
+
+  /// The base client to use for internal HTTP calls.
+  late final http.Client _baseClient;
+
+  /// Stores client-sensitive information related to the OAuth flow. Must be
+  /// persistent, so that state can be recovered on startup.
   final StorageRepo _storageRepo;
+
+  /// Encryption key used for [_storageRepo].
+  Uint8List? _encryptionKey;
+
+  /// Stores pinned SSL certificates.
+  final SSLRepo _sslRepository;
 
   final _authStateController = StreamController<AuthState>.broadcast();
 
+  /// The cached auth state.
   AuthState? _latestAuthState;
 
-  /// Ensures that `_init` is only called once.
+  /// Ensures that [init] is only called once.
   Future<AuthState>? _initStateFuture;
 
   /// Returns the stream of authorization states.
-  ///
-  /// Possible [AuthState] values include:
-  /// * [AuthLoading]: Information is refreshing or being retrieved.
-  /// * [AuthSignedIn]: User is logged in with valid credentials.
-  /// * [AuthSignedOut]: User is logged out or has expired credentials.
-  /// * [AuthFailure]: An error has occurred during authentication or during an HTTP request.
   Stream<AuthState> get authStates async* {
-    if (_latestAuthState == null) {
-      _initStateFuture ??= _init();
-      _latestAuthState = await _initStateFuture!;
-    }
+    await init();
     yield _latestAuthState!;
     yield* _authStateController.stream;
   }
 
+  /// Adds the state to the stream and caches it.
   void _addState(AuthState state) {
-    _latestAuthState = state;
-    _authStateController.add(state);
-  }
-
-  void _onRefreshError(dynamic e) {
-    if (e is http.ClientException) {
-      e = ApiException('', e.uri.toString(), 0, e.message);
+    if (state != _latestAuthState) {
+      FTAuth.debug('Next state: $state');
+      _latestAuthState = state;
+      _authStateController.add(state);
     }
-    _addState(AuthFailure.fromException(e));
   }
 
+  /// Internal representation of the OAuth flow.
   oauth2.AuthorizationCodeGrant? _authCodeGrant;
 
   Authorizer(
     this._config, {
-    StorageRepo? storageRepo,
-    MetadataRepo? metadataRepo,
+    required StorageRepo storageRepo,
+    SSLRepo? sslRepository,
     http.Client? baseClient,
-  }) : _storageRepo = storageRepo ?? StorageRepo.instance {
-    _baseClient = baseClient;
-    _metadataRepo = metadataRepo ?? MetadataRepoImpl(_config, httpClient);
+    Duration? timeout,
+    Uint8List? encryptionKey,
+  })  : _storageRepo = storageRepo,
+        _sslRepository = sslRepository ?? SSLRepoImpl(storageRepo),
+        _encryptionKey = encryptionKey {
+    _baseClient = SSLPinningClient(
+      _sslRepository,
+      baseClient: baseClient,
+      timeout: timeout,
+    );
   }
 
-  http.Client get httpClient {
-    final baseClient = _baseClient ?? DPoPClient(DPoPRepo.instance);
+  /// Handles internal HTTP requests.
+  http.Client get _httpClient {
     return InlineClient(
       send: (http.BaseRequest request) async {
         Exception? _e;
         try {
-          return await baseClient.send(request);
+          return await _baseClient.send(request);
         } on http.ClientException catch (e) {
           _e = e;
-          throw ApiException(
-            request.method,
-            request.url.toString(),
-            0,
-            e.toString(),
-          );
+          throw ApiException(request.method, request.url, 0, e.toString());
         } on Exception catch (e) {
           _e = e;
           rethrow;
@@ -99,214 +105,199 @@ class Authorizer {
     );
   }
 
+  /// Initializes the SDK and guarantees that [_init] is only called once.
+  @override
+  Future<void> init() async {
+    if (_latestAuthState == null) {
+      _initStateFuture ??= _init();
+      _latestAuthState = await _initStateFuture!;
+      FTAuth.debug('Initial state: $_latestAuthState');
+    }
+  }
+
+  /// Initializes the SDK with no assumptions. Checks what is stored on disk
+  /// to determine the state of the client.
   Future<AuthState> _init() async {
     if (_initStateFuture != null) {
       return _initStateFuture!;
     }
+
+    FTAuth.debug('Inititalizing SSO module...');
+
+    await _storageRepo.init(encryptionKey: _encryptionKey);
+
+    // Checks if this is the first time starting the app from a fresh install.
+    // If it is, clear any old Keychain information which may be left behind
+    // from previous installs.
+    final isFreshInstall =
+        await _storageRepo.getEphemeralString(keyFreshInstall) == null;
+    if (isFreshInstall) {
+      FTAuth.debug('Clearing old Keychain items...');
+      await _storageRepo.clear();
+      await _storageRepo.setEphemeralString(keyFreshInstall, 'flag');
+    }
+
+    // Initialize the SSL repository
+    await _sslRepository.init();
+
+    // Store locally the current config
+    await _storageRepo.setString(keyConfig, jsonEncode(_config));
+
     try {
-      final accessTokenEnc = await _storageRepo.getString(keyAccessToken);
-      final refreshTokenEnc = await _storageRepo.getString(keyRefreshToken);
-
-      if (accessTokenEnc != null && refreshTokenEnc != null) {
-        final keyStore = await _metadataRepo.loadKeySet();
-        final accessToken = JsonWebToken.parse(accessTokenEnc);
-        await accessToken.verify(
-          keyStore,
-          verifierFactory: (key) => key.verifier,
-        );
-
-        final refreshToken = JsonWebToken.parse(refreshTokenEnc);
-        await refreshToken.verify(
-          keyStore,
-          verifierFactory: (key) => key.verifier,
-        );
-
-        if (accessToken.claims.expiration!.isAfter(DateTime.now()) ||
-            refreshToken.claims.expiration!.isAfter(DateTime.now())) {
-          final credentials = Credentials(
-            accessToken,
-            refreshToken,
-            _config.tokenUri,
-            keyStore,
-            _config.scopes,
-            onError: _onRefreshError,
-          );
-          final client = Client(
-            credentials: credentials,
-            clientId: _config.clientId,
-            httpClient: httpClient,
-          );
-
-          final userId = accessToken.claims.ftauthClaims!['user_id'] as String;
-          final user = await UserRepo(_config, client).getUserInfo(userId);
-
-          return AuthSignedIn(client, user);
-        } else {
-          await _storageRepo.delete(keyAccessToken);
-          await _storageRepo.delete(keyRefreshToken);
-        }
+      final stateFromStorage = await _reloadFromStorage();
+      if (stateFromStorage != null) {
+        return stateFromStorage;
       }
 
       final state = await _storageRepo.getString(keyState);
       final codeVerifier = await _storageRepo.getString(keyCodeVerifier);
 
       if (state != null && codeVerifier != null) {
-        _authCodeGrant = oauth2.AuthorizationCodeGrant(
-          _config.clientId,
-          _config.authorizationUri,
-          _config.tokenUri,
-          secret: '',
-          codeVerifier: codeVerifier,
-          httpClient: httpClient,
-        );
-
-        // Generate URL to advance internal code grant state.
-        final _ = _authCodeGrant!.getAuthorizationUrl(_config.redirectUri);
+        FTAuth.debug('State and code verifier found. Logging out.');
+        await _clearStorageForLogout();
       }
 
-      return AuthSignedOut();
+      FTAuth.info('User is logged out.');
+
+      return const AuthSignedOut();
     } catch (e) {
       return AuthFailure('${e.runtimeType}', e.toString());
     }
   }
 
-  Future<Client> loginWithUsernameAndPassword(
-    String username,
-    String password,
-  ) async {
-    _addState(const AuthLoading());
+  /// Reloads the current AuthState from storage, if present.
+  Future<AuthState?> _reloadFromStorage() async {
+    FTAuth.debug('Reloading tokens from storage...');
+    final accessTokenEnc = await _storageRepo.getString(keyAccessToken);
+    final refreshTokenEnc = await _storageRepo.getString(keyRefreshToken);
+    final idTokenEnc = await _storageRepo.getString(keyIdToken);
 
-    final client = await oauth2.resourceOwnerPasswordGrant(
-      _config.authorizationUri,
-      username,
-      password,
-      identifier: _config.clientId,
-      secret: _config.clientSecret ?? '',
-      scopes: _config.scopes,
-      httpClient: httpClient,
+    if (accessTokenEnc == null || refreshTokenEnc == null) {
+      FTAuth.debug('No tokens found in storage.');
+      return null;
+    }
+
+    final accessToken = Token(
+      accessTokenEnc,
+      type: _config.accessTokenFormat,
     );
 
-    final keyStore = await _metadataRepo.loadKeySet();
-    final credentials = await Credentials.fromOAuthCredentials(
-      client.credentials,
-      keyStore,
-      _config.scopes,
-      onError: _onRefreshError,
+    final refreshToken = Token(
+      refreshTokenEnc,
+      type: _config.refreshTokenFormat,
     );
 
-    await _storageRepo.setString(keyAccessToken, credentials.accessToken);
-    await _storageRepo.setString(keyRefreshToken, credentials.refreshToken);
+    Token? idToken;
+    if (idTokenEnc != null) {
+      idToken = Token(
+        idTokenEnc,
+        type: TokenFormat.JWT,
+      );
+    }
 
-    final newClient = Client(
+    var credentials = Credentials(
+      accessToken,
+      refreshToken,
+      _config,
+      idToken: idToken,
+      storageRepo: _storageRepo,
+      httpClient: _httpClient,
+    );
+
+    if (accessToken.expiry == null || accessToken.isExpired) {
+      try {
+        credentials = await credentials.refresh() as Credentials;
+      } on oauth2.AuthorizationException {
+        FTAuth.info('Could not refresh access token. Logging user out...');
+        await _clearStorageForLogout();
+        return const AuthSignedOut();
+      }
+    }
+
+    final client = Client(
       credentials: credentials,
       clientId: _config.clientId,
-      httpClient: httpClient,
+      sslRepository: _sslRepository,
+      authorizer: this,
+      httpClient: _baseClient,
     );
 
-    final accessToken = JsonWebToken.parse(client.credentials.accessToken);
-    final userId = accessToken.claims.ftauthClaims!['user_id'] as String;
-    final user = await UserRepo(_config, newClient).getUserInfo(userId);
+    User? user;
+    try {
+      user = await UserRepo(_config, client, _storageRepo).getUserInfo();
+    } on Exception catch (e) {
+      FTAuth.error('Error downloading user: $e');
+    }
 
-    _addState(AuthSignedIn(newClient, user));
+    FTAuth.info('User is logged in.');
 
-    return newClient;
+    return AuthSignedIn(client, user);
   }
 
-  Future<Client> loginWithCredentials() async {
-    if (_config.clientType == ClientType.public) {
-      throw AssertionError(
-          'Public clients should call authorize, followed by exchange.');
+  /// Pull the latest auth state from the keychain. If, for example, an app extension
+  /// refreshed it, we may not have the latest.
+  Future<void> refreshAuthState() async {
+    final state = await _reloadFromStorage();
+    if (state != null) {
+      // Only update the credentials when refreshing. Otherwise, add new states
+      // to the stream.
+      if (_latestAuthState is AuthSignedIn && state is AuthSignedIn) {
+        (_latestAuthState as AuthSignedIn).client.credentials =
+            state.client.credentials;
+      } else {
+        _addState(state);
+      }
     }
-    if (_config.clientSecret != null) {
-      throw AssertionError(
-          'Client secret must be provided for confidential clients.');
-    }
+  }
 
+  /// Initiates the authorization code flow.
+  Future<String> authorize({
+    String? language,
+    String? countryCode,
+  }) async {
+    await init();
+    if (_latestAuthState is AuthSignedIn) {
+      FTAuth.info('User is already logged in.');
+      return '';
+    }
     _addState(const AuthLoading());
-
-    final client = await oauth2.clientCredentialsGrant(
-      _config.authorizationUri,
-      _config.clientId,
-      _config.clientSecret!,
-      scopes: _config.scopes,
-      httpClient: httpClient,
+    return getAuthorizationUrl(
+      language: language,
+      countryCode: countryCode,
     );
-    final keyStore = await _metadataRepo.loadKeySet();
-    final credentials = await Credentials.fromOAuthCredentials(
-      client.credentials,
-      keyStore,
-      _config.scopes,
-      onError: _onRefreshError,
-    );
-
-    // Save keys to storage
-    await _storageRepo.setString(keyAccessToken, credentials.accessToken);
-    await _storageRepo.setString(keyRefreshToken, credentials.refreshToken);
-
-    final newClient = Client(
-      credentials: credentials,
-      clientId: _config.clientId,
-      httpClient: httpClient,
-    );
-
-    _addState(AuthSignedIn(newClient, null));
-
-    return newClient;
   }
 
-  Future<String> authorize() async {
-    await (_initStateFuture ??= _init());
-
-    _addState(const AuthLoading());
-    return getAuthorizationUrl();
-  }
-
-  String _generateState() {
-    const _stateLength = 16;
-
-    final random = Random.secure();
-    final bytes = <int>[];
-    for (var i = 0; i < _stateLength; i++) {
-      final value = random.nextInt(255);
-      bytes.add(value);
-    }
-
-    return base64RawUrl.encode(bytes);
-  }
-
-  String _createCodeVerifier() {
-    const length = 128;
-    const characterSet =
-        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~';
-    var codeVerifier = '';
-    for (var i = 0; i < length; i++) {
-      codeVerifier +=
-          characterSet[Random.secure().nextInt(characterSet.length)];
-    }
-    return codeVerifier;
-  }
-
+  /// Returns the URL to direct the user to via a WebView.
+  ///
+  /// Classes which extend [Authorizer] may override this method.
+  @protected
   @visibleForTesting
-  Future<String> getAuthorizationUrl() async {
+  @mustCallSuper
+  Future<String> getAuthorizationUrl({
+    String? language,
+    String? countryCode,
+  }) async {
     if (_config.clientType == ClientType.confidential) {
       throw StateError(
         'Confidential clients must use client credentials flow',
       );
     }
 
-    final state = _generateState();
-    final codeVerifier = _createCodeVerifier();
+    final state = OAuthUtil.generateState();
+    final codeVerifier = OAuthUtil.createCodeVerifier();
 
-    await _storageRepo.setString(keyState, state);
-    await _storageRepo.setString(keyCodeVerifier, codeVerifier);
+    await Future.wait([
+      _storageRepo.setString(keyState, state),
+      _storageRepo.setString(keyCodeVerifier, codeVerifier),
+    ]);
 
     _authCodeGrant = oauth2.AuthorizationCodeGrant(
       _config.clientId,
       _config.authorizationUri,
       _config.tokenUri,
-      secret: '',
+      secret: _config.clientSecret,
       codeVerifier: codeVerifier,
-      httpClient: httpClient,
+      httpClient: _httpClient,
     );
     return _authCodeGrant!
         .getAuthorizationUrl(
@@ -324,8 +315,19 @@ class Authorizer {
     );
   }
 
+  @protected
+  Future<oauth2.Credentials> handleExchange(
+      Map<String, String> parameters) async {
+    final client =
+        await _authCodeGrant!.handleAuthorizationResponse(parameters);
+    return client.credentials;
+  }
+
+  /// Performs the second part of the authorization code flow, exhanging the
+  /// parameters retrieved via the WebView with the OAuth server for an access
+  /// and refresh token.
   Future<Client> exchange(Map<String, String> parameters) async {
-    await (_initStateFuture ??= _init());
+    await init();
 
     if (_authCodeGrant == null) {
       throw StateError('Must call authorize first.');
@@ -342,34 +344,47 @@ class Authorizer {
     _addState(const AuthLoading());
 
     try {
-      final client =
-          await _authCodeGrant!.handleAuthorizationResponse(parameters);
-      final keyStore = await _metadataRepo.loadKeySet();
-      final accessToken = JsonWebToken.parse(client.credentials.accessToken);
-      final userId = accessToken.claims.ftauthClaims!['user_id'] as String;
-
-      final credentials = await Credentials.fromOAuthCredentials(
-        client.credentials,
-        keyStore,
-        _config.scopes,
-        onError: _onRefreshError,
+      final oauthCredentials = await handleExchange(parameters);
+      final credentials = Credentials.fromOAuthCredentials(
+        oauthCredentials,
+        config: _config,
+        storageRepo: _storageRepo,
+        httpClient: _httpClient,
       );
 
-      await _storageRepo.setString(keyAccessToken, credentials.accessToken);
-      await _storageRepo.setString(keyRefreshToken, credentials.refreshToken);
+      await Future.wait([
+        _storageRepo.setString(keyAccessToken, credentials.accessToken),
+        if (credentials.expirationSecondsSinceEpoch != null)
+          _storageRepo.setString(
+            keyAccessTokenExp,
+            credentials.expirationSecondsSinceEpoch!.toString(),
+          ),
+        _storageRepo.setString(keyRefreshToken, credentials.refreshToken),
+        if (credentials.idToken != null)
+          _storageRepo.setString(keyIdToken, credentials.idToken!),
+      ]);
 
       final newClient = Client(
         credentials: credentials,
         clientId: _config.clientId,
-        httpClient: httpClient,
+        sslRepository: _sslRepository,
+        authorizer: this,
+        httpClient: _baseClient,
       );
 
-      final user = await UserRepo(_config, newClient).getUserInfo(userId);
+      User? user;
+      try {
+        user = await UserRepo(_config, newClient, _storageRepo).getUserInfo();
+      } on Exception catch (e) {
+        FTAuth.error('Error downloading user: $e');
+      }
 
       _addState(AuthSignedIn(newClient, user));
 
-      await _storageRepo.delete(keyState);
-      await _storageRepo.delete(keyCodeVerifier);
+      await Future.wait([
+        _storageRepo.delete(keyState),
+        _storageRepo.delete(keyCodeVerifier),
+      ]);
 
       return newClient;
     } catch (e) {
@@ -378,11 +393,35 @@ class Authorizer {
     }
   }
 
+  Future<void> _clearStorageForLogout() async {
+    // Delete all auth keys, but leave other keys present.
+    // Calling _storageRepo.clear() is probably not what
+    // we want to do.
+    await Future.wait(
+      [
+        keyAccessToken,
+        keyAccessTokenExp,
+        keyRefreshToken,
+        keyIdToken,
+        keyState,
+        keyCodeVerifier,
+        keyUserInfo,
+      ].map(_storageRepo.delete),
+    );
+  }
+
   Future<void> logout() async {
-    await _storageRepo.delete(keyState);
-    await _storageRepo.delete(keyCodeVerifier);
-    await _storageRepo.delete(keyAccessToken);
-    await _storageRepo.delete(keyRefreshToken);
-    _addState(AuthSignedOut());
+    await _clearStorageForLogout();
+    _addState(const AuthSignedOut());
+  }
+
+  @override
+  bool isPinning(String host) {
+    return _sslRepository.isPinning(host);
+  }
+
+  @override
+  void pinCert(Certificate certificate) {
+    _sslRepository.pinCert(certificate);
   }
 }

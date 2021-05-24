@@ -1,0 +1,146 @@
+{
+    "ar": {
+        "language": "Arabic",
+        "code": "ar"
+    },
+    "bg": {
+        "language": "Bulgarian",
+        "code": "bg"
+    },
+    "cs": {
+        "language": "Czech",
+        "code": "cs"
+    },
+    "da": {
+        "language": "Danish",
+        "code": "da"
+    },
+    "de": {
+        "language": "German",
+        "code": "de"
+    },
+    "el": {
+        "language": "Greek",
+        "code": "el"
+    },
+    "en": {
+        "language": "English",
+        "code": "en"
+    },
+    "es": {
+        "language": "Spanish",
+        "code": "es"
+    },
+    "et": {
+        "language": "Estonian",
+        "code": "et"
+    },
+    "fi": {
+        "language": "Finnish",
+        "code": "fi"
+    },
+    "fr": {
+        "language": "French",
+        "code": "fr"
+    },
+    "he": {
+        "language": "Hebrew",
+        "code": "he"
+    },
+    "hr": {
+        "language": "Croatian",
+        "code": "hr"
+    },
+    "hu": {
+        "language": "Hungarian",
+        "code": "hu"
+    },
+    "is": {
+        "language": "Icelandic",
+        "code": "is"
+    },
+    "it": {
+        "language": "Italian",
+        "code": "it"
+    },
+    "ja": {
+        "language": "Japanese",
+        "code": "ja"
+    },
+    "kk": {
+        "language": "Kazakh",
+        "code": "kk"
+    },
+    "ko": {
+        "language": "Korean",
+        "code": "ko"
+    },
+    "lt": {
+        "language": "Lithuanian",
+        "code": "lt"
+    },
+    "lv": {
+        "language": "Latvian",
+        "code": "lv"
+    },
+    "mk": {
+        "language": "Macedonian",
+        "code": "mk"
+    },
+    "nb": {
+        "language": "Norwegian",
+        "code": "nb"
+    },
+    "nl": {
+        "language": "Dutch",
+        "code": "nl"
+    },
+    "pl": {
+        "language": "Polish",
+        "code": "pl"
+    },
+    "pt-BR": {
+        "language": "Brazilian Portuguese",
+        "code": "pt-BR"
+    },
+    "pt-PT": {
+        "language": "Portuguese",
+        "code": "pt-PT"
+    },
+    "ro": {
+        "language": "Romanian",
+        "code": "ro"
+    },
+    "ru": {
+        "language": "Russian",
+        "code": "ru"
+    },
+    "sk": {
+        "language": "Slovak",
+        "code": "sk"
+    },
+    "sl": {
+        "language": "Slovenian",
+        "code": "sl"
+    },
+    "sr": {
+        "language": "Serbian",
+        "code": "sr"
+    },
+    "sv": {
+        "language": "Swedish",
+        "code": "sv"
+    },
+    "tr": {
+        "language": "Turkish",
+        "code": "tr"
+    },
+    "uk": {
+        "language": "Ukrainian",
+        "code": "uk"
+    },
+    "zh": {
+        "language": "Chinese (simplified)",
+        "code": "zh"
+    }
+}

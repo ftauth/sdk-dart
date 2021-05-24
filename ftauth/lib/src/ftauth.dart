@@ -4,150 +4,133 @@ import 'dart:typed_data';
 import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/demo/demo.dart';
 import 'package:ftauth/src/exception.dart';
+import 'package:ftauth/src/logger/logger.dart';
 import 'package:ftauth/src/model/user/user.dart';
-import 'package:ftauth/src/path_provider/path_provider.dart';
-import 'package:ftauth/src/storage/storage_repo.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-import 'package:hive/hive.dart';
 
 const _isDemo = bool.fromEnvironment('demo', defaultValue: false);
 
+typedef SetupHandler = FutureOr<void> Function(FTAuth);
+
+abstract class FTAuthInterface
+    implements AuthorizerInterface, SSLPinningInterface {
+  Future<void> logout();
+  Stream<AuthState> get authStates;
+  Future<AuthState> get currentState;
+  Future<bool> get isLoggedIn;
+  Future<User?> get currentUser;
+}
+
 /// The main utility class. It is generally not necessary to work with this
 /// class directly.
-class FTAuthImpl extends http.BaseClient implements Authorizer {
-  static final instance = FTAuthImpl._();
+class FTAuth extends http.BaseClient implements FTAuthInterface {
+  /// Override this value to set the logger for the SSO module.
+  static LoggerInterface logger = const StdoutLogger();
 
-  var _inititalized = false;
-  late final FTAuthConfig _config;
-  late final Authorizer _authorizer;
+  static void debug(String log) => logger.debug(log);
+  static void info(String log) => logger.info(log);
+  static void warn(String log) => logger.warn(log);
+  static void error(String log) => logger.error(log);
 
-  FTAuthConfig get config {
-    _assertInitialized();
-    return _config;
-  }
+  final http.Client _baseClient;
+  final Duration _timeout;
+  final Config config;
+  late final Authorizer authorizer;
 
-  Authorizer get authorizer {
-    _assertInitialized();
-    return _authorizer;
-  }
-
-  FTAuthImpl._();
-
-  /// Initialize the FTAuth library.
-  ///
-  /// It is required to call either `init` for server and web applications or
-  /// `initFlutter` for Flutter applications.
-  Future<void> init(
-    FTAuthConfig config, {
-    Uint8List? encryptionKey,
-    Authorizer? authorizer,
+  FTAuth(
+    this.config, {
     StorageRepo? storageRepo,
-  }) async {
-    const pathProvider = PathProvider();
-
-    // This will return null for Flutter mobile and Web, but calling `Hive.init`
-    // is not required in these cases.
-    final hivePath = pathProvider.getHiveDirectory();
-    if (hivePath != null) {
-      Hive.init(hivePath);
-    }
-    _config = config;
-    if (_isDemo) {
-      _authorizer = DemoAuthorizer();
-    } else {
-      _authorizer = authorizer ??
-          Authorizer(
-            config,
-            storageRepo: storageRepo ?? StorageRepo.instance,
-          );
+    Authorizer? authorizer,
+    http.Client? baseClient,
+    Duration? timeout,
+    Uint8List? encryptionKey,
+    SetupHandler? setup,
+  })  : _baseClient = baseClient ?? http.Client(),
+        _timeout = timeout ?? const Duration(seconds: 60) {
+    switch (config.provider) {
+      default:
+        this.authorizer = authorizer ??
+            Authorizer(
+              config,
+              storageRepo: storageRepo ?? StorageRepo.instance,
+              baseClient: baseClient,
+            );
+        break;
     }
 
-    await (storageRepo ?? StorageRepo.instance)
-        .init(encryptionKey: encryptionKey);
-
-    _inititalized = true;
+    // Perform setup tasks after init
+    init().then((_) => scheduleMicrotask(() => setup?.call(this)));
   }
 
-  void _assertInitialized() {
-    if (!_inititalized) {
-      throw UninitializedError();
-    }
-  }
-
+  /// Initializes the SDK. **Must** be called before performing any activities
+  /// like SSL pinning.
   @override
-  Future<String> authorize() {
-    _assertInitialized();
-    return _authorizer.authorize();
-  }
+  Future<void> init() => authorizer.init();
 
+  /// Returns the stream of authorization states.
+  ///
+  /// Possible [AuthState] values include:
+  /// * [AuthLoading]: Information is refreshing or being retrieved.
+  /// * [AuthSignedIn]: User is logged in with valid credentials.
+  /// * [AuthSignedOut]: User is logged out or has expired credentials.
+  /// * [AuthFailure]: An error has occurred during authentication or during an HTTP request.
   @override
-  Future<Client> exchange(Map<String, String> parameters) {
-    _assertInitialized();
-    return _authorizer.exchange(parameters);
-  }
+  Stream<AuthState> get authStates => authorizer.authStates;
 
+  /// The current authorization state.
   @override
-  @visibleForTesting
-  Future<String> getAuthorizationUrl() {
-    _assertInitialized();
-    // ignore: invalid_use_of_visible_for_testing_member
-    return _authorizer.getAuthorizationUrl();
-  }
+  Future<AuthState> get currentState => authStates.first;
 
+  /// Whether or not a user is currently logged in.
   @override
-  Future<void> logout() {
-    _assertInitialized();
-    return _authorizer.logout();
-  }
+  Future<bool> get isLoggedIn async => (await currentState) is AuthSignedIn;
 
-  /// Retrieves the stream of authorization states, representing the current
-  /// state of the user's authorization.
+  /// Retrieves the currently logged in user.
   @override
-  Stream<AuthState> get authStates async* {
-    _assertInitialized();
-    yield* _authorizer.authStates;
-  }
-
-  /// Retrieves the current [User], or `null`, if not logged in.
   Future<User?> get currentUser async {
-    _assertInitialized();
-    final state = await authStates.first;
+    final state = await currentState;
     if (state is AuthSignedIn) {
       return state.user;
     }
     return null;
   }
 
-  /// Retrieves the current [Client] for this config, or `null` if not logged in.
-  Future<Client?> get client async {
-    _assertInitialized();
-    final state = await authStates.first;
-    if (state is AuthSignedIn) {
-      return state.client;
-    }
-    return null;
+  /// Logs out the current user.
+  @override
+  Future<void> logout() {
+    FTAuth.info('Logging out...');
+    return authorizer.logout();
   }
+
+  @override
+  Future<String> authorize({
+    String? language,
+    String? countryCode,
+  }) =>
+      authorizer.authorize(language: language, countryCode: countryCode);
+
+  @override
+  Future<Client> exchange(Map<String, String> parameters) =>
+      authorizer.exchange(parameters);
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    _assertInitialized();
-    return _authorizer.httpClient.send(request);
+    await authorizer.refreshAuthState();
+    final state = await authStates.first;
+    if (state is AuthSignedIn) {
+      return state.client.send(request).timeout(_timeout);
+    }
+    return _baseClient.send(request).timeout(_timeout);
   }
 
   @override
-  Future<Client> loginWithCredentials() {
-    _assertInitialized();
-    return _authorizer.loginWithCredentials();
+  bool isPinning(String host) {
+    return authorizer.isPinning(host);
   }
 
   @override
-  Future<Client> loginWithUsernameAndPassword(
-      String username, String password) {
-    _assertInitialized();
-    return _authorizer.loginWithUsernameAndPassword(username, password);
+  void pinCert(Certificate certificate) {
+    authorizer.pinCert(certificate);
   }
-
-  @override
-  http.Client get httpClient => _authorizer.httpClient;
 }

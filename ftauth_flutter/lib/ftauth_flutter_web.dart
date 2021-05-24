@@ -7,6 +7,7 @@ import 'dart:html' as html show window;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:ftauth_flutter/ftauth_flutter.dart';
 
 /// A web implementation of the FtauthFlutter plugin.
 class FtauthFlutterWeb {
@@ -23,7 +24,7 @@ class FtauthFlutterWeb {
 
   void _assert<T>(dynamic arg) {
     if (arg == null || arg is! T) {
-      throw PlatformException(code: 'INVALID_ARGUMENTS');
+      throw PlatformException(code: PlatformExceptionCodes.invalidArguments);
     }
   }
 
@@ -42,7 +43,9 @@ class FtauthFlutterWeb {
 
         html.window.open(url, '_self');
         throw PlatformException(
-            code: 'WEBVIEW', message: 'Could not launch webview');
+          code: PlatformExceptionCodes.couldNotLaunchWebview,
+          message: 'Could not launch webview',
+        );
 
       // Future.wait([
       //   newWindow.on['unload'].first.then(
@@ -69,7 +72,7 @@ class FtauthFlutterWeb {
       // }
       default:
         throw PlatformException(
-          code: 'Unimplemented',
+          code: PlatformExceptionCodes.unknown,
           details:
               'ftauth_flutter for web doesn\'t implement \'${call.method}\'',
         );
@@ -105,7 +108,7 @@ class FtauthFlutterWeb {
         break;
       default:
         throw PlatformException(
-          code: 'Unimplemented',
+          code: PlatformExceptionCodes.unknown,
           details:
               'ftauth_flutter for web doesn\'t implement \'${call.method}\'',
         );

@@ -1,29 +1,29 @@
 class ApiException implements Exception {
   final String method;
-  final String path;
+  final Uri url;
   final int statusCode;
   final String body;
 
-  const ApiException(this.method, this.path, this.statusCode, [this.body = '']);
+  const ApiException(this.method, this.url, this.statusCode, [this.body = '']);
 
-  ApiException.get(this.path, this.statusCode, [this.body = ''])
+  ApiException.get(this.url, this.statusCode, [this.body = ''])
       : method = 'GET';
 
-  ApiException.post(this.path, this.statusCode, [this.body = ''])
+  ApiException.post(this.url, this.statusCode, [this.body = ''])
       : method = 'POST';
 
-  ApiException.put(this.path, this.statusCode, [this.body = ''])
+  ApiException.put(this.url, this.statusCode, [this.body = ''])
       : method = 'PUT';
 
-  ApiException.delete(this.path, this.statusCode, [this.body = ''])
+  ApiException.delete(this.url, this.statusCode, [this.body = ''])
       : method = 'DELETE';
 
   @override
   String toString() {
     if (statusCode == 401) {
-      return '$method $path: Unauthorized';
+      return '$method $url: Unauthorized';
     }
-    return "$method $path: $statusCode - '$body'";
+    return "$method $url: $statusCode - '$body'";
   }
 }
 

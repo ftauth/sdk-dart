@@ -1,76 +1,161 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ftauth/ftauth.dart' as ftauth;
+import 'package:ftauth/ftauth.dart' hide FTAuth;
+import 'package:ftauth/ftauth.dart' as ftauth show FTAuth;
 import 'package:ftauth_flutter/src/storage/secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 import 'exception.dart';
-import 'flutter_authorizer.dart';
 
 /// The default configuration path.
 const kConfigPath = 'assets/ftauth_config.json';
 
-extension FTAuthFlutter on ftauth.FTAuthImpl {
-  /// Initializes the FTAuth instance.
-  ///
-  /// Must be called before any other methods are called. Typically, this is
-  /// done in the main method, before all Flutter actions.
-  ///
-  /// ```
-  /// Future<void> main() async {
-  ///   final config = FTAuthConfig(
-  ///     gatewayUrl: 'https://7602aa8d005e.ngrok.io',
-  ///     clientId: '3cf9a7ac-9198-469e-92a7-cc2f15d8b87d',
-  ///     clientType: ClientType.public,
-  ///     redirectUri: kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://auth',
-  ///   );
-  ///
-  ///   await FTAuth.initFlutter(config: config);
-  ///
-  ///   runApp(MyApp());
-  /// }
-  /// ```
-  Future<void> initFlutter({
-    ftauth.FTAuthConfig? config,
-    String? configPath,
-  }) async {
-    WidgetsFlutterBinding.ensureInitialized();
+/// Wrapper class used for providing a [FTAuthClient] to descendant widgets.
+///
+/// ```
+/// final config = await FlutterConfig.fromAsset();
+/// runApp(
+///   FTAuth(
+///     config,
+///     child: MyApp(),
+///   ),
+/// );
+///
+/// // Login
+/// await FTAuthClient.of(context).login();
+///
+/// // Logout
+/// await FTAuthClient.of(context).logout();
+///
+/// // Fetch Data
+/// final ftauthClient = FTAuthClient.of(context);
+/// final userInfo = Uri.parse('https://myapp.com/api/user');
+/// final resp = await ftauthClient.get(userInfo);
+/// ```
+class FTAuth extends InheritedWidget {
+  /// Override this value to set the logger for the SSO module.
+  static set logger(LoggerInterface newValue) =>
+      ftauth.FTAuth.logger = newValue;
 
-    // Try to load config from file if not provided.
-    if (config == null) {
-      configPath ??= kConfigPath;
-      try {
-        config = await rootBundle.loadStructuredData(configPath, (value) async {
-          final configJson =
-              (json.decode(value) as Map).cast<String, dynamic>();
-          return ftauth.FTAuthConfig.fromJson(configJson);
-        });
-      } on Exception {
-        throw ConfigNotFoundException(configPath);
-      }
-    }
+  static void debug(String log) => ftauth.FTAuth.debug(log);
+  static void info(String log) => ftauth.FTAuth.info(log);
+  static void warn(String log) => ftauth.FTAuth.warn(log);
+  static void error(String log) => ftauth.FTAuth.error(log);
 
-    const secureStorage = FlutterSecureStorage.instance;
-    ftauth.CryptoRepo.instance = ftauth.CryptoRepoImpl(secureStorage);
+  final FTAuthClient client;
 
-    return ftauth.FTAuth.init(
-      config!,
-      authorizer: FlutterAuthorizer(config),
-      storageRepo: secureStorage,
-    );
+  FTAuth(
+    Config config, {
+    Key? key,
+    required Widget child,
+    http.Client? baseClient,
+    Duration? timeout,
+    StorageRepo? storageRepo,
+    Uint8List? encryptionKey,
+    String? appGroup,
+    SetupHandler? setup,
+  })  : client = FTAuthClient(
+          config,
+          baseClient: baseClient,
+          timeout: timeout,
+          encryptionKey: encryptionKey,
+          storageRepo: storageRepo,
+          appGroup: appGroup,
+          setup: setup,
+        ),
+        super(key: key, child: child);
+
+  @override
+  bool updateShouldNotify(covariant FTAuth oldWidget) => false;
+}
+
+class FTAuthClient extends ftauth.FTAuth {
+  static const _channel = MethodChannel('ftauth_flutter');
+
+  FTAuthClient(
+    Config config, {
+    StorageRepo? storageRepo,
+    Uint8List? encryptionKey,
+    Authorizer? authorizer,
+    http.Client? baseClient,
+    Duration? timeout,
+    String? appGroup,
+    SetupHandler? setup,
+  }) : super(
+          config,
+          authorizer: authorizer,
+          baseClient: baseClient,
+          timeout: timeout,
+          setup: setup,
+          encryptionKey: encryptionKey,
+          storageRepo: storageRepo ??
+              FlutterSecureStorage(
+                appGroup: appGroup,
+              ),
+        );
+
+  static FTAuthClient of(BuildContext context) {
+    final ftauth = context.dependOnInheritedWidgetOfExactType<FTAuth>();
+    assert(ftauth != null, 'No FTAuth widget found above this one.');
+    return ftauth!.client;
   }
 
-  /// A convenience method for mobile Flutter clients to login and retrieve
-  /// an FTAuth client in one step.
-  ///
-  /// Flutter Web applications must still call [exchange] after being redirected.
-  Future<ftauth.Client> login() async {
-    final state = await authStates.first;
-    if (state is ftauth.AuthSignedIn) {
-      return state.client;
+  /// Performs the two-step OAuth process to login the user.
+  Future<void> login({
+    String? language,
+    String? countryCode,
+  }) async {
+    if (await isLoggedIn) {
+      FTAuth.info('User is already logged in.');
+      return;
     }
-    return (authorizer as FlutterAuthorizer).login();
+
+    final url = await authorizer.authorize(
+      language: language,
+      countryCode: countryCode,
+    );
+
+    FTAuth.debug('Launching url: $url');
+    try {
+      final Map<String, String>? parameters =
+          await _channel.invokeMapMethod<String, String>('login', url);
+
+      if (parameters == null) {
+        throw PlatformException(
+          code: PlatformExceptionCodes.unknown,
+          message: 'Login process failed.',
+        );
+      }
+
+      await authorizer.exchange(parameters);
+    } on Exception catch (e) {
+      if (e is PlatformException &&
+          e.code == PlatformExceptionCodes.authCancelled) {
+        FTAuth.info('Authorization process cancelled.');
+      } else {
+        FTAuth.error('Error logging in: $e');
+      }
+      // Cancel the login process
+      await authorizer.logout();
+      rethrow;
+    }
+  }
+}
+
+class FlutterConfig {
+  static Future<Config> fromAsset([String? configPath]) async {
+    configPath ??= kConfigPath;
+    try {
+      return await rootBundle.loadStructuredData(configPath, (value) async {
+        final configJson = (json.decode(value) as Map).cast<String, dynamic>();
+        return Config.fromJson(configJson);
+      });
+    } on Exception {
+      throw ConfigNotFoundException(configPath);
+    }
   }
 }

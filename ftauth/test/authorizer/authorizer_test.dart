@@ -1,29 +1,33 @@
-import 'package:ftauth/ftauth.dart';
+import 'dart:convert';
+
+import 'package:ftauth/src/authorizer/keys.dart';
+import 'package:ftauth/src/repo/ssl/keys.dart';
 import 'package:test/test.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/src/response.dart';
+import 'package:ftauth/ftauth.dart';
+import 'package:uuid/uuid.dart';
 
-import '../mock/metadata_repo.dart';
-import '../mock/storage_repo.dart';
-import '../mock/user_repo.dart';
-
-const _accessToken =
-    'eyJ0eXAiOiJhdCtqd3QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjgzYzE4MmU0LWY5NjktNDc4OS1iZWE2LTE2OTQwZGQ3NWU5MSJ9.eyJhdWQiOiIzY2Y5YTdhYy05MTk4LTQ2OWUtOTJhNy1jYzJmMTVkOGI4N2QiLCJjbmYiOnsiamt0IjoiXzFmdXk2VWczWmlxNzloWi1XdkdMMEdla2diakJFajdMVXVwQVRZZjRJdyJ9LCJleHAiOjE2MTQ1NDE1OTgsImh0dHBzOi8vZnRhdXRoLmlvIjp7ImNsaWVudF9pZCI6IjNjZjlhN2FjLTkxOTgtNDY5ZS05MmE3LWNjMmYxNWQ4Yjg3ZCIsInVzZXJfaWQiOiI4NjE4Y2MzNi1jMzlkLTQwMzEtYTI1Yy03YWVhZTMzMGRiZWQifSwiaWF0IjoxNjE0NTM3OTk4LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJqdGkiOiI2MWRjNmM5ZS1jNThhLTQ3YWEtYjc2ZC02OTZkMWE5NGE0YmEiLCJzY29wZSI6ImRlZmF1bHQiLCJzdWIiOiI4NjE4Y2MzNi1jMzlkLTQwMzEtYTI1Yy03YWVhZTMzMGRiZWQifQ.enJJXxZ03Ql_2v1958BsDP5IKpxVb2vRwA3blhilJR5Ze4oOT0Y3lD0YPCPFhy0d1Ycf2JWMGufbBj5rdKQU8p_kpsQTCASjo6ZBbVD67lC6MANoLaSCXd_iFtLQSTh1Ie0WbRpKr9nT6W-GxxUYaVgaqgjkbNqD3aUPR9i5X4mnFSvBuQpU71juwytet0nqGr9cVKr1FHSP53bq9-mWj9NfkAHsZBeejExWPwIyZMFa8PKLdIDX4Zh5MeVtEOJN2aeW8ETb0Syllvi5HPmnA9ZrKy45OuTs20UWLKxVKtTf5FrSt4ufFJ8rKc6wOGuJkLiPErGtIRVzEV-n9KcwKydBsenzftueQfQaBIffAa25uJqV85n6Ry-kCHhLPmAZsBM2-6Z5AIZLc86MKrmyVwS9lbrw_LNXm_7JH5aMyqg2onulN2F3N0TCe1g7lsKm3fMy-eVbHIec_v6I6Rz6ftNR2x4rCMCnLqLPTcxJYQHZlMQjgf2_lXeW8m8GzCkH';
-const _refreshToken =
-    'eyJ0eXAiOiJhdCtqd3QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjgzYzE4MmU0LWY5NjktNDc4OS1iZWE2LTE2OTQwZGQ3NWU5MSJ9.eyJhdWQiOiIzY2Y5YTdhYy05MTk4LTQ2OWUtOTJhNy1jYzJmMTVkOGI4N2QiLCJjbmYiOnsiamt0IjoiXzFmdXk2VWczWmlxNzloWi1XdkdMMEdla2diakJFajdMVXVwQVRZZjRJdyJ9LCJleHAiOjE2MTQ2MjQzOTgsImh0dHBzOi8vZnRhdXRoLmlvIjp7ImNsaWVudF9pZCI6IjNjZjlhN2FjLTkxOTgtNDY5ZS05MmE3LWNjMmYxNWQ4Yjg3ZCIsInVzZXJfaWQiOiI4NjE4Y2MzNi1jMzlkLTQwMzEtYTI1Yy03YWVhZTMzMGRiZWQifSwiaWF0IjoxNjE0NTM3OTk4LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJqdGkiOiJlODZjNjE0Zi1mMDk1LTQ4NmYtYTU1OC1mMDU2OGRmNmE3OWMiLCJzY29wZSI6ImRlZmF1bHQiLCJzdWIiOiI2MWRjNmM5ZS1jNThhLTQ3YWEtYjc2ZC02OTZkMWE5NGE0YmEifQ.yeAp0tiEwEqXAjPBXEH399UGRs9hgvmLawUVECrSy9rh3sh2xfWtweuoMOrs1XkJJGawZwqwVCFr82QsT1m_6B-9rUPZ-j-bntd-bXMgzLxTr2COVB346TDCVBd3cGf5H_0Xad8_m9Nge_XCTyz9JVXVadiDE0uGW31xcCnOdTXmAIatMXZ9eT2XjlvsouAkHHjotZ-RBB9BHJ3FpmJzIGd7OertHywv1xl0ekHqIMgQsG6sMTH9lLUioAcL_xO2KaJ1GbrPWsZI4QAPC9ldovO0jO4XSaTWYPK7-dFsTJOchiZbs3ENjjCHhjo8FYXxmVadp-_4OLSeXg6Hl-9MVVHDw3_24ACOD3zyPT1UCKFhyoJX6jVAkW7WTSUUYsxQJeeJZb3v1PSyUHx_T3MDmafib7IO00wk09ViLEnTi3s7Z20ORTKxW7e7xnfiPp6RfDjWdef-cDkWeUEWQwN8yuYCP5VexgZ7FRBpC7aqhicTAnjOXNzeHQtRQuSw2C4X';
-const _pssAccessToken =
-    'eyJ0eXAiOiJhdCtqd3QiLCJhbGciOiJQUzI1NiJ9.eyJhdWQiOiIzY2Y5YTdhYy05MTk4LTQ2OWUtOTJhNy1jYzJmMTVkOGI4N2QiLCJjbGllbnRfaWQiOiIzY2Y5YTdhYy05MTk4LTQ2OWUtOTJhNy1jYzJmMTVkOGI4N2QiLCJjbmYiOnsiamt0IjoiOXJBWEp1ckZTYjgzalFoQ0ZxUDFMYXpieXdFVFVoVmtJT0ZTbGU3eF9TYyJ9LCJleHAiOjE2MTM4NzE0NzksImlhdCI6MTYxMzg2Nzg3OSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwianRpIjoiYjZiMzA5NGItZjc4MS00ZjIzLThlNjktYWI4ZWZjYzgxNDI5Iiwic2NvcGUiOiJkZWZhdWx0Iiwic3ViIjoiRGlsbG9uIiwidXNlckluZm8iOnsiaWQiOiJEaWxsb24ifX0.RwlYGGRM0VUPPOfh2CdjmuJIGIcUrVPjoKUzAi0epuQ430QXPpYQintemBhLODURdhm278C1r-Ts_labwd19HBKdtAePWs9P1ZySBzW72EmAP_w7Gb7QjZkiQ7grHr54VBWxugkWCzgMMTc4M2d0BSPD6LqTb2ii9NpFefTwXbNThf19AXjC7QfXdpeb3FW7RdqKI_YBX-putRPQkRYR0jHVs-pUYmmz3Nnk4UZXo5Yla844KivVxxVwKXmkK2Zg6HDxjBOHUWrl5oNWJ5dwRxnKev5v4AF58sRi4W1SpwXtN7HK7L1evGVTgWp4RQDszeUPbMEjLAOrVlF9PfZ79PeU_zQBnOVXhAi2T-i5mKSKRlADLoHy6XNFxC0gU9T1_u2ILANLfT16sVy3R2PBP5vF57gC6IrcfM-cDRPzNtrk3oJi5RhzjYve9hEV-P6p8aTXq0Z7ZpKX84BfGy1iahRxearoHPYxpGBhbfH6lWmWaf7Dy5KLbYfjNcqNXCi7YjN59c_emYzN-sRF_R8wv16GAy1AYDSA5zDoeGt92kehtgXrWYgdRd8-SZjyYtsNJY3v-ISseE3WMkv3b60vYZdvn-L2It3zgH-EGnIp02YHHbMmrECH7Pao_mE1bvmlktiS0yN9s6wfo6ckGXZ46r6uwLNTCFKMTyaqPJ5iqzk';
-const _pssRefreshToken =
-    'eyJ0eXAiOiJhdCtqd3QiLCJhbGciOiJQUzI1NiJ9.eyJhdWQiOiIzY2Y5YTdhYy05MTk4LTQ2OWUtOTJhNy1jYzJmMTVkOGI4N2QiLCJjbGllbnRfaWQiOiIzY2Y5YTdhYy05MTk4LTQ2OWUtOTJhNy1jYzJmMTVkOGI4N2QiLCJjbmYiOnsiamt0IjoiOXJBWEp1ckZTYjgzalFoQ0ZxUDFMYXpieXdFVFVoVmtJT0ZTbGU3eF9TYyJ9LCJleHAiOjE2MTM5NTQyNzksImlhdCI6MTYxMzg2Nzg3OSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwIiwianRpIjoiODNjMTZjNzQtMzc0MS00Njk4LTgwNjMtNzVhNWY4MDcwMThlIiwic2NvcGUiOiJkZWZhdWx0Iiwic3ViIjoiYjZiMzA5NGItZjc4MS00ZjIzLThlNjktYWI4ZWZjYzgxNDI5IiwidXNlckluZm8iOnsiaWQiOiIzY2Y5YTdhYy05MTk4LTQ2OWUtOTJhNy1jYzJmMTVkOGI4N2QifX0.kLI3tQWx-SNlDgB7XVv37Xk5XIbVQaIjKiIrnlVV6a4hOwwISr0XIY4fostdfpDnJF_Jq1C9RGQ85JMPkK2dJJTeKYiTeE7GDv_fr5kSLCZlQLyDPZtoJiVbxMcQBoRddZKqVepq__HyX-pqrXZxtRIu8l5Ha1nTXMpaZaql7yo9i8S10s76pLbKHEKldy8IUOurYz7jePS1W5-vzzL0spII7dHBB8EF9qlPOajSo4prQD6f7Qrolg2Kg4mV1yx8byk2-m4W6gPI7Tg7LSauZiQOSdu4Tn0FpJKAhLG5xZYaIoYV9CmWM2KY6pEsaqbgv96J3Kb8vF_Px3vXklU7WI9bgOyyh4DMYxGEiZbSbw7yYREYAdnTGDStxMifFw9XSloVMs-ZbTH5XX9SRony0ufozmPZQGN4d8X13B8bCXyEOuq9neNzsMpkMOhQRyAUpRRjBIoOFuzTyBLlGTuLpb_GwrRUN7PSbjq6nGKqOUuW41WOWOMG_Tt3xMnrEeT-SeSPjNakFktuaLMXp1O1vCmZxDsPyJP4DCgQLFAMFRHf6rlsEu6lSrVwSjD_FSWRutgj-I6DvcwPcSAXTYWanlCFnZiMpVNPSi5GfUPIxf-ZrF5bKNYATMGaw4j0ITVvbsTe7ZQDTh56YxAKz7w0fKqCXTSDS3gW2rN9eIj9GL8';
+import '../mock/mock_oauth_server.dart';
+import '../mock/mock_storage_repo.dart';
+import '../mock/mock_http_client.dart';
+import '../util/jwt.dart';
+import '../util/logger.dart';
 
 void main() {
+  FTAuth.logger = const NoOutputLogger();
   final storageRepo = MockStorageRepo();
-  storageRepo.init();
-
-  final mockMetadataRepo = MockMetadataRepo();
-  final mockHttpClient = MockHttpClient();
+  late final JwtUtil jwtUtil;
+  final baseHttpClient = MockHttpClient(
+    userInfoHandler: (_) async {
+      final user = User(id: 'test');
+      final json = jsonEncode(user.toJson());
+      return Response(json, 200);
+    },
+  );
+  late final MockOAuthServer mockOAuthServer;
 
   const clientId = 'some-client-id';
-  final mockPublicConfig = FTAuthConfig(
+  final mockPublicConfig = Config(
     gatewayUrl: 'http://localhost:8080',
     clientType: ClientType.public,
     clientId: clientId,
@@ -31,8 +35,14 @@ void main() {
     scopes: ['default'],
   );
 
-  setUp(() {
-    storageRepo.clear();
+  setUpAll(() async {
+    jwtUtil = await JwtUtil.instance;
+    mockOAuthServer = MockOAuthServer(jwtUtil);
+  });
+
+  setUp(() async {
+    await storageRepo.clear();
+    mockOAuthServer.reset();
   });
 
   group('getAuthorizationUrl', () {
@@ -40,7 +50,6 @@ void main() {
       final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
-        metadataRepo: mockMetadataRepo,
       );
 
       final authorizationUrl = await authorizer.getAuthorizationUrl();
@@ -73,7 +82,7 @@ void main() {
       const clientId = 'some-client-id';
       const clientSecret = 'some-client-secret';
 
-      final config = FTAuthConfig(
+      final config = Config(
         gatewayUrl: 'http://localhost:8080',
         clientType: ClientType.confidential,
         clientId: clientId,
@@ -85,7 +94,6 @@ void main() {
       final authorizer = Authorizer(
         config,
         storageRepo: storageRepo,
-        metadataRepo: mockMetadataRepo,
       );
 
       expect(
@@ -95,16 +103,24 @@ void main() {
     });
   });
 
+  Future<void> setupValidUser() async {
+    final accessToken = await jwtUtil.createJWTToken(
+      expiration: DateTime.now().add(const Duration(minutes: 5)),
+    );
+    final refreshToken = Uuid().v4();
+
+    await storageRepo.setEphemeralString(keyFreshInstall, 'flag');
+    await storageRepo.setString(keyAccessToken, accessToken);
+    await storageRepo.setString(keyRefreshToken, refreshToken);
+  }
+
   group('initState', () {
     test('nothing in storage', () async {
       final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
-        metadataRepo: mockMetadataRepo,
       );
 
-      final authState = await authorizer.authStates.first;
-      expect(authState, AuthSignedOut());
       expect(
         authorizer.authStates,
         emitsInOrder([
@@ -117,11 +133,8 @@ void main() {
       final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
-        metadataRepo: mockMetadataRepo,
       );
 
-      final authState = await authorizer.authStates.first;
-      expect(authState, AuthSignedOut());
       expect(
         authorizer.authStates,
         emitsInOrder([
@@ -130,25 +143,233 @@ void main() {
       );
     });
 
-    test('access/refresh token in storage', () async {
+    group('access/refresh token in storage', () {
+      test('valid tokens', () async {
+        final authorizer = Authorizer(
+          mockPublicConfig,
+          storageRepo: storageRepo,
+          baseClient: baseHttpClient,
+        );
+        await setupValidUser();
+
+        expect(
+          authorizer.authStates,
+          emitsInOrder([
+            isA<AuthSignedIn>(),
+          ]),
+        );
+      });
+
+      test('fresh install', () async {
+        final authorizer = Authorizer(
+          mockPublicConfig,
+          storageRepo: storageRepo,
+          baseClient: baseHttpClient,
+        );
+        await setupValidUser();
+        await storageRepo.delete(keyFreshInstall);
+
+        expect(
+          authorizer.authStates,
+          emitsInOrder([
+            isA<AuthSignedOut>(),
+          ]),
+        );
+      });
+
+      test('expired tokens', () async {
+        final httpClient = baseHttpClient.copyWith(
+          tokenHandler: (_) async {
+            return Response(
+              '''
+              {
+                "error": "invalid_grant",
+                "error_description": "The given grant is invalid"
+              }
+              ''',
+              400,
+              headers: {'content-type': 'application/json'},
+            );
+          },
+        );
+        final authorizer = Authorizer(
+          mockPublicConfig,
+          storageRepo: storageRepo,
+          baseClient: httpClient,
+        );
+        await setupValidUser();
+
+        final accessToken = await jwtUtil.createJWTToken(
+          expiration: DateTime.now().add(const Duration(minutes: -5)),
+        );
+        await storageRepo.setString(keyAccessToken, accessToken);
+
+        expect(
+          authorizer.authStates,
+          emitsInOrder([
+            isA<AuthSignedOut>(),
+          ]),
+        );
+      });
+
+      test('userinfo call fails', () async {
+        final httpClient = baseHttpClient.copyWith(
+          userInfoHandler: (_) async => Response('Unauthorized', 401),
+        );
+
+        final authorizer = Authorizer(
+          mockPublicConfig,
+          storageRepo: storageRepo,
+          baseClient: httpClient,
+        );
+        await setupValidUser();
+
+        expect(
+          authorizer.authStates,
+          emitsInOrder([
+            isA<AuthSignedIn>(),
+          ]),
+        );
+      });
+    });
+  });
+
+  group('authorize', () {
+    test('user is logged in', () async {
       final authorizer = Authorizer(
         mockPublicConfig,
         storageRepo: storageRepo,
-        metadataRepo: mockMetadataRepo,
-        baseClient: mockHttpClient,
+        baseClient: baseHttpClient,
+      );
+      await setupValidUser();
+
+      final url = await authorizer.authorize();
+      expect(url, '');
+    });
+
+    test('returns auth code and modifies state', () async {
+      final authorizer = Authorizer(
+        mockPublicConfig,
+        storageRepo: storageRepo,
+        baseClient: baseHttpClient,
       );
 
-      await storageRepo.setString('access_token', _accessToken);
-      await storageRepo.setString('refresh_token', _refreshToken);
+      final url = await authorizer.authorize();
+      expect(url.isNotEmpty, isTrue);
 
-      final authState = await authorizer.authStates.first;
-      expect(authState, isA<AuthSignedIn>());
-      expect(
-        authorizer.authStates,
-        emitsInOrder([
-          isA<AuthSignedIn>(),
-        ]),
+      final resp = await mockOAuthServer.mockHttpClient.get(Uri.parse(url));
+      expect(resp.statusCode, 200);
+
+      final json = jsonDecode(resp.body) as Map;
+      expect(json['code'], isNotNull);
+
+      expect(await authorizer.authStates.first, const AuthLoading());
+    });
+  });
+
+  group('exchange', () {
+    test('authorize has not been called', () async {
+      final authorizer = Authorizer(
+        mockPublicConfig,
+        storageRepo: storageRepo,
+        baseClient: baseHttpClient,
       );
+
+      expect(authorizer.exchange({}), throwsStateError);
+    });
+
+    test('successful exchange', () async {
+      final authorizer = Authorizer(
+        mockPublicConfig,
+        storageRepo: storageRepo,
+        baseClient: mockOAuthServer.mockHttpClient,
+      );
+
+      final url = await authorizer.authorize();
+      expect(url.isNotEmpty, isTrue);
+
+      final resp = await mockOAuthServer.mockHttpClient.get(Uri.parse(url));
+      expect(resp.statusCode, 200);
+
+      final json = jsonDecode(resp.body) as Map;
+      expect(json['code'], isNotNull);
+      expect(json['state'], isNotNull);
+
+      await authorizer.exchange(json.cast());
+
+      expect(await authorizer.authStates.first, isA<AuthSignedIn>());
+    });
+
+    test('failedExchange', () async {
+      final authorizer = Authorizer(
+        mockPublicConfig,
+        storageRepo: storageRepo,
+        baseClient: mockOAuthServer.mockHttpClient.copyWith(
+          tokenHandler: (_) async => Response(
+            jsonEncode({paramError: 'Bad Request'}),
+            400,
+            headers: {'content-type': 'application/json'},
+          ),
+        ),
+      );
+
+      final url = await authorizer.authorize();
+      expect(url.isNotEmpty, isTrue);
+
+      final resp = await mockOAuthServer.mockHttpClient.get(Uri.parse(url));
+      expect(resp.statusCode, 200);
+
+      final json = jsonDecode(resp.body) as Map;
+      expect(json['code'], isNotNull);
+      expect(json['state'], isNotNull);
+
+      try {
+        await authorizer.exchange(json.cast());
+      } on Exception {
+        // ignore
+      }
+
+      expect(await authorizer.authStates.first, isA<AuthFailure>());
+    });
+  });
+
+  group('logout', () {
+    test('clears correct data', () async {
+      await Future.wait([
+        storageRepo.setString(keyAccessToken, 'access_token'),
+        storageRepo.setString(keyAccessTokenExp, '123456789'),
+        storageRepo.setString(keyRefreshToken, 'refresh_token'),
+        storageRepo.setString(keyCodeVerifier, 'code_verifier'),
+        storageRepo.setString(keyState, 'state'),
+        storageRepo.setString(keyConfig, 'config'),
+        storageRepo.setString(keyIdToken, 'id_token'),
+        storageRepo.setString(keyPinnedCertificates, 'pinned_certs'),
+        storageRepo.setString(keyPinnedCertificateChains, 'pinned_cert_chains'),
+      ]);
+
+      final authorizer = Authorizer(
+        mockPublicConfig,
+        storageRepo: storageRepo,
+        baseClient: mockOAuthServer.mockHttpClient,
+      );
+      await authorizer.logout();
+
+      final removedStrings = await Future.wait([
+        storageRepo.getString(keyAccessToken),
+        storageRepo.getString(keyAccessTokenExp),
+        storageRepo.getString(keyRefreshToken),
+        storageRepo.getString(keyCodeVerifier),
+        storageRepo.getString(keyState),
+        storageRepo.getString(keyIdToken),
+      ]);
+      expect(removedStrings.every((element) => element == null), isTrue);
+
+      final savedStrings = await Future.wait([
+        storageRepo.getString(keyPinnedCertificates),
+        storageRepo.getString(keyPinnedCertificateChains),
+        storageRepo.getString(keyConfig),
+      ]);
+      expect(savedStrings.every((element) => element != null), isTrue);
     });
   });
 }

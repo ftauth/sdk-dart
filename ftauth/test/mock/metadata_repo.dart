@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:ftauth/src/jwt/keyset.dart';
-import 'package:ftauth/src/metadata/metadata_repo.dart';
+import 'package:ftauth/src/repo/metadata/metadata_repo.dart';
+import 'package:ftauth_jwt/ftauth_jwt.dart';
 import 'package:ftauth/src/model/server/metadata.dart';
 
 class MockMetadataRepo extends MetadataRepo {

@@ -1,5 +1,3 @@
-import 'package:ftauth/src/jwt/claims.dart';
-import 'package:ftauth/src/jwt/token.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';

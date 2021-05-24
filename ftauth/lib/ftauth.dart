@@ -3,16 +3,21 @@
 /// For Flutter apps, see [ftauth_flutter](https://pub.dev/packages/ftauth_flutter).
 library ftauth;
 
-import 'src/ftauth.dart';
 export 'src/ftauth.dart';
 
 export 'src/http/client.dart';
-export 'src/credentials.dart';
+export 'src/authorizer/credentials.dart';
+export 'src/logger/logger.dart';
 export 'src/model/model.dart';
 
 export 'src/authorizer/authorizer.dart';
-export 'src/crypto/crypto_repo.dart';
-export 'src/storage/storage_repo.dart';
-export 'src/demo/demo.dart';
+// export 'src/demo/demo.dart';
 
-final FTAuthImpl FTAuth = FTAuthImpl.instance;
+export 'src/repo/crypto/crypto_repo.dart';
+export 'src/repo/storage/storage_repo.dart';
+
+// SSL Pinning
+export 'src/repo/ssl/ssl_pinning_client.dart';
+export 'src/repo/ssl/ssl_repo.dart';
+
+export 'src/util/oauth.dart';
