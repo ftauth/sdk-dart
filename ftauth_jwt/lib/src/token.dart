@@ -36,7 +36,9 @@ class JsonWebToken with EquatableMixin {
     List<int>? signature,
   }) : _signature = signature {
     header.assertValid();
-    claims.assertValid(header.type);
+    if (header.type != null) {
+      claims.assertValid(header.type!);
+    }
 
     // Add the raw value if we can.
     if (_signature == null) {

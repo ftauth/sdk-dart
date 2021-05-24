@@ -21,11 +21,19 @@ const _standardClaims = [
   'jti',
   'nonce',
   'cnf',
-  'client_id',
   'scope',
   'htm',
   'htu',
+];
+
+const _ftauthClaims = [
+  'client_id',
   'userInfo',
+];
+
+const _reservedClaims = [
+  ..._standardClaims,
+  ..._ftauthClaims,
 ];
 
 @serialize
@@ -107,7 +115,7 @@ class JsonWebClaims extends Equatable {
   factory JsonWebClaims.fromJson(Map<String, dynamic> json) {
     var instance = _$JsonWebClaimsFromJson(json);
     final customClaims =
-        json.keys.where((key) => !_standardClaims.contains(key));
+        json.keys.where((key) => !_reservedClaims.contains(key));
     instance.customClaims
         .addEntries(customClaims.map((key) => MapEntry(key, json[key])));
     return instance;

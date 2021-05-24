@@ -34,8 +34,11 @@ class JsonWebHeader extends Equatable {
   final String? keyId;
 
   @JsonKey(
-      name: 'typ', fromJson: TokenTypeX.fromJson, toJson: TokenTypeX.toJson)
-  final TokenType type;
+    name: 'typ',
+    fromJson: TokenTypeX.tryFromJson,
+    toJson: TokenTypeX.toJson,
+  )
+  final TokenType? type;
 
   @JsonKey(name: 'x5c')
   final List<String>? x509CertChain;
@@ -50,7 +53,7 @@ class JsonWebHeader extends Equatable {
   final Uri? x509Uri;
 
   JsonWebHeader({
-    required this.type,
+    this.type,
     this.contentType,
     required this.algorithm,
     this.jwkSetUri,

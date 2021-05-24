@@ -8,7 +8,7 @@ part of 'header.dart';
 
 JsonWebHeader _$JsonWebHeaderFromJson(Map<String, dynamic> json) {
   return JsonWebHeader(
-    type: TokenTypeX.fromJson(json['typ'] as String),
+    type: TokenTypeX.tryFromJson(json['typ'] as String?),
     contentType: json['cty'] as String?,
     algorithm: AlgorithmX.fromJson(json['alg'] as String),
     jwkSetUri: json['jwu'] == null ? null : Uri.parse(json['jwu'] as String),
