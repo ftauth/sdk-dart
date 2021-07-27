@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
@@ -38,8 +37,7 @@ const kConfigPath = 'assets/ftauth_config.json';
 /// ```
 class FTAuth extends InheritedWidget {
   /// Override this value to set the logger for the SSO module.
-  static set logger(LoggerInterface newValue) =>
-      ftauth.FTAuth.logger = newValue;
+  static set logger(LoggerInterface newValue) => ftauth.FTAuth.logger = newValue;
 
   static void debug(String log) => ftauth.FTAuth.debug(log);
   static void info(String log) => ftauth.FTAuth.info(log);
@@ -121,8 +119,7 @@ class FTAuthClient extends ftauth.FTAuth {
 
     FTAuth.debug('Launching url: $url');
     try {
-      final Map<String, String>? parameters =
-          await _channel.invokeMapMethod<String, String>('login', url);
+      final Map<String, String>? parameters = await _channel.invokeMapMethod<String, String>('login', url);
 
       if (parameters == null) {
         throw PlatformException(
@@ -133,8 +130,7 @@ class FTAuthClient extends ftauth.FTAuth {
 
       await authorizer.exchange(parameters);
     } on Exception catch (e) {
-      if (e is PlatformException &&
-          e.code == PlatformExceptionCodes.authCancelled) {
+      if (e is PlatformException && e.code == PlatformExceptionCodes.authCancelled) {
         FTAuth.info('Authorization process cancelled.');
       } else {
         FTAuth.error('Error logging in: $e');

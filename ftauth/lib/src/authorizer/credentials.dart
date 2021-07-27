@@ -12,7 +12,7 @@ class Credentials implements oauth2.Credentials {
   final StorageRepo _storageRepo;
   final Config _config;
   final Token _accessToken;
-  final Token _refreshToken;
+  final Token? _refreshToken;
   final Token? _idToken;
   final List<String> _scopes;
   final http.Client _httpClient;
@@ -38,13 +38,15 @@ class Credentials implements oauth2.Credentials {
     final accessToken = Token(
       creds.accessToken,
       type: config.accessTokenFormat,
-      expiry:
-          config.accessTokenFormat != TokenFormat.JWT ? creds.expiration : null,
+      expiry: config.accessTokenFormat != TokenFormat.JWT ? creds.expiration : null,
     );
-    final refreshToken = Token(
-      creds.refreshToken!,
-      type: config.refreshTokenFormat,
-    );
+    Token? refreshToken;
+    if (creds.refreshToken != null) {
+      refreshToken = Token(
+        creds.refreshToken!,
+        type: config.refreshTokenFormat,
+      );
+    }
     Token? idToken;
     if (creds.idToken != null) {
       idToken = Token(creds.idToken!, type: TokenFormat.JWT);
@@ -64,13 +66,12 @@ class Credentials implements oauth2.Credentials {
   String get accessToken => _accessToken.raw;
 
   @override
-  bool get canRefresh => true;
+  bool get canRefresh => _refreshToken != null;
 
   @override
   DateTime? get expiration => _accessToken.expiry;
 
-  int? get expirationSecondsSinceEpoch =>
-      expiration != null ? expiration!.millisecondsSinceEpoch ~/ 1000 : null;
+  int? get expirationSecondsSinceEpoch => expiration != null ? expiration!.millisecondsSinceEpoch ~/ 1000 : null;
 
   @override
   String? get idToken => _idToken?.raw;
@@ -79,7 +80,7 @@ class Credentials implements oauth2.Credentials {
   bool get isExpired => _accessToken.isExpired;
 
   @override
-  String get refreshToken => _refreshToken.raw;
+  String? get refreshToken => _refreshToken?.raw;
 
   @override
   List<String> get scopes => _scopes;
@@ -128,7 +129,7 @@ class Credentials implements oauth2.Credentials {
             keyAccessTokenExp,
             creds.expirationSecondsSinceEpoch!.toString(),
           ),
-        _storageRepo.setString(keyRefreshToken, creds.refreshToken),
+        if (creds.refreshToken != null) _storageRepo.setString(keyRefreshToken, creds.refreshToken!),
       ]);
 
       return creds;

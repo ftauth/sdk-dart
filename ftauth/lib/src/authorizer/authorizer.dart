@@ -54,7 +54,8 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   }
 
   /// Adds the state to the stream and caches it.
-  void _addState(AuthState state) {
+  @protected
+  void addState(AuthState state) {
     if (state != _latestAuthState) {
       FTAuth.debug('Next state: $state');
       _latestAuthState = state;
@@ -98,7 +99,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
         } finally {
           if (_e != null) {
             final state = AuthFailure.fromException(_e);
-            _addState(state);
+            addState(state);
           }
         }
       },
@@ -129,8 +130,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     // Checks if this is the first time starting the app from a fresh install.
     // If it is, clear any old Keychain information which may be left behind
     // from previous installs.
-    final isFreshInstall =
-        await _storageRepo.getEphemeralString(keyFreshInstall) == null;
+    final isFreshInstall = await _storageRepo.getEphemeralString(keyFreshInstall) == null;
     if (isFreshInstall) {
       FTAuth.debug('Clearing old Keychain items...');
       await _storageRepo.clear();
@@ -172,7 +172,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     final refreshTokenEnc = await _storageRepo.getString(keyRefreshToken);
     final idTokenEnc = await _storageRepo.getString(keyIdToken);
 
-    if (accessTokenEnc == null || refreshTokenEnc == null) {
+    if (accessTokenEnc == null) {
       FTAuth.debug('No tokens found in storage.');
       return null;
     }
@@ -182,10 +182,13 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       type: _config.accessTokenFormat,
     );
 
-    final refreshToken = Token(
-      refreshTokenEnc,
-      type: _config.refreshTokenFormat,
-    );
+    Token? refreshToken;
+    if (refreshTokenEnc != null) {
+      refreshToken = Token(
+        refreshTokenEnc,
+        type: _config.refreshTokenFormat,
+      );
+    }
 
     Token? idToken;
     if (idTokenEnc != null) {
@@ -242,10 +245,9 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       // Only update the credentials when refreshing. Otherwise, add new states
       // to the stream.
       if (_latestAuthState is AuthSignedIn && state is AuthSignedIn) {
-        (_latestAuthState as AuthSignedIn).client.credentials =
-            state.client.credentials;
+        (_latestAuthState as AuthSignedIn).client.credentials = state.client.credentials;
       } else {
-        _addState(state);
+        addState(state);
       }
     }
   }
@@ -260,7 +262,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       FTAuth.info('User is already logged in.');
       return '';
     }
-    _addState(const AuthLoading());
+    addState(const AuthLoading());
     return getAuthorizationUrl(
       language: language,
       countryCode: countryCode,
@@ -316,10 +318,8 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   }
 
   @protected
-  Future<oauth2.Credentials> handleExchange(
-      Map<String, String> parameters) async {
-    final client =
-        await _authCodeGrant!.handleAuthorizationResponse(parameters);
+  Future<oauth2.Credentials> handleExchange(Map<String, String> parameters) async {
+    final client = await _authCodeGrant!.handleAuthorizationResponse(parameters);
     return client.credentials;
   }
 
@@ -337,11 +337,11 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       final error = parameters['error']!;
       final errorDesc = parameters['error_description'];
       final errorUri = parameters['error_uri'];
-      _addState(_buildError(errorDesc, code: error, uri: errorUri));
+      addState(_buildError(errorDesc, code: error, uri: errorUri));
       throw AuthException(error);
     }
 
-    _addState(const AuthLoading());
+    addState(const AuthLoading());
 
     try {
       final oauthCredentials = await handleExchange(parameters);
@@ -359,9 +359,8 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
             keyAccessTokenExp,
             credentials.expirationSecondsSinceEpoch!.toString(),
           ),
-        _storageRepo.setString(keyRefreshToken, credentials.refreshToken),
-        if (credentials.idToken != null)
-          _storageRepo.setString(keyIdToken, credentials.idToken!),
+        if (credentials.refreshToken != null) _storageRepo.setString(keyRefreshToken, credentials.refreshToken!),
+        if (credentials.idToken != null) _storageRepo.setString(keyIdToken, credentials.idToken!),
       ]);
 
       final newClient = Client(
@@ -379,7 +378,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
         FTAuth.error('Error downloading user: $e');
       }
 
-      _addState(AuthSignedIn(newClient, user));
+      addState(AuthSignedIn(newClient, user));
 
       await Future.wait([
         _storageRepo.delete(keyState),
@@ -388,7 +387,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
       return newClient;
     } catch (e) {
-      _addState(AuthFailure('${e.runtimeType}', e.toString()));
+      addState(AuthFailure('${e.runtimeType}', e.toString()));
       rethrow;
     }
   }
@@ -412,7 +411,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
   Future<void> logout() async {
     await _clearStorageForLogout();
-    _addState(const AuthSignedOut());
+    addState(const AuthSignedOut());
   }
 
   @override
