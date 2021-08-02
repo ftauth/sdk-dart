@@ -79,13 +79,18 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
     // Once the dialog is closed, logout (i.e. cancel the auth request)
     // and pop to the previous screen.
 
-    await FTAuthClient.of(context).logout();
+    await FTAuth.of(context).logout();
     Navigator.of(context).pop();
   }
 
   Future<void> _exchangeWithParameters(Map<String, String> parameters) async {
     try {
-      await FTAuthClient.of(context).exchange(parameters);
+      await FTAuth.of(context).exchange(parameters);
+
+      // We're logged in. Return to the previous screen.
+      if (mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
     } on Exception catch (e) {
       return _showErrorPopup(e);
     }
@@ -93,7 +98,7 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final ssoClient = FTAuthClient.of(context);
+    final ssoClient = FTAuth.of(context);
     return WillPopScope(
       onWillPop: () async {
         // Will fire only if the user clicks the back button. Ensures that the

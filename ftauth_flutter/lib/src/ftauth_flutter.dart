@@ -25,19 +25,20 @@ const kConfigPath = 'assets/ftauth_config.json';
 /// );
 ///
 /// // Login
-/// await FTAuthClient.of(context).login();
+/// await FTAuth.of(context).login();
 ///
 /// // Logout
-/// await FTAuthClient.of(context).logout();
+/// await FTAuth.of(context).logout();
 ///
 /// // Fetch Data
-/// final ftauthClient = FTAuthClient.of(context);
+/// final ftauthClient = FTAuth.of(context);
 /// final userInfo = Uri.parse('https://myapp.com/api/user');
 /// final resp = await ftauthClient.get(userInfo);
 /// ```
 class FTAuth extends InheritedWidget {
   /// Override this value to set the logger for the SSO module.
-  static set logger(LoggerInterface newValue) => ftauth.FTAuth.logger = newValue;
+  static set logger(LoggerInterface newValue) =>
+      ftauth.FTAuth.logger = newValue;
 
   static void debug(String log) => ftauth.FTAuth.debug(log);
   static void info(String log) => ftauth.FTAuth.info(log);
@@ -69,6 +70,18 @@ class FTAuth extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant FTAuth oldWidget) => false;
+
+  /// Returns the [FTAuthClient] for [context].
+  static FTAuthClient of(BuildContext context, {bool listen = true}) {
+    FTAuth? ftauth;
+    if (listen) {
+      ftauth = context.dependOnInheritedWidgetOfExactType<FTAuth>();
+    } else {
+      ftauth = context.findAncestorWidgetOfExactType<FTAuth>();
+    }
+    assert(ftauth != null, 'No FTAuth widget found above this one.');
+    return ftauth!.client;
+  }
 }
 
 class FTAuthClient extends ftauth.FTAuth {
@@ -96,12 +109,6 @@ class FTAuthClient extends ftauth.FTAuth {
               ),
         );
 
-  static FTAuthClient of(BuildContext context) {
-    final ftauth = context.dependOnInheritedWidgetOfExactType<FTAuth>();
-    assert(ftauth != null, 'No FTAuth widget found above this one.');
-    return ftauth!.client;
-  }
-
   /// Performs the two-step OAuth process to login the user.
   Future<void> login({
     String? language,
@@ -119,7 +126,8 @@ class FTAuthClient extends ftauth.FTAuth {
 
     FTAuth.debug('Launching url: $url');
     try {
-      final Map<String, String>? parameters = await _channel.invokeMapMethod<String, String>('login', url);
+      final Map<String, String>? parameters =
+          await _channel.invokeMapMethod<String, String>('login', url);
 
       if (parameters == null) {
         throw PlatformException(
@@ -130,7 +138,8 @@ class FTAuthClient extends ftauth.FTAuth {
 
       await authorizer.exchange(parameters);
     } on Exception catch (e) {
-      if (e is PlatformException && e.code == PlatformExceptionCodes.authCancelled) {
+      if (e is PlatformException &&
+          e.code == PlatformExceptionCodes.authCancelled) {
         FTAuth.info('Authorization process cancelled.');
       } else {
         FTAuth.error('Error logging in: $e');

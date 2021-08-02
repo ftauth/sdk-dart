@@ -27,6 +27,7 @@ class SSLRepoImpl extends SSLRepo {
   SSLRepoImpl(this._storageRepo, {this.withTrustedRoots})
       : super(_storageRepo, withTrustedRoots: withTrustedRoots);
 
+  @override
   Future<void> init() async {
     final storedPins = await _storageRepo.getString(keyPinnedCertificates);
     if (storedPins != null) {

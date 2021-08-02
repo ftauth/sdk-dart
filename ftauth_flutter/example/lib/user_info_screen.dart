@@ -28,7 +28,7 @@ class _UserInfoScreenState extends State<UserInfoScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_response == null) {
-      _refreshState(FTAuthClient.of(context));
+      _refreshState(FTAuth.of(context));
     }
   }
 
@@ -41,7 +41,7 @@ class _UserInfoScreenState extends State<UserInfoScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _refreshState(FTAuthClient.of(context));
+      _refreshState(FTAuth.of(context));
     }
   }
 

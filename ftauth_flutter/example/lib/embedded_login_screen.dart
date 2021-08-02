@@ -21,7 +21,7 @@ class _EmbeddedLoginScreenState extends State<EmbeddedLoginScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final ssoClient = FTAuthClient.of(context);
+    final ssoClient = FTAuth.of(context);
     ssoClient.authStates
         .firstWhere((state) => state is AuthSignedIn || state is AuthFailure)
         .then((_) {
