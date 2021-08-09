@@ -49,7 +49,7 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
 
   /// The initial login URL loaded into the view. Used to compare against
   /// later URLs to know when we've moved pass the login page.
-  late final String _initialUrl;
+  String? _initialUrl;
 
   /// Whether or not to show the loading indicator.
   bool _isLoading = true;
@@ -80,19 +80,25 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
     // and pop to the previous screen.
 
     await FTAuth.of(context).logout();
-    Navigator.of(context).pop();
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
   }
 
   Future<void> _exchangeWithParameters(Map<String, String> parameters) async {
     try {
       await FTAuth.of(context).exchange(parameters);
 
-      // We're logged in. Return to the previous screen.
-      if (mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
+      _onLoggedIn();
     } on Exception catch (e) {
       return _showErrorPopup(e);
+    }
+  }
+
+  /// Callback for successful login. Return to the previous screen.
+  void _onLoggedIn() {
+    if (mounted && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
     }
   }
 
@@ -115,13 +121,14 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
               try {
                 final isLoggedIn = await ssoClient.isLoggedIn;
                 if (isLoggedIn) {
+                  _onLoggedIn();
                   return;
                 }
-                _initialUrl = await ssoClient.authorize(
+                final authorizeUrl = await ssoClient.authorize(
                   language: widget.language,
                   countryCode: widget.countryCode,
                 );
-                controller.loadUrl(_initialUrl);
+                controller.loadUrl(authorizeUrl);
               } on Exception catch (e) {
                 FTAuth.error('Error calling authorize: $e');
                 setState(() => _isLoading = false);
@@ -140,8 +147,9 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
               FTAuth.debug('WebView - Loading url: $url');
               // Will be true if the login page is reloaded, for example, if
               // the user enters an incorrect password.
-              final isReload =
-                  Uri.parse(_initialUrl).path == Uri.parse(url).path;
+              final isReload = _initialUrl == null
+                  ? false
+                  : Uri.parse(_initialUrl!).path == Uri.parse(url).path;
               if (!_isLoading && !isReload) {
                 setState(() => _isLoading = true);
               }
@@ -149,6 +157,7 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
             onPageFinished: (String url) {
               FTAuth.debug('WebView - Loaded url: $url');
               if (!loadedLoginPage.isCompleted) {
+                _initialUrl = url;
                 setState(() {
                   _isLoading = false;
                   loadedLoginPage.complete();
