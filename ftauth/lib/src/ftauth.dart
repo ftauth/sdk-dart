@@ -42,6 +42,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     Duration? timeout,
     Uint8List? encryptionKey,
     SetupHandler? setup,
+    bool? clearOnFreshInstall,
   })  : _baseClient = baseClient ?? http.Client(),
         _timeout = timeout ?? const Duration(seconds: 60) {
     switch (config.provider) {
@@ -51,6 +52,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
               config,
               storageRepo: storageRepo ?? StorageRepo.instance,
               baseClient: baseClient,
+              clearOnFreshInstall: clearOnFreshInstall,
             );
         break;
     }

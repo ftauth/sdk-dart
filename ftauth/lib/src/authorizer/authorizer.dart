@@ -36,6 +36,9 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   /// Encryption key used for [_storageRepo].
   Uint8List? _encryptionKey;
 
+  /// Whether to clear previous Keychain items on a fresh install.
+  final bool clearOnFreshInstall;
+
   /// Stores pinned SSL certificates.
   final SSLRepo _sslRepository;
 
@@ -78,9 +81,11 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     http.Client? baseClient,
     Duration? timeout,
     Uint8List? encryptionKey,
+    bool? clearOnFreshInstall,
   })  : _storageRepo = storageRepo,
         _sslRepository = sslRepository ?? SSLRepoImpl(storageRepo),
-        _encryptionKey = encryptionKey {
+        _encryptionKey = encryptionKey,
+        clearOnFreshInstall = clearOnFreshInstall ?? true {
     _baseClient = SSLPinningClient(
       _sslRepository,
       baseClient: baseClient,
@@ -139,7 +144,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     // from previous installs.
     final isFreshInstall =
         await _storageRepo.getEphemeralString(keyFreshInstall) == null;
-    if (isFreshInstall) {
+    if (isFreshInstall && clearOnFreshInstall) {
       FTAuth.debug('Clearing old Keychain items...');
       await _storageRepo.clear();
       await _storageRepo.setEphemeralString(keyFreshInstall, 'flag');

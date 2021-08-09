@@ -57,6 +57,7 @@ class FTAuth extends InheritedWidget {
     Uint8List? encryptionKey,
     String? appGroup,
     SetupHandler? setup,
+    bool? clearOnFreshInstall,
   })  : client = FTAuthClient(
           config,
           baseClient: baseClient,
@@ -65,6 +66,7 @@ class FTAuth extends InheritedWidget {
           storageRepo: storageRepo,
           appGroup: appGroup,
           setup: setup,
+          clearOnFreshInstall: clearOnFreshInstall,
         ),
         super(key: key, child: child);
 
@@ -96,6 +98,7 @@ class FTAuthClient extends ftauth.FTAuth {
     Duration? timeout,
     String? appGroup,
     SetupHandler? setup,
+    bool? clearOnFreshInstall,
   }) : super(
           config,
           authorizer: authorizer,
@@ -107,6 +110,7 @@ class FTAuthClient extends ftauth.FTAuth {
               FlutterSecureStorage(
                 appGroup: appGroup,
               ),
+          clearOnFreshInstall: clearOnFreshInstall,
         );
 
   /// Performs the two-step OAuth process to login the user.
