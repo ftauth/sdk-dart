@@ -38,7 +38,8 @@ class Credentials implements oauth2.Credentials {
     final accessToken = Token(
       creds.accessToken,
       type: config.accessTokenFormat,
-      expiry: config.accessTokenFormat != TokenFormat.JWT ? creds.expiration : null,
+      expiry:
+          config.accessTokenFormat != TokenFormat.JWT ? creds.expiration : null,
     );
     Token? refreshToken;
     if (creds.refreshToken != null) {
@@ -71,7 +72,8 @@ class Credentials implements oauth2.Credentials {
   @override
   DateTime? get expiration => _accessToken.expiry;
 
-  int? get expirationSecondsSinceEpoch => expiration != null ? expiration!.millisecondsSinceEpoch ~/ 1000 : null;
+  int? get expirationSecondsSinceEpoch =>
+      expiration != null ? expiration!.millisecondsSinceEpoch ~/ 1000 : null;
 
   @override
   String? get idToken => _idToken?.raw;
@@ -110,8 +112,10 @@ class Credentials implements oauth2.Credentials {
         tokenEndpoint: _config.tokenUri,
         scopes: scopes,
       ).refresh(
-        identifier: identifier,
-        secret: secret,
+        identifier: _config.clientId,
+        // Must be included as empty string so that the client ID is sent
+        // in requests.
+        secret: _config.clientSecret ?? '',
         httpClient: _httpClient,
       );
 
@@ -129,7 +133,8 @@ class Credentials implements oauth2.Credentials {
             keyAccessTokenExp,
             creds.expirationSecondsSinceEpoch!.toString(),
           ),
-        if (creds.refreshToken != null) _storageRepo.setString(keyRefreshToken, creds.refreshToken!),
+        if (creds.refreshToken != null)
+          _storageRepo.setString(keyRefreshToken, creds.refreshToken!),
       ]);
 
       return creds;

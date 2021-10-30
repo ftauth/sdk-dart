@@ -31,7 +31,7 @@ public class SwiftFtauthFlutterPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "storageInit":
-        try? keystore.clear()
+        // No-op
         result(nil)
     case "storageGet":
         guard let key = call.arguments as? String else {
@@ -39,18 +39,19 @@ public class SwiftFtauthFlutterPlugin: NSObject, FlutterPlugin {
             return
         }
         do {
-            let data = try keystore.get(key.data(using: .utf8))
+            let data = try keystore.get(key)
             result(data)
         } catch {
             handleKeystoreError(error: error, result: result)
         }
     case "storageSet":
-        guard let map = call.arguments as? [String: String], let key = map["key"], let value = map["value"] else {
+        guard let map = call.arguments as? [String: String],
+              let key = map["key"], let value = map["value"] else {
             result(FTAuthError(errorCode: .invalidArguments).flutterError)
             return
         }
         do {
-            try keystore.save(key.data(using: .utf8)!, value: value.data(using: .utf8)!)
+            try keystore.save(key, value: value.data(using: .utf8)!)
             result(nil)
         } catch {
             handleKeystoreError(error: error, result: result)
@@ -61,7 +62,7 @@ public class SwiftFtauthFlutterPlugin: NSObject, FlutterPlugin {
             return
         }
         do {
-            try keystore.delete(key.data(using: .utf8))
+            try keystore.delete(key)
             result(nil)
         } catch {
             handleKeystoreError(error: error, result: result)

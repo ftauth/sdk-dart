@@ -21,13 +21,13 @@ import 'package:http/http.dart' as http;
 /// );
 ///
 /// // Login
-/// await FTAuthClient.of(context).login();
+/// await FTAuth.of(context).login();
 ///
 /// // Logout
-/// await FTAuthClient.of(context).logout();
+/// await FTAuth.of(context).logout();
 ///
 /// // Fetch Data
-/// final ftauthClient = FTAuthClient.of(context);
+/// final ftauthClient = FTAuth.of(context);
 /// final userInfo = Uri.parse('https://myapp.com/api/user');
 /// final resp = await ftauthClient.get(userInfo);
 /// ```
@@ -53,6 +53,7 @@ class FTAuth extends InheritedWidget {
     Uint8List? encryptionKey,
     String? appGroup,
     SetupHandler? setup,
+    bool? clearOnFreshInstall,
   })  : client = FTAuthClient(
           config,
           baseClient: baseClient,
@@ -61,11 +62,24 @@ class FTAuth extends InheritedWidget {
           storageRepo: storageRepo,
           appGroup: appGroup,
           setup: setup,
+          clearOnFreshInstall: clearOnFreshInstall,
         ),
         super(key: key, child: child);
 
   @override
   bool updateShouldNotify(covariant FTAuth oldWidget) => false;
+
+  /// Returns the [FTAuthClient] for [context].
+  static FTAuthClient of(BuildContext context, {bool listen = true}) {
+    FTAuth? ftauth;
+    if (listen) {
+      ftauth = context.dependOnInheritedWidgetOfExactType<FTAuth>();
+    } else {
+      ftauth = context.findAncestorWidgetOfExactType<FTAuth>();
+    }
+    assert(ftauth != null, 'No FTAuth widget found above this one.');
+    return ftauth!.client;
+  }
 }
 
 class FTAuthClient extends ftauth.FTAuth {
@@ -78,6 +92,7 @@ class FTAuthClient extends ftauth.FTAuth {
     Duration? timeout,
     String? appGroup,
     SetupHandler? setup,
+    bool? clearOnFreshInstall,
   }) : super(
           config,
           authorizer: authorizer,
@@ -89,6 +104,7 @@ class FTAuthClient extends ftauth.FTAuth {
               FTAuthSecureStorage(
                 appGroup: appGroup,
               ),
+          clearOnFreshInstall: clearOnFreshInstall,
         );
 
   static FTAuthPlatformInterface get _platform =>

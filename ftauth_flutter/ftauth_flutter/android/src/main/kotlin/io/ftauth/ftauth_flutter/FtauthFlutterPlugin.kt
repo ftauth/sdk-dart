@@ -1,36 +1,112 @@
 package io.ftauth.ftauth_flutter
 
+import android.content.Context
 import androidx.annotation.NonNull
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
+import io.ftauth.ftauth.common.KeyStore
+import io.ftauth.ftauth.common.KeyStoreException
+import io.ftauth.ftauth.common.KeyStoreExceptionCode
+import java.nio.charset.Charset
 
 /** FtauthFlutterPlugin */
-class FtauthFlutterPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
+class FtauthFlutterPlugin : FlutterPlugin, MethodCallHandler {
+    /// The MethodChannel that will the communication between Flutter and native Android
+    ///
+    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+    /// when the Flutter Engine is detached from the Activity
+    private lateinit var channel: MethodChannel
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ftauth_flutter")
-    channel.setMethodCallHandler(this)
-  }
+    private lateinit var context: Context
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else {
-      result.notImplemented()
+    private var keystore: KeyStore? = null
+
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ftauth_flutter")
+        channel.setMethodCallHandler(this)
+        context = flutterPluginBinding.applicationContext
     }
-  }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+    private fun handleKeystoreError(result: Result, e: Exception) {
+        if (e is KeyStoreException) {
+            result.error(e.code.code, e.details, null)
+        } else {
+            result.error(KeyStoreExceptionCode.UNKNOWN.code, e.message, null)
+        }
+    }
+
+    private val isInitialized: Boolean
+        get() = keystore != null
+
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+        fun handleUninitialized() {
+            result.error(
+                "UNKNOWN",
+                "Must call \"storageInit\" before accessing methods",
+                null
+            )
+        }
+        when (call.method) {
+            "storageInit" -> {
+                keystore = keystore ?: KeyStore(context)
+                result.success(null)
+            }
+            else -> {
+                if (!isInitialized) {
+                    handleUninitialized()
+                    return
+                }
+                when (call.method) {
+                    "storageGet" -> {
+                        try {
+                            val key = call.arguments as? String
+                            val value = keystore!!.get(key)
+                            result.success(value)
+                        } catch(e: Exception) {
+                            handleKeystoreError(result, e)
+                        }
+                    }
+                    "storageSet" -> {
+                        try {
+                            val map = (call.arguments as? Map<*, *> ?: emptyMap<String, Any?>()) as Map<String, Any?>
+                            val key: String? by map
+                            val value: String? by map
+                            keystore!!.save(key, value?.toByteArray(Charsets.UTF_8))
+                            result.success(null)
+                        } catch(e: Exception) {
+                            handleKeystoreError(result, e)
+                        }
+                    }
+                    "storageDelete" -> {
+                        try {
+                            val key = call.arguments as? String
+                            keystore!!.delete(key)
+                            result.success(null)
+                        } catch(e: Exception) {
+                            handleKeystoreError(result, e)
+                        }
+                    }
+                    "storageClear" -> {
+                        try {
+                            keystore!!.clear()
+                            result.success(null)
+                        } catch(e: Exception) {
+                            handleKeystoreError(result, e)
+                        }
+                    }
+                    "login" -> {
+                        result.success(null)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
+        }
+    }
+
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
 }

@@ -12,7 +12,7 @@ class AuthStateIndicator extends StatelessWidget {
     final largeTextStyle = Theme.of(context).textTheme.headline5;
 
     return StreamBuilder<AuthState>(
-      stream: FTAuthClient.of(context).authStates,
+      stream: FTAuth.of(context).authStates,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const CircularProgressIndicator();

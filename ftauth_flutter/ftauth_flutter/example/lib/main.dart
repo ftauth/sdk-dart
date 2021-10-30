@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_widgetkit/flutter_widgetkit.dart';
 import 'package:ftauth/src/authorizer/keys.dart';
 import 'package:ftauth/src/repo/ssl/keys.dart';
 import 'package:ftauth_example/embedded_login_screen.dart';
@@ -180,7 +177,7 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                       key: Key(keyLoginButton),
                       child: const Text('Login'),
-                      onPressed: () => FTAuthClient.of(context).login(
+                      onPressed: () => FTAuth.of(context).login(
                         language: _selectedLanguage?.code,
                         countryCode: _selectedCountry?.isoCode,
                       ),
@@ -218,7 +215,7 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                       key: Key(keyLogoutButton),
                       child: const Text('Logout'),
-                      onPressed: () => FTAuthClient.of(context).logout(),
+                      onPressed: () => FTAuth.of(context).logout(),
                     ),
                   ],
                 ),

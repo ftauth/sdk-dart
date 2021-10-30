@@ -43,6 +43,6 @@ class AuthFailure extends AuthState {
 
   @override
   String toString() {
-    return '$code: $message';
+    return 'AuthFailure{code=$code, message=$message}';
   }
 }

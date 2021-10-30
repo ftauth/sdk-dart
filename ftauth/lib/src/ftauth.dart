@@ -2,11 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth/src/demo/demo.dart';
-import 'package:ftauth/src/exception.dart';
 import 'package:ftauth/src/logger/logger.dart';
 import 'package:ftauth/src/model/user/user.dart';
-import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 
 const _isDemo = bool.fromEnvironment('demo', defaultValue: false);
@@ -17,9 +14,8 @@ abstract class FTAuthInterface
     implements AuthorizerInterface, SSLPinningInterface {
   Future<void> logout();
   Stream<AuthState> get authStates;
-  Future<AuthState> get currentState;
-  Future<bool> get isLoggedIn;
-  Future<User?> get currentUser;
+  bool get isLoggedIn;
+  User? get currentUser;
 }
 
 /// The main utility class. It is generally not necessary to work with this
@@ -46,6 +42,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     Duration? timeout,
     Uint8List? encryptionKey,
     SetupHandler? setup,
+    bool? clearOnFreshInstall,
   })  : _baseClient = baseClient ?? http.Client(),
         _timeout = timeout ?? const Duration(seconds: 60) {
     switch (config.provider) {
@@ -55,6 +52,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
               config,
               storageRepo: storageRepo ?? StorageRepo.instance,
               baseClient: baseClient,
+              clearOnFreshInstall: clearOnFreshInstall,
             );
         break;
     }
@@ -80,16 +78,16 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
 
   /// The current authorization state.
   @override
-  Future<AuthState> get currentState => authStates.first;
+  AuthState get currentState => authorizer.currentState;
 
   /// Whether or not a user is currently logged in.
   @override
-  Future<bool> get isLoggedIn async => (await currentState) is AuthSignedIn;
+  bool get isLoggedIn => currentState is AuthSignedIn;
 
   /// Retrieves the currently logged in user.
   @override
-  Future<User?> get currentUser async {
-    final state = await currentState;
+  User? get currentUser {
+    final state = currentState;
     if (state is AuthSignedIn) {
       return state.user;
     }

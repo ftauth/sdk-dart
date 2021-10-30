@@ -16,6 +16,7 @@ abstract class AuthorizerInterface {
   Future<void> init();
   Future<String> authorize();
   Future<Client> exchange(Map<String, String> parameters);
+  AuthState get currentState;
 }
 
 /// Handles the generic OAuth flow by interfacing with native layer components and
@@ -35,6 +36,9 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   /// Encryption key used for [_storageRepo].
   Uint8List? _encryptionKey;
 
+  /// Whether to clear previous Keychain items on a fresh install.
+  final bool clearOnFreshInstall;
+
   /// Stores pinned SSL certificates.
   final SSLRepo _sslRepository;
 
@@ -42,6 +46,10 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
   /// The cached auth state.
   AuthState? _latestAuthState;
+
+  /// The current auth state.
+  @override
+  AuthState get currentState => _latestAuthState ?? const AuthLoading();
 
   /// Ensures that [init] is only called once.
   Future<AuthState>? _initStateFuture;
@@ -73,9 +81,11 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     http.Client? baseClient,
     Duration? timeout,
     Uint8List? encryptionKey,
+    bool? clearOnFreshInstall,
   })  : _storageRepo = storageRepo,
         _sslRepository = sslRepository ?? SSLRepoImpl(storageRepo),
-        _encryptionKey = encryptionKey {
+        _encryptionKey = encryptionKey,
+        clearOnFreshInstall = clearOnFreshInstall ?? true {
     _baseClient = SSLPinningClient(
       _sslRepository,
       baseClient: baseClient,
@@ -110,9 +120,11 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   @override
   Future<void> init() async {
     if (_latestAuthState == null) {
-      _initStateFuture ??= _init();
+      _initStateFuture ??= _init().then((state) {
+        FTAuth.debug('Initial state: $state');
+        return state;
+      });
       _latestAuthState = await _initStateFuture!;
-      FTAuth.debug('Initial state: $_latestAuthState');
     }
   }
 
@@ -130,8 +142,9 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     // Checks if this is the first time starting the app from a fresh install.
     // If it is, clear any old Keychain information which may be left behind
     // from previous installs.
-    final isFreshInstall = await _storageRepo.getEphemeralString(keyFreshInstall) == null;
-    if (isFreshInstall) {
+    final isFreshInstall =
+        await _storageRepo.getEphemeralString(keyFreshInstall) == null;
+    if (isFreshInstall && clearOnFreshInstall) {
       FTAuth.debug('Clearing old Keychain items...');
       await _storageRepo.clear();
       await _storageRepo.setEphemeralString(keyFreshInstall, 'flag');
@@ -245,7 +258,8 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       // Only update the credentials when refreshing. Otherwise, add new states
       // to the stream.
       if (_latestAuthState is AuthSignedIn && state is AuthSignedIn) {
-        (_latestAuthState as AuthSignedIn).client.credentials = state.client.credentials;
+        (_latestAuthState as AuthSignedIn).client.credentials =
+            state.client.credentials;
       } else {
         addState(state);
       }
@@ -253,6 +267,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   }
 
   /// Initiates the authorization code flow.
+  @override
   Future<String> authorize({
     String? language,
     String? countryCode,
@@ -297,7 +312,9 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       _config.clientId,
       _config.authorizationUri,
       _config.tokenUri,
-      secret: _config.clientSecret,
+      // Must be included as empty string so that the client ID is sent
+      // in requests.
+      secret: _config.clientSecret ?? '',
       codeVerifier: codeVerifier,
       httpClient: _httpClient,
     );
@@ -318,14 +335,17 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   }
 
   @protected
-  Future<oauth2.Credentials> handleExchange(Map<String, String> parameters) async {
-    final client = await _authCodeGrant!.handleAuthorizationResponse(parameters);
+  Future<oauth2.Credentials> handleExchange(
+      Map<String, String> parameters) async {
+    final client =
+        await _authCodeGrant!.handleAuthorizationResponse(parameters);
     return client.credentials;
   }
 
   /// Performs the second part of the authorization code flow, exhanging the
   /// parameters retrieved via the WebView with the OAuth server for an access
   /// and refresh token.
+  @override
   Future<Client> exchange(Map<String, String> parameters) async {
     await init();
 
@@ -359,8 +379,10 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
             keyAccessTokenExp,
             credentials.expirationSecondsSinceEpoch!.toString(),
           ),
-        if (credentials.refreshToken != null) _storageRepo.setString(keyRefreshToken, credentials.refreshToken!),
-        if (credentials.idToken != null) _storageRepo.setString(keyIdToken, credentials.idToken!),
+        if (credentials.refreshToken != null)
+          _storageRepo.setString(keyRefreshToken, credentials.refreshToken!),
+        if (credentials.idToken != null)
+          _storageRepo.setString(keyIdToken, credentials.idToken!),
       ]);
 
       final newClient = Client(
