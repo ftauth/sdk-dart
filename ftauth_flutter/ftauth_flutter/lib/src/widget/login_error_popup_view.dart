@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'embedded_login_view.dart';
+
 /// An error popup for [EmbeddedLoginView].
 class LoginErrorPopupView extends StatelessWidget {
   final String error;

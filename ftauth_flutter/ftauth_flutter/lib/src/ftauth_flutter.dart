@@ -6,12 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:ftauth/ftauth.dart' hide FTAuth;
 import 'package:ftauth/ftauth.dart' as ftauth show FTAuth;
 import 'package:ftauth_flutter/src/storage/secure_storage.dart';
+import 'package:ftauth_platform_interface/ftauth_platform_interface.dart';
 import 'package:http/http.dart' as http;
-
-import 'exception.dart';
-
-/// The default configuration path.
-const kConfigPath = 'assets/ftauth_config.json';
 
 /// Wrapper class used for providing a [FTAuthClient] to descendant widgets.
 ///
@@ -37,7 +33,8 @@ const kConfigPath = 'assets/ftauth_config.json';
 /// ```
 class FTAuth extends InheritedWidget {
   /// Override this value to set the logger for the SSO module.
-  static set logger(LoggerInterface newValue) => ftauth.FTAuth.logger = newValue;
+  static set logger(LoggerInterface newValue) =>
+      ftauth.FTAuth.logger = newValue;
 
   static void debug(String log) => ftauth.FTAuth.debug(log);
   static void info(String log) => ftauth.FTAuth.info(log);
@@ -72,8 +69,6 @@ class FTAuth extends InheritedWidget {
 }
 
 class FTAuthClient extends ftauth.FTAuth {
-  static const _channel = MethodChannel('ftauth_flutter');
-
   FTAuthClient(
     Config config, {
     StorageRepo? storageRepo,
@@ -95,6 +90,9 @@ class FTAuthClient extends ftauth.FTAuth {
                 appGroup: appGroup,
               ),
         );
+
+  static FTAuthPlatformInterface get _platform =>
+      FTAuthPlatformInterface.instance;
 
   static FTAuthClient of(BuildContext context) {
     final ftauth = context.dependOnInheritedWidgetOfExactType<FTAuth>();
@@ -119,18 +117,12 @@ class FTAuthClient extends ftauth.FTAuth {
 
     FTAuth.debug('Launching url: $url');
     try {
-      final Map<String, String>? parameters = await _channel.invokeMapMethod<String, String>('login', url);
-
-      if (parameters == null) {
-        throw PlatformException(
-          code: PlatformExceptionCodes.unknown,
-          message: 'Login process failed.',
-        );
-      }
+      final Map<String, String> parameters = await _platform.login(url);
 
       await authorizer.exchange(parameters);
     } on Exception catch (e) {
-      if (e is PlatformException && e.code == PlatformExceptionCodes.authCancelled) {
+      if (e is PlatformException &&
+          e.code == PlatformExceptionCodes.authCancelled) {
         FTAuth.info('Authorization process cancelled.');
       } else {
         FTAuth.error('Error logging in: $e');

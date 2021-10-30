@@ -3,12 +3,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth_flutter/src/exception.dart';
+import 'package:ftauth_platform_interface/ftauth_platform_interface.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FlutterSecureStorage extends StorageRepo {
   // TODO: Add pigeon for IOSOptions
-  static const _iosKeychainService = 'com.medtronic.sso_module';
+  static const _iosKeychainService = 'io.ftauth.ftauth';
   static const MethodChannel _channel = const MethodChannel('ftauth_flutter');
 
   late final SharedPreferences _ephemeralStorage;
