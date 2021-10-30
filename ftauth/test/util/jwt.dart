@@ -23,8 +23,8 @@ class JwtUtil {
   }) {
     final jwt = JsonWebToken(
       header: JsonWebHeader(
-        type: TokenType.JWT,
-        algorithm: Algorithm.RSASHA256,
+        type: TokenType.jwt,
+        algorithm: Algorithm.rsaSha256,
       ),
       claims: JsonWebClaims.fromJson(
         {

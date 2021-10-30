@@ -19,8 +19,8 @@ class DPoPRepoImpl extends DPoPRepo {
     final publicKey = await cryptoRepo.publicKey;
 
     final header = JsonWebHeader(
-      type: TokenType.DPoP,
-      algorithm: Algorithm.RSASHA256,
+      type: TokenType.dpop,
+      algorithm: Algorithm.rsaSha256,
       jwk: publicKey,
     );
 

@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ftauth/ftauth.dart' hide FTAuth;
 import 'package:ftauth/ftauth.dart' as ftauth show FTAuth;
-import 'package:ftauth_flutter/src/storage/secure_storage.dart';
 import 'package:ftauth_platform_interface/ftauth_platform_interface.dart';
+import 'package:ftauth_storage/ftauth_storage.dart';
 import 'package:http/http.dart' as http;
 
 /// Wrapper class used for providing a [FTAuthClient] to descendant widgets.
@@ -86,7 +86,7 @@ class FTAuthClient extends ftauth.FTAuth {
           setup: setup,
           encryptionKey: encryptionKey,
           storageRepo: storageRepo ??
-              FlutterSecureStorage(
+              FTAuthSecureStorage(
                 appGroup: appGroup,
               ),
         );

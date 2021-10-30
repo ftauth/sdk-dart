@@ -1,49 +1,49 @@
 import 'package:ftauth_jwt/src/key_type.dart';
 
 enum Algorithm {
-  HMACSHA256,
-  HMACSHA384,
-  HMACSHA512,
-  RSASHA256,
-  RSASHA384,
-  RSASHA512,
-  ECDSASHA256,
-  ECDSASHA384,
-  ECDSASHA512,
-  PSSSHA256,
-  PSSSHA384,
-  PSSSHA512,
-  None,
+  hmacSha256,
+  hmacSha384,
+  hmacSha512,
+  rsaSha256,
+  rsaSha384,
+  rsaSha512,
+  ecdsaSha256,
+  ecdsaSha384,
+  ecdsaSha512,
+  pssSha256,
+  pssSha384,
+  pssSha512,
+  none,
 }
 
 extension AlgorithmX on Algorithm {
   String get code {
     switch (this) {
-      case Algorithm.HMACSHA256:
+      case Algorithm.hmacSha256:
         return 'HS256';
-      case Algorithm.HMACSHA384:
+      case Algorithm.hmacSha384:
         return 'HS384';
-      case Algorithm.HMACSHA512:
+      case Algorithm.hmacSha512:
         return 'HS512';
-      case Algorithm.RSASHA256:
+      case Algorithm.rsaSha256:
         return 'RS256';
-      case Algorithm.RSASHA384:
+      case Algorithm.rsaSha384:
         return 'RS384';
-      case Algorithm.RSASHA512:
+      case Algorithm.rsaSha512:
         return 'RS512';
-      case Algorithm.ECDSASHA256:
+      case Algorithm.ecdsaSha256:
         return 'ES256';
-      case Algorithm.ECDSASHA384:
+      case Algorithm.ecdsaSha384:
         return 'ES384';
-      case Algorithm.ECDSASHA512:
+      case Algorithm.ecdsaSha512:
         return 'ES512';
-      case Algorithm.PSSSHA256:
+      case Algorithm.pssSha256:
         return 'PS256';
-      case Algorithm.PSSSHA384:
+      case Algorithm.pssSha384:
         return 'PS384';
-      case Algorithm.PSSSHA512:
+      case Algorithm.pssSha512:
         return 'PS512';
-      case Algorithm.None:
+      case Algorithm.none:
         return 'none';
     }
   }
@@ -65,42 +65,42 @@ extension AlgorithmX on Algorithm {
 
   KeyType? get keyType {
     switch (this) {
-      case Algorithm.HMACSHA256:
-      case Algorithm.HMACSHA384:
-      case Algorithm.HMACSHA512:
-        return KeyType.Octet;
-      case Algorithm.ECDSASHA256:
-      case Algorithm.ECDSASHA384:
-      case Algorithm.ECDSASHA512:
-        return KeyType.EllipticCurve;
-      case Algorithm.RSASHA256:
-      case Algorithm.RSASHA384:
-      case Algorithm.RSASHA512:
-      case Algorithm.PSSSHA256:
-      case Algorithm.PSSSHA384:
-      case Algorithm.PSSSHA512:
-        return KeyType.RSA;
-      case Algorithm.None:
+      case Algorithm.hmacSha256:
+      case Algorithm.hmacSha384:
+      case Algorithm.hmacSha512:
+        return KeyType.octet;
+      case Algorithm.ecdsaSha256:
+      case Algorithm.ecdsaSha384:
+      case Algorithm.ecdsaSha512:
+        return KeyType.ellipticCurve;
+      case Algorithm.rsaSha256:
+      case Algorithm.rsaSha384:
+      case Algorithm.rsaSha512:
+      case Algorithm.pssSha256:
+      case Algorithm.pssSha384:
+      case Algorithm.pssSha512:
+        return KeyType.rsa;
+      case Algorithm.none:
         return null;
     }
   }
 
   bool get isValid {
     switch (this) {
-      case Algorithm.HMACSHA256:
-      case Algorithm.HMACSHA384:
-      case Algorithm.HMACSHA512:
-      case Algorithm.ECDSASHA256:
-      case Algorithm.ECDSASHA384:
-      case Algorithm.ECDSASHA512:
-      case Algorithm.RSASHA256:
-      case Algorithm.RSASHA384:
-      case Algorithm.RSASHA512:
+      case Algorithm.hmacSha256:
+      case Algorithm.hmacSha384:
+      case Algorithm.hmacSha512:
+      case Algorithm.ecdsaSha256:
+      case Algorithm.ecdsaSha384:
+      case Algorithm.ecdsaSha512:
+      case Algorithm.rsaSha256:
+      case Algorithm.rsaSha384:
+      case Algorithm.rsaSha512:
         return true;
-      case Algorithm.PSSSHA256:
-      case Algorithm.PSSSHA384:
-      case Algorithm.PSSSHA512:
-      case Algorithm.None:
+      case Algorithm.pssSha256:
+      case Algorithm.pssSha384:
+      case Algorithm.pssSha512:
+      case Algorithm.none:
         return false;
     }
   }

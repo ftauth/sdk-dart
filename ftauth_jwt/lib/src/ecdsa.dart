@@ -8,7 +8,7 @@ import 'package:pointycastle/ecc/curves/secp256r1.dart';
 import 'package:pointycastle/ecc/curves/secp384r1.dart';
 import 'package:pointycastle/ecc/curves/secp521r1.dart';
 import 'package:pointycastle/pointycastle.dart' as pc;
-import 'package:pointycastle/random/fortuna_random.dart';
+// ignore: implementation_imports
 import 'package:pointycastle/src/utils.dart';
 
 class EcdsaPrivateKey implements Signer, Verifier {
@@ -29,15 +29,15 @@ class EcdsaPrivateKey implements Signer, Verifier {
     pc.Digest digest;
     pc.ECDomainParameters params;
     switch (jwk.algorithm) {
-      case Algorithm.ECDSASHA256:
+      case Algorithm.ecdsaSha256:
         digest = SHA256Digest();
         params = ECCurve_secp256r1();
         break;
-      case Algorithm.ECDSASHA384:
+      case Algorithm.ecdsaSha384:
         digest = SHA384Digest();
         params = ECCurve_secp384r1();
         break;
-      case Algorithm.ECDSASHA512:
+      case Algorithm.ecdsaSha512:
         digest = SHA512Digest();
         params = ECCurve_secp521r1();
         break;
@@ -77,15 +77,15 @@ class EcdsaPublicKey implements Verifier {
     pc.Digest digest;
     pc.ECDomainParameters params;
     switch (jwk.algorithm) {
-      case Algorithm.ECDSASHA256:
+      case Algorithm.ecdsaSha256:
         digest = SHA256Digest();
         params = ECCurve_secp256r1();
         break;
-      case Algorithm.ECDSASHA384:
+      case Algorithm.ecdsaSha384:
         digest = SHA384Digest();
         params = ECCurve_secp384r1();
         break;
-      case Algorithm.ECDSASHA512:
+      case Algorithm.ecdsaSha512:
         digest = SHA512Digest();
         params = ECCurve_secp521r1();
         break;

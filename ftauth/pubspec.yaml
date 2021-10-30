@@ -13,7 +13,7 @@ dependencies:
   ftauth_jwt:
     path: ../ftauth_jwt
   js: ^0.6.3
-  json_annotation: ^4.0.0
+  json_annotation: ^4.3.0
   oauth2: ^2.0.0
   pointycastle: ^3.0.0
   uuid: ^3.0.0

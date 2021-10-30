@@ -18,13 +18,13 @@ class RsaPrivateKey implements Signer, Verifier {
     }
     pc.Digest digest;
     switch (jwk.algorithm) {
-      case Algorithm.RSASHA256:
+      case Algorithm.rsaSha256:
         digest = SHA256Digest();
         break;
-      case Algorithm.RSASHA384:
+      case Algorithm.rsaSha384:
         digest = SHA384Digest();
         break;
-      case Algorithm.RSASHA512:
+      case Algorithm.rsaSha512:
         digest = SHA512Digest();
         break;
       default:
@@ -71,13 +71,13 @@ class RsaPublicKey implements Verifier {
   factory RsaPublicKey.fromJwk(JsonWebKey jwk) {
     pc.Digest digest;
     switch (jwk.algorithm) {
-      case Algorithm.RSASHA256:
+      case Algorithm.rsaSha256:
         digest = SHA256Digest();
         break;
-      case Algorithm.RSASHA384:
+      case Algorithm.rsaSha384:
         digest = SHA384Digest();
         break;
-      case Algorithm.RSASHA512:
+      case Algorithm.rsaSha512:
         digest = SHA512Digest();
         break;
       default:

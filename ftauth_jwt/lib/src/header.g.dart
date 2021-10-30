@@ -6,23 +6,22 @@ part of 'header.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-JsonWebHeader _$JsonWebHeaderFromJson(Map<String, dynamic> json) {
-  return JsonWebHeader(
-    type: TokenTypeX.tryFromJson(json['typ'] as String?),
-    contentType: json['cty'] as String?,
-    algorithm: AlgorithmX.fromJson(json['alg'] as String),
-    jwkSetUri: json['jwu'] == null ? null : Uri.parse(json['jwu'] as String),
-    jwk: json['jwk'] == null
-        ? null
-        : JsonWebKey.fromJson(json['jwk'] as Map<String, dynamic>),
-    keyId: json['kid'] as String?,
-    x509Uri: json['x5u'] == null ? null : Uri.parse(json['x5u'] as String),
-    x509CertChain:
-        (json['x5c'] as List<dynamic>?)?.map((e) => e as String).toList(),
-    x509sha1Thumbprint: json['x5t'] as String?,
-    x509sha256Thumbprint: json['x5t#S256'] as String?,
-  );
-}
+JsonWebHeader _$JsonWebHeaderFromJson(Map<String, dynamic> json) =>
+    JsonWebHeader(
+      type: TokenTypeX.tryFromJson(json['typ'] as String?),
+      contentType: json['cty'] as String?,
+      algorithm: AlgorithmX.fromJson(json['alg'] as String),
+      jwkSetUri: json['jwu'] == null ? null : Uri.parse(json['jwu'] as String),
+      jwk: json['jwk'] == null
+          ? null
+          : JsonWebKey.fromJson(json['jwk'] as Map<String, dynamic>),
+      keyId: json['kid'] as String?,
+      x509Uri: json['x5u'] == null ? null : Uri.parse(json['x5u'] as String),
+      x509CertChain:
+          (json['x5c'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      x509sha1Thumbprint: json['x5t'] as String?,
+      x509sha256Thumbprint: json['x5t#S256'] as String?,
+    );
 
 Map<String, dynamic> _$JsonWebHeaderToJson(JsonWebHeader instance) {
   final val = <String, dynamic>{};

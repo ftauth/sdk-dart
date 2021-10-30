@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
+// ignore: implementation_imports
 import 'package:pointycastle/src/utils.dart';
 
 Map<String, dynamic> decodeBase64(String base64) {

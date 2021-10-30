@@ -29,7 +29,7 @@ void main() {
       late String encoded;
       test('sign ${alg.code}', () async {
         encoded = await token.encodeBase64(privateKey.signer);
-        if (alg.keyType != KeyType.EllipticCurve) {
+        if (alg.keyType != KeyType.ellipticCurve) {
           expect(encoded, testCase.jwt);
         }
       });

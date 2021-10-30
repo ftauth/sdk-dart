@@ -6,37 +6,35 @@ part of 'key.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-JsonWebKey _$JsonWebKeyFromJson(Map<String, dynamic> json) {
-  return JsonWebKey(
-    keyType: KeyTypeX.fromJson(json['kty'] as String),
-    publicKeyUse: PublicKeyUseX.fromJson(json['use'] as String?),
-    keyOperations: (json['key_ops'] as List<dynamic>?)
-        ?.map((e) => _$enumDecode(_$KeyOperationEnumMap, e))
-        .toList(),
-    algorithm: AlgorithmX.tryFromJson(json['alg'] as String?),
-    keyId: json['kid'] as String?,
-    x509Url: json['x5u'] as String?,
-    x509CertChain:
-        (json['x5c'] as List<dynamic>?)?.map((e) => e as String).toList(),
-    x509Sha1Thumbprint: json['x5t'] as String?,
-    x509Sha256Thumbprint: json['x5t#S256'] as String?,
-    ellipticCurve: EllipticCurveX.fromJson(json['crv'] as String?),
-    x: base64UrlUintTryDecode(json['x'] as String?),
-    y: base64UrlUintTryDecode(json['y'] as String?),
-    n: base64UrlUintTryDecode(json['n'] as String?),
-    e: base64UrlUintTryDecode(json['e'] as String?),
-    k: symmetricKeyFromJson(json['k'] as String?),
-    d: base64UrlUintTryDecode(json['d'] as String?),
-    p: base64UrlUintTryDecode(json['p'] as String?),
-    q: base64UrlUintTryDecode(json['q'] as String?),
-    dp: base64UrlUintTryDecode(json['dp'] as String?),
-    dq: base64UrlUintTryDecode(json['dq'] as String?),
-    qi: base64UrlUintTryDecode(json['qi'] as String?),
-    otherPrimes: (json['oth'] as List<dynamic>?)
-        ?.map((e) => OtherPrime.fromJson(e as Map<String, dynamic>))
-        .toList(),
-  );
-}
+JsonWebKey _$JsonWebKeyFromJson(Map<String, dynamic> json) => JsonWebKey(
+      keyType: KeyTypeX.fromJson(json['kty'] as String),
+      publicKeyUse: PublicKeyUseX.fromJson(json['use'] as String?),
+      keyOperations: (json['key_ops'] as List<dynamic>?)
+          ?.map((e) => $enumDecode(_$KeyOperationEnumMap, e))
+          .toList(),
+      algorithm: AlgorithmX.tryFromJson(json['alg'] as String?),
+      keyId: json['kid'] as String?,
+      x509Url: json['x5u'] as String?,
+      x509CertChain:
+          (json['x5c'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      x509Sha1Thumbprint: json['x5t'] as String?,
+      x509Sha256Thumbprint: json['x5t#S256'] as String?,
+      ellipticCurve: EllipticCurveX.fromJson(json['crv'] as String?),
+      x: base64UrlUintTryDecode(json['x'] as String?),
+      y: base64UrlUintTryDecode(json['y'] as String?),
+      n: base64UrlUintTryDecode(json['n'] as String?),
+      e: base64UrlUintTryDecode(json['e'] as String?),
+      k: symmetricKeyFromJson(json['k'] as String?),
+      d: base64UrlUintTryDecode(json['d'] as String?),
+      p: base64UrlUintTryDecode(json['p'] as String?),
+      q: base64UrlUintTryDecode(json['q'] as String?),
+      dp: base64UrlUintTryDecode(json['dp'] as String?),
+      dq: base64UrlUintTryDecode(json['dq'] as String?),
+      qi: base64UrlUintTryDecode(json['qi'] as String?),
+      otherPrimes: (json['oth'] as List<dynamic>?)
+          ?.map((e) => OtherPrime.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
 
 Map<String, dynamic> _$JsonWebKeyToJson(JsonWebKey instance) {
   final val = <String, dynamic>{};
@@ -73,32 +71,6 @@ Map<String, dynamic> _$JsonWebKeyToJson(JsonWebKey instance) {
   return val;
 }
 
-K _$enumDecode<K, V>(
-  Map<K, V> enumValues,
-  Object? source, {
-  K? unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError(
-      'A value must be provided. Supported values: '
-      '${enumValues.values.join(', ')}',
-    );
-  }
-
-  return enumValues.entries.singleWhere(
-    (e) => e.value == source,
-    orElse: () {
-      if (unknownValue == null) {
-        throw ArgumentError(
-          '`$source` is not one of the supported values: '
-          '${enumValues.values.join(', ')}',
-        );
-      }
-      return MapEntry(unknownValue, enumValues.values.first);
-    },
-  ).key;
-}
-
 const _$KeyOperationEnumMap = {
   KeyOperation.sign: 'sign',
   KeyOperation.verify: 'verify',
@@ -110,13 +82,11 @@ const _$KeyOperationEnumMap = {
   KeyOperation.deriveBytes: 'deriveBytes',
 };
 
-OtherPrime _$OtherPrimeFromJson(Map<String, dynamic> json) {
-  return OtherPrime(
-    r: base64UrlUintDecode(json['r'] as String),
-    d: base64UrlUintDecode(json['d'] as String),
-    t: base64UrlUintDecode(json['t'] as String),
-  );
-}
+OtherPrime _$OtherPrimeFromJson(Map<String, dynamic> json) => OtherPrime(
+      r: base64UrlUintDecode(json['r'] as String),
+      d: base64UrlUintDecode(json['d'] as String),
+      t: base64UrlUintDecode(json['t'] as String),
+    );
 
 Map<String, dynamic> _$OtherPrimeToJson(OtherPrime instance) {
   final val = <String, dynamic>{};

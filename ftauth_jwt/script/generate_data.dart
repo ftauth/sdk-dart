@@ -116,17 +116,17 @@ Future<void> generateTestCases() async {
 
 Future<void> generateKey(Algorithm algorithm) async {
   switch (algorithm.keyType) {
-    case KeyType.EllipticCurve:
+    case KeyType.ellipticCurve:
       EllipticCurve curve;
       switch (algorithm) {
-        case Algorithm.ECDSASHA256:
-          curve = EllipticCurve.P256;
+        case Algorithm.ecdsaSha256:
+          curve = EllipticCurve.p256;
           break;
-        case Algorithm.ECDSASHA384:
-          curve = EllipticCurve.P384;
+        case Algorithm.ecdsaSha384:
+          curve = EllipticCurve.p384;
           break;
-        case Algorithm.ECDSASHA512:
-          curve = EllipticCurve.P521;
+        case Algorithm.ecdsaSha512:
+          curve = EllipticCurve.p521;
           break;
         default:
           throw '';

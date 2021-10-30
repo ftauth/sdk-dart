@@ -1,6 +1,4 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// A simple, robust JWT library.
 library ftauth_jwt;
 
 export 'src/alg.dart';

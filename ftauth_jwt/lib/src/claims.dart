@@ -37,7 +37,7 @@ const _reservedClaims = [
 ];
 
 @serialize
-class JsonWebClaims extends Equatable {
+class JsonWebClaims {
   @JsonKey(name: 'iss')
   final String? issuer;
 
@@ -133,7 +133,7 @@ class JsonWebClaims extends Equatable {
   String encodeBase64() => base64RawUrl.encode(encode());
 
   void assertValid(TokenType type) {
-    if (type == TokenType.JWT) {
+    if (type == TokenType.jwt) {
       // TODO: Define general JWT requirements
       return;
     }
@@ -141,9 +141,9 @@ class JsonWebClaims extends Equatable {
       throw MissingParameterExeception('iat');
     }
     switch (type) {
-      case TokenType.JWT:
+      case TokenType.jwt:
         break;
-      case TokenType.Access:
+      case TokenType.access:
         if (issuer == null) {
           throw MissingParameterExeception('iss');
         }
@@ -160,7 +160,7 @@ class JsonWebClaims extends Equatable {
           throw MissingParameterExeception('scope');
         }
         break;
-      case TokenType.DPoP:
+      case TokenType.dpop:
         if (jwtId == null) {
           throw MissingParameterExeception('jti');
         }

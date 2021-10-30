@@ -16,6 +16,8 @@ flutter:
         pluginClass: FtauthFlutterPlugin
       ios:
         pluginClass: FtauthFlutterPlugin
+      web:
+        default_package: ftauth_flutter_web
 
 dependencies:
   flutter:
@@ -25,9 +27,12 @@ dependencies:
 
   ftauth:
     path: ../../ftauth
+  ftauth_flutter_web:
+    path: ../ftauth_flutter_web
   ftauth_platform_interface:
     path: ../ftauth_platform_interface
-  shared_preferences: ^2.0.0
+  ftauth_storage:
+    path: ../../ftauth_storage/ftauth_storage
   webview_flutter: ^2.0.0
 
 dev_dependencies:

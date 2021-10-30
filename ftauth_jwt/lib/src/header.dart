@@ -89,7 +89,7 @@ class JsonWebHeader extends Equatable {
   String encodeBase64() => base64RawUrl.encode(encode());
 
   void assertValid() {
-    if (type == TokenType.DPoP) {
+    if (type == TokenType.dpop) {
       if (jwk == null) {
         throw MissingParameterExeception('jwk');
       }

@@ -17,7 +17,7 @@ import 'keys.dart';
 import 'user_info_screen.dart';
 
 const appGroup = 'group.io.ftauth.ftauth_example';
-final storageRepo = FlutterSecureStorage(
+final storageRepo = FTAuthSecureStorage(
   appGroup: appGroup,
 );
 

@@ -1,17 +1,17 @@
 enum TokenType {
-  JWT,
-  Access,
-  DPoP,
+  jwt,
+  access,
+  dpop,
 }
 
 extension TokenTypeX on TokenType {
   String get code {
     switch (this) {
-      case TokenType.JWT:
+      case TokenType.jwt:
         return 'JWT';
-      case TokenType.Access:
+      case TokenType.access:
         return 'at+jwt';
-      case TokenType.DPoP:
+      case TokenType.dpop:
         return 'dpop+jwt';
     }
   }

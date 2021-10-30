@@ -23,7 +23,7 @@ void main() async {
 
   final jwt = JsonWebToken(
     header: JsonWebHeader(
-      algorithm: Algorithm.RSASHA256,
+      algorithm: Algorithm.rsaSha256,
       keyId: key.keyId,
     ),
     claims: JsonWebClaims(

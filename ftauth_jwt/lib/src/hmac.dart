@@ -14,13 +14,13 @@ class HmacKey implements Signer, Verifier {
   factory HmacKey.fromJwk(JsonWebKey jwk) {
     pc.Digest digest;
     switch (jwk.algorithm) {
-      case Algorithm.HMACSHA256:
+      case Algorithm.hmacSha256:
         digest = pc.SHA256Digest();
         break;
-      case Algorithm.HMACSHA384:
+      case Algorithm.hmacSha384:
         digest = pc.SHA384Digest();
         break;
-      case Algorithm.HMACSHA512:
+      case Algorithm.hmacSha512:
         digest = pc.SHA512Digest();
         break;
       default:

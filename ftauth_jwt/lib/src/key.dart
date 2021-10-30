@@ -101,7 +101,7 @@ class JsonWebKey extends Equatable {
 
   JsonWebKey get publicKey {
     switch (keyType) {
-      case KeyType.EllipticCurve:
+      case KeyType.ellipticCurve:
         if (!isPrivate) {
           return this;
         }
@@ -117,7 +117,7 @@ class JsonWebKey extends Equatable {
           x: x,
           y: y,
         );
-      case KeyType.RSA:
+      case KeyType.rsa:
         if (!isPrivate) {
           return this;
         }
@@ -133,7 +133,7 @@ class JsonWebKey extends Equatable {
           n: n,
           e: e,
         );
-      case KeyType.Octet:
+      case KeyType.octet:
         return this;
     }
   }
@@ -168,22 +168,22 @@ class JsonWebKey extends Equatable {
 
   Algorithm _inferAlgorithm() {
     switch (keyType) {
-      case KeyType.EllipticCurve:
+      case KeyType.ellipticCurve:
         if (ellipticCurve == null) {
           throw MissingParameterExeception('crv');
         }
         switch (ellipticCurve!) {
-          case EllipticCurve.P256:
-            return Algorithm.ECDSASHA256;
-          case EllipticCurve.P384:
-            return Algorithm.ECDSASHA384;
-          case EllipticCurve.P521:
-            return Algorithm.ECDSASHA512;
+          case EllipticCurve.p256:
+            return Algorithm.ecdsaSha256;
+          case EllipticCurve.p384:
+            return Algorithm.ecdsaSha384;
+          case EllipticCurve.p521:
+            return Algorithm.ecdsaSha512;
         }
-      case KeyType.RSA:
-        return Algorithm.RSASHA256;
-      case KeyType.Octet:
-        return Algorithm.HMACSHA256;
+      case KeyType.rsa:
+        return Algorithm.rsaSha256;
+      case KeyType.octet:
+        return Algorithm.hmacSha256;
     }
   }
 
@@ -228,18 +228,18 @@ class JsonWebKey extends Equatable {
 
   bool _hasPrivateKeyInfo() {
     switch (keyType) {
-      case KeyType.EllipticCurve:
+      case KeyType.ellipticCurve:
         return d != null;
-      case KeyType.RSA:
+      case KeyType.rsa:
         return d != null;
-      case KeyType.Octet:
+      case KeyType.octet:
         return true;
     }
   }
 
   void assertValid() {
     switch (keyType) {
-      case KeyType.EllipticCurve:
+      case KeyType.ellipticCurve:
         if (ellipticCurve == null) {
           throw MissingParameterExeception('crv');
         }
@@ -250,7 +250,7 @@ class JsonWebKey extends Equatable {
           throw MissingParameterExeception('y');
         }
         break;
-      case KeyType.RSA:
+      case KeyType.rsa:
         if (n == null) {
           throw MissingParameterExeception('n');
         }
@@ -258,7 +258,7 @@ class JsonWebKey extends Equatable {
           throw MissingParameterExeception('e');
         }
         break;
-      case KeyType.Octet:
+      case KeyType.octet:
         if (k == null) {
           throw MissingParameterExeception('k');
         }

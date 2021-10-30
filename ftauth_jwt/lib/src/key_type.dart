@@ -1,17 +1,17 @@
 enum KeyType {
-  EllipticCurve,
-  RSA,
-  Octet,
+  ellipticCurve,
+  rsa,
+  octet,
 }
 
 extension KeyTypeX on KeyType {
   String get code {
     switch (this) {
-      case KeyType.EllipticCurve:
+      case KeyType.ellipticCurve:
         return 'EC';
-      case KeyType.RSA:
+      case KeyType.rsa:
         return 'RSA';
-      case KeyType.Octet:
+      case KeyType.octet:
         return 'oct';
     }
   }

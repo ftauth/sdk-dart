@@ -28,8 +28,8 @@ void main() {
 					"k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"
 				}''',
         key: JsonWebKey(
-          keyType: KeyType.Octet,
-          algorithm: Algorithm.HMACSHA256,
+          keyType: KeyType.octet,
+          algorithm: Algorithm.hmacSha256,
           k: base64RawUrl.decode(
             'AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow',
           ),
@@ -47,9 +47,9 @@ void main() {
 				"kid":"1"
 			}''',
         key: JsonWebKey(
-          keyType: KeyType.EllipticCurve,
-          ellipticCurve: EllipticCurve.P256,
-          algorithm: Algorithm.ECDSASHA256,
+          keyType: KeyType.ellipticCurve,
+          ellipticCurve: EllipticCurve.p256,
+          algorithm: Algorithm.ecdsaSha256,
           x: base64UrlUintDecode('MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4'),
           y: base64UrlUintDecode('4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM'),
           publicKeyUse: PublicKeyUse.encryption,
@@ -67,11 +67,11 @@ void main() {
 				"kid":"2011-04-29"
 				}''',
         key: JsonWebKey(
-          keyType: KeyType.RSA,
+          keyType: KeyType.rsa,
           n: base64UrlUintDecode(
               '0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw'),
           e: base64UrlUintDecode('AQAB'),
-          algorithm: Algorithm.RSASHA256,
+          algorithm: Algorithm.rsaSha256,
           keyId: '2011-04-29',
         ),
       ),
@@ -88,8 +88,8 @@ void main() {
 				"kid":"1"
 				}''',
         key: JsonWebKey(
-          keyType: KeyType.EllipticCurve,
-          ellipticCurve: EllipticCurve.P256,
+          keyType: KeyType.ellipticCurve,
+          ellipticCurve: EllipticCurve.p256,
           x: base64UrlUintDecode('MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4'),
           y: base64UrlUintDecode('4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM'),
           d: base64UrlUintDecode('870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE'),
@@ -114,7 +114,7 @@ void main() {
 				"kid":"2011-04-29"
 				}''',
         key: JsonWebKey(
-          keyType: KeyType.RSA,
+          keyType: KeyType.rsa,
           n: base64UrlUintDecode(
               '0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw'),
           e: base64UrlUintDecode('AQAB'),
@@ -130,7 +130,7 @@ void main() {
               's9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE1efrA6huUUvMfBcMpn8lqeW6vzznYY5SSQF7pMdC_agI3nG8Ibp1BUb0JUiraRNqUfLhcQb_d9GF4Dh7e74WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk'),
           qi: base64UrlUintDecode(
               'GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3rQJBfmt0FoYzgUIZEVFEcOqwemRN81zoDAaa-Bk0KWNGDjJHZDdDmFhW3AN7lI-puxk_mHZGJ11rxyR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU'),
-          algorithm: Algorithm.RSASHA256,
+          algorithm: Algorithm.rsaSha256,
           keyId: '2011-04-29',
         ),
       ),

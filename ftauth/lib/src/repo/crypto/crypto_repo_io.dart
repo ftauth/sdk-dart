@@ -28,8 +28,8 @@ class CryptoRepoImpl extends CryptoRepo {
 
   Future<JsonWebKey> _savePrivateKey(RSAPrivateKey privateKey) async {
     final privateJWK = JsonWebKey(
-      keyType: KeyType.RSA,
-      algorithm: Algorithm.RSASHA256,
+      keyType: KeyType.rsa,
+      algorithm: Algorithm.rsaSha256,
       publicKeyUse: PublicKeyUse.signature,
       keyId: Uuid().v4(),
       n: privateKey.n,
