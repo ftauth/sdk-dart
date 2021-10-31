@@ -5,9 +5,14 @@ import 'package:ftauth/ftauth.dart';
 import 'package:ftauth_storage_platform_interface/ftauth_storage_plugin_interface.dart';
 
 class FTAuthSecureStorage extends StorageRepo {
+  static FTAuthSecureStorage? _instance;
   late final FTAuthStoragePlatform _platform;
 
-  FTAuthSecureStorage({String? appGroup}) {
+  factory FTAuthSecureStorage({String? appGroup}) {
+    return _instance ??= FTAuthSecureStorage._(appGroup: appGroup);
+  }
+
+  FTAuthSecureStorage._({String? appGroup}) {
     _platform = FTAuthStoragePlatform.getInstance(appGroup: appGroup);
   }
 

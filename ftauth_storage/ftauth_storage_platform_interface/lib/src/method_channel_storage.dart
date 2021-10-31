@@ -26,8 +26,8 @@ class MethodChannelStorage extends FTAuthStoragePlatform {
   }
 
   @override
-  Future<void> delete(String key) async {
-    await _channel.invokeMethod<void>('storageDelete', key);
+  Future<void> delete(String key) {
+    return _channel.invokeMethod<void>('storageDelete', key);
   }
 
   @override
@@ -51,7 +51,7 @@ class MethodChannelStorage extends FTAuthStoragePlatform {
   }
 
   @override
-  Future<void> setString(String key, String value) async {
+  Future<void> setString(String key, String value) {
     return _channel.invokeMethod<void>('storageSet', <String, String>{
       'key': key,
       'value': value,

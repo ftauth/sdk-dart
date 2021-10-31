@@ -66,7 +66,7 @@ class FTAuthStoragePlatform extends PlatformInterface implements StorageRepo {
   }
 
   @override
-  Future<void> setEphemeralString(String key, String value) async {
-    await _ephemeralStorage.setString(key, value);
+  Future<void> setEphemeralString(String key, String value) {
+    return _ephemeralStorage.setString(key, value);
   }
 }

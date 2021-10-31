@@ -1,5 +1,5 @@
 name: ftauth_example
-description: Demonstrates how to use the sso_module plugin.
+description: Demonstrates how to use the ftauth_flutter plugin.
 publish_to: 'none'
 
 environment:
