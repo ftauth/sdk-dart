@@ -2,4 +2,4 @@
 Native Dart and Flutter SDKs for the FTAuth server.
 
 ## Examples
-See the [example](ftauth_flutter/ftauth_flutter/example) directory for a Flutter example.
+See the [example](example/) directory for a Flutter example.
