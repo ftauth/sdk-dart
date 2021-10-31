@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 
 import 'storage_repo.dart';
 
-class StorageRepoImpl extends StorageRepo {
+class StorageRepoImpl implements StorageRepo {
   late final Box<String> _box;
 
   @override
@@ -41,12 +41,12 @@ class StorageRepoImpl extends StorageRepo {
   @override
   Future<String?> getEphemeralString(String key) {
     // TODO: implement getEphemeralString
-    throw UnimplementedError();
+    return getString(key);
   }
 
   @override
   Future<void> setEphemeralString(String key, String value) {
     // TODO: implement setEphemeralString
-    throw UnimplementedError();
+    return setString(key, value);
   }
 }

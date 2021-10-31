@@ -1,9 +1,10 @@
-import 'dart:io';
+import 'certificate_chain_stub.dart'
+    if (dart.library.io) 'certificate_chain_io.dart'
+    if (dart.library.html) 'certificate_chain_html.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'certificate_type.dart';
 import 'certificate.dart';
 
 part 'certificate_chain.g.dart';
@@ -25,29 +26,17 @@ class CertificateChain extends Equatable {
   @override
   List<Object?> get props => [host, root, intermediate, leaf];
 
-  factory CertificateChain.loadChain(
+  static Future<CertificateChain> load(
     Uri host, {
-    required String leafFilename,
-    required String intermediateFilename,
-    required String rootFilename,
+    required Uri leafUri,
+    required Uri intermediateUri,
+    required Uri rootUri,
   }) {
-    return CertificateChain(
-      host: host.host,
-      root: Certificate(
-        host: host.host,
-        type: CertificateType.root,
-        certificate: File(rootFilename).readAsStringSync(),
-      ),
-      intermediate: Certificate(
-        host: host.host,
-        type: CertificateType.intermediate,
-        certificate: File(intermediateFilename).readAsStringSync(),
-      ),
-      leaf: Certificate(
-        host: host.host,
-        type: CertificateType.leaf,
-        certificate: File(leafFilename).readAsStringSync(),
-      ),
+    return loadChain(
+      host,
+      leafUri: leafUri,
+      intermediateUri: intermediateUri,
+      rootUri: rootUri,
     );
   }
 

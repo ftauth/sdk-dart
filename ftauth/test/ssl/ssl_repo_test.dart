@@ -18,21 +18,21 @@ Future<void> main() async {
   const googleHost = 'google.com';
   final googleUri = Uri(scheme: 'https', host: googleHost);
   final googleDir = path.join(currentDir, 'google');
-  final googleCertChain = CertificateChain.loadChain(
+  final googleCertChain = await CertificateChain.load(
     googleUri,
-    leafFilename: googleDir + '/leaf.pem',
-    intermediateFilename: googleDir + '/int.pem',
-    rootFilename: googleDir + '/root.pem',
+    leafUri: Uri.file(googleDir + '/leaf.pem'),
+    intermediateUri: Uri.file(googleDir + '/int.pem'),
+    rootUri: Uri.file(googleDir + '/root.pem'),
   );
 
   const amazonHost = 'amazon.com';
   final amazonUri = Uri(scheme: 'https', host: amazonHost);
   final amazonDir = path.join(currentDir, 'amazon');
-  final amazonCertChain = CertificateChain.loadChain(
+  final amazonCertChain = await CertificateChain.load(
     amazonUri,
-    leafFilename: amazonDir + '/leaf.pem',
-    intermediateFilename: amazonDir + '/int.pem',
-    rootFilename: amazonDir + '/root.pem',
+    leafUri: Uri.file(amazonDir + '/leaf.pem'),
+    intermediateUri: Uri.file(amazonDir + '/int.pem'),
+    rootUri: Uri.file(amazonDir + '/root.pem'),
   );
 
   final emptyCert = Certificate(
@@ -82,11 +82,11 @@ Future<void> main() async {
   group('pinCertChain', () {
     test('invalid format', () {
       expect(() async {
-        CertificateChain.loadChain(
+        await CertificateChain.load(
           googleUri,
-          rootFilename: googleDir + '/root.cer',
-          intermediateFilename: googleDir + '/int.cer',
-          leafFilename: googleDir + '/leaf.cer',
+          leafUri: Uri.file(googleDir + '/leaf.cer'),
+          intermediateUri: Uri.file(googleDir + '/int.cer'),
+          rootUri: Uri.file(googleDir + '/root.cer'),
         );
       }, throwsA(isA<FileSystemException>()));
     });

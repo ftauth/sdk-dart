@@ -4,9 +4,7 @@ import 'package:ftauth/ftauth.dart';
 import 'package:ftauth_jwt/ftauth_jwt.dart';
 import 'package:http/http.dart' as http;
 
-import 'metadata_repo.dart';
-
-class MetadataRepoImpl extends MetadataRepo {
+class MetadataRepoImpl implements MetadataRepo {
   final Config _config;
   final http.Client _httpClient;
 

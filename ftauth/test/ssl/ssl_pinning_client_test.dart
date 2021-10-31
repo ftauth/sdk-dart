@@ -15,12 +15,7 @@ void main() {
   const googleHost = 'google.com';
   final googleUri = Uri(scheme: 'https', host: googleHost);
   final googleDir = path.join(currentDir, 'google');
-  final googleCertChain = CertificateChain.loadChain(
-    googleUri,
-    leafFilename: googleDir + '/leaf.pem',
-    intermediateFilename: googleDir + '/int.pem',
-    rootFilename: googleDir + '/root.pem',
-  );
+  late final CertificateChain googleCertChain;
 
   const amazonHost = 'amazon.com';
   final amazonUri = Uri(scheme: 'https', host: amazonHost);
@@ -29,6 +24,15 @@ void main() {
 
   late SSLRepo sslRepo;
   late SSLPinningClient sslPinningClient;
+
+  setUpAll(() async {
+    googleCertChain = await CertificateChain.load(
+      googleUri,
+      leafUri: Uri.file(googleDir + '/leaf.pem'),
+      intermediateUri: Uri.file(googleDir + '/int.pem'),
+      rootUri: Uri.file(googleDir + '/root.pem'),
+    );
+  });
 
   setUp(() {
     sslRepo = SSLRepoImpl(storageRepo);

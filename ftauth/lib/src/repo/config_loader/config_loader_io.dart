@@ -6,6 +6,8 @@ import 'package:ftauth/ftauth.dart';
 import 'config_loader.dart';
 
 class ConfigLoader extends ConfigLoaderInterface {
+  const ConfigLoader();
+
   @override
   Future<Config> fromFile(String filename) async {
     final data = File(filename).readAsStringSync();

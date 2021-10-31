@@ -14,7 +14,9 @@ export 'src/authorizer/authorizer.dart';
 // export 'src/demo/demo.dart';
 
 export 'src/repo/crypto/crypto_repo.dart';
+export 'src/repo/metadata/metadata_repo.dart';
 export 'src/repo/storage/storage_repo.dart';
+export 'src/repo/user/user_repo.dart';
 
 // SSL Pinning
 export 'src/repo/ssl/ssl_pinning_client.dart';

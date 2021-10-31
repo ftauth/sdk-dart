@@ -28,7 +28,7 @@ abstract class CryptoRepo implements Signer, Verifier {
     final seedSource = Random.secure();
     final seeds = <int>[];
     for (var i = 0; i < 32; i++) {
-      seeds.add(seedSource.nextInt(255));
+      seeds.add(seedSource.nextInt(256));
     }
     secureRandom.seed(pc.KeyParameter(Uint8List.fromList(seeds)));
 

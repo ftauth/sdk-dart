@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
 
-class MockStorageRepo extends StorageRepo {
+class MockStorageRepo implements StorageRepo {
   Map<String, String> _inMemStorage = {};
 
   @override

@@ -5,7 +5,7 @@ import 'package:uuid/uuid.dart';
 
 import 'dpop_repo.dart';
 
-class DPoPRepoImpl extends DPoPRepo {
+class DPoPRepoImpl implements DPoPRepo {
   final CryptoRepo cryptoRepo;
 
   DPoPRepoImpl(this.cryptoRepo);

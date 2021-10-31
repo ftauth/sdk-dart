@@ -4,7 +4,7 @@ import 'package:ftauth/src/repo/metadata/metadata_repo.dart';
 import 'package:ftauth_jwt/ftauth_jwt.dart';
 import 'package:ftauth/src/model/server/metadata.dart';
 
-class MockMetadataRepo extends MetadataRepo {
+class MockMetadataRepo implements MetadataRepo {
   static const jwksJson = '''
   {
     "keys": [

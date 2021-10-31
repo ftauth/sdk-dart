@@ -5,9 +5,11 @@ import 'storage_repo_impl.dart';
 /// Handles secure storage of private information retained via the OAuth process
 /// including tokens, state, and code verifiers.
 abstract class StorageRepo {
-  static final instance = StorageRepoImpl();
+  static late final instance = StorageRepoImpl();
 
-  const StorageRepo();
+  factory StorageRepo() {
+    return instance;
+  }
 
   /// Initializes the storage repository.
   Future<void> init({Uint8List? encryptionKey});

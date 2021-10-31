@@ -8,6 +8,8 @@ export 'config_loader_stub.dart'
     if (dart.library.html) 'config_loader_html.dart';
 
 abstract class ConfigLoaderInterface {
+  const ConfigLoaderInterface();
+
   Future<Config> fromFile(String filename);
 
   Future<Config> fromUrl(Uri url) async {
