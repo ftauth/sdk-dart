@@ -39,7 +39,7 @@ class Credentials implements oauth2.Credentials {
       creds.accessToken,
       type: config.accessTokenFormat,
       expiry:
-          config.accessTokenFormat != TokenFormat.JWT ? creds.expiration : null,
+          config.accessTokenFormat != TokenFormat.jwt ? creds.expiration : null,
     );
     Token? refreshToken;
     if (creds.refreshToken != null) {
@@ -50,7 +50,7 @@ class Credentials implements oauth2.Credentials {
     }
     Token? idToken;
     if (creds.idToken != null) {
-      idToken = Token(creds.idToken!, type: TokenFormat.JWT);
+      idToken = Token(creds.idToken!, type: TokenFormat.jwt);
     }
 
     return Credentials(

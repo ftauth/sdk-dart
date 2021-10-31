@@ -67,7 +67,7 @@ Map<String, dynamic> _$JsonWebKeyToJson(JsonWebKey instance) {
   writeNotNull('dp', base64UrlUintEncode(instance.dp));
   writeNotNull('dq', base64UrlUintEncode(instance.dq));
   writeNotNull('qi', base64UrlUintEncode(instance.qi));
-  writeNotNull('oth', instance.otherPrimes);
+  writeNotNull('oth', instance.otherPrimes?.map((e) => e.toJson()).toList());
   return val;
 }
 

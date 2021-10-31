@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:canonical_json/canonical_json.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -37,7 +36,7 @@ const _reservedClaims = [
 ];
 
 @serialize
-class JsonWebClaims {
+class JsonWebClaims extends Equatable {
   @JsonKey(name: 'iss')
   final String? issuer;
 
@@ -75,7 +74,7 @@ class JsonWebClaims {
   final String? httpUri;
 
   @JsonKey(ignore: true)
-  final Map<String, dynamic> customClaims;
+  final Map<String, Object?> customClaims;
 
   JsonWebClaims({
     this.issuer,
@@ -90,7 +89,7 @@ class JsonWebClaims {
     this.scope,
     this.httpMethod,
     this.httpUri,
-    Map<String, dynamic>? customClaims,
+    Map<String, Object?>? customClaims,
   }) : customClaims = customClaims ?? {};
 
   @override
@@ -110,9 +109,10 @@ class JsonWebClaims {
         customClaims,
       ];
 
-  Map<String, dynamic>? get ftauthClaims => customClaims['https://ftauth.io'];
+  Map<String, Object?>? get ftauthClaims =>
+      customClaims['https://ftauth.io'] as Map<String, Object?>?;
 
-  factory JsonWebClaims.fromJson(Map<String, dynamic> json) {
+  factory JsonWebClaims.fromJson(Map<String, Object?> json) {
     var instance = _$JsonWebClaimsFromJson(json);
     final customClaims =
         json.keys.where((key) => !_reservedClaims.contains(key));
@@ -121,15 +121,15 @@ class JsonWebClaims {
     return instance;
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     final map = _$JsonWebClaimsToJson(this);
-    final keys = [...map.keys, ...customClaims.keys]..sort();
+    final keys = [...map.keys, ...customClaims.keys];
     return {
       for (final key in keys) key: map[key] ?? customClaims[key],
     };
   }
 
-  List<int> encode() => utf8.encode(jsonEncode(toJson()));
+  List<int> encode() => canonicalJson.encode(toJson());
   String encodeBase64() => base64RawUrl.encode(encode());
 
   void assertValid(TokenType type) {
@@ -191,8 +191,8 @@ class ConfirmationClaim extends Equatable {
   @override
   List<Object?> get props => [key, sha256Thumbprint];
 
-  factory ConfirmationClaim.fromJson(Map<String, dynamic> json) =>
+  factory ConfirmationClaim.fromJson(Map<String, Object?> json) =>
       _$ConfirmationClaimFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ConfirmationClaimToJson(this);
+  Map<String, Object?> toJson() => _$ConfirmationClaimToJson(this);
 }

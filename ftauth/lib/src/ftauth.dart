@@ -2,11 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth/src/logger/logger.dart';
-import 'package:ftauth/src/model/user/user.dart';
 import 'package:http/http.dart' as http;
-
-const _isDemo = bool.fromEnvironment('demo', defaultValue: false);
 
 typedef SetupHandler = FutureOr<void> Function(FTAuth);
 

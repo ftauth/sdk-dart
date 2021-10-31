@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 import 'dart:typed_data';
 import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/authorizer/keys.dart';
@@ -7,9 +6,6 @@ import 'package:ftauth_jwt/ftauth_jwt.dart';
 import 'package:js/js_util.dart';
 
 import 'crypto_subtle.dart' as subtle;
-
-// Max salt length for SHA-256/2048 bit key.
-const _saltLength = 222;
 
 class CryptoRepoImpl extends CryptoRepo {
   CryptoRepoImpl([StorageRepo? storageRepo])

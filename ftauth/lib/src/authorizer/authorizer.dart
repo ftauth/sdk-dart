@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
 import 'package:ftauth/src/http/inline_client.dart';
-import 'package:ftauth/src/model/ssl/certificate.dart';
 import 'package:ftauth/src/repo/user/user_repo.dart';
 import 'package:meta/meta.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
@@ -34,7 +33,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   final StorageRepo _storageRepo;
 
   /// Encryption key used for [_storageRepo].
-  Uint8List? _encryptionKey;
+  final Uint8List? _encryptionKey;
 
   /// Whether to clear previous Keychain items on a fresh install.
   final bool clearOnFreshInstall;
@@ -207,7 +206,7 @@ class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     if (idTokenEnc != null) {
       idToken = Token(
         idTokenEnc,
-        type: TokenFormat.JWT,
+        type: TokenFormat.jwt,
       );
     }
 

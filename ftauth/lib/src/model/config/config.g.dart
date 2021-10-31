@@ -25,7 +25,7 @@ Config _$ConfigFromJson(Map<String, dynamic> json) => Config(
           .toList(),
       accessTokenFormat: $enumDecodeNullable(
               _$TokenFormatEnumMap, json['access_token_format']) ??
-          TokenFormat.JWT,
+          TokenFormat.jwt,
       refreshTokenFormat: $enumDecodeNullable(
               _$TokenFormatEnumMap, json['refresh_token_format']) ??
           TokenFormat.custom,
@@ -51,6 +51,6 @@ const _$ClientTypeEnumMap = {
 };
 
 const _$TokenFormatEnumMap = {
-  TokenFormat.JWT: 'JWT',
+  TokenFormat.jwt: 'JWT',
   TokenFormat.custom: 'custom',
 };

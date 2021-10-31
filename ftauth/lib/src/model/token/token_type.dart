@@ -1,1 +1,1 @@
-enum TokenFormat { JWT, custom }
+enum TokenFormat { jwt, custom }

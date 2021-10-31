@@ -1,0 +1,127 @@
+# Created with package:mono_repo v5.0.4
+name: Test
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+defaults:
+  run:
+    shell: bash
+env:
+  PUB_ENVIRONMENT: bot.github
+
+jobs:
+  job_001:
+    name: "unit_test; Dart 2.14.0; `dart test -p \"chrome,vm\"`"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Pub hosted dependencies
+        uses: actions/cache@v2.1.6
+        with:
+          path: "~/.pub-cache/hosted"
+          key: "os:ubuntu-latest;pub-cache-hosted;dart:2.14.0;packages:ftauth_jwt;commands:test_1"
+          restore-keys: |
+            os:ubuntu-latest;pub-cache-hosted;dart:2.14.0;packages:ftauth_jwt
+            os:ubuntu-latest;pub-cache-hosted;dart:2.14.0
+            os:ubuntu-latest;pub-cache-hosted
+            os:ubuntu-latest
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: "2.14.0"
+      - id: checkout
+        uses: actions/checkout@v2.3.5
+      - id: ftauth_jwt_pub_upgrade
+        name: ftauth_jwt; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart pub upgrade
+      - name: "ftauth_jwt; dart test -p \"chrome,vm\""
+        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: "dart test -p \"chrome,vm\""
+  job_002:
+    name: "unit_test; Dart 2.14.0; `dart test`"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Pub hosted dependencies
+        uses: actions/cache@v2.1.6
+        with:
+          path: "~/.pub-cache/hosted"
+          key: "os:ubuntu-latest;pub-cache-hosted;dart:2.14.0;packages:ftauth_jwt;commands:test_0"
+          restore-keys: |
+            os:ubuntu-latest;pub-cache-hosted;dart:2.14.0;packages:ftauth_jwt
+            os:ubuntu-latest;pub-cache-hosted;dart:2.14.0
+            os:ubuntu-latest;pub-cache-hosted
+            os:ubuntu-latest
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: "2.14.0"
+      - id: checkout
+        uses: actions/checkout@v2.3.5
+      - id: ftauth_jwt_pub_upgrade
+        name: ftauth_jwt; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart pub upgrade
+      - name: ftauth_jwt; dart test
+        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart test
+  job_003:
+    name: "unit_test; Dart dev; `dart test -p \"chrome,vm\"`"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Pub hosted dependencies
+        uses: actions/cache@v2.1.6
+        with:
+          path: "~/.pub-cache/hosted"
+          key: "os:ubuntu-latest;pub-cache-hosted;dart:dev;packages:ftauth_jwt;commands:test_1"
+          restore-keys: |
+            os:ubuntu-latest;pub-cache-hosted;dart:dev;packages:ftauth_jwt
+            os:ubuntu-latest;pub-cache-hosted;dart:dev
+            os:ubuntu-latest;pub-cache-hosted
+            os:ubuntu-latest
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: dev
+      - id: checkout
+        uses: actions/checkout@v2.3.5
+      - id: ftauth_jwt_pub_upgrade
+        name: ftauth_jwt; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart pub upgrade
+      - name: "ftauth_jwt; dart test -p \"chrome,vm\""
+        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: "dart test -p \"chrome,vm\""
+  job_004:
+    name: "unit_test; Dart dev; `dart test`"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Pub hosted dependencies
+        uses: actions/cache@v2.1.6
+        with:
+          path: "~/.pub-cache/hosted"
+          key: "os:ubuntu-latest;pub-cache-hosted;dart:dev;packages:ftauth_jwt;commands:test_0"
+          restore-keys: |
+            os:ubuntu-latest;pub-cache-hosted;dart:dev;packages:ftauth_jwt
+            os:ubuntu-latest;pub-cache-hosted;dart:dev
+            os:ubuntu-latest;pub-cache-hosted
+            os:ubuntu-latest
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: dev
+      - id: checkout
+        uses: actions/checkout@v2.3.5
+      - id: ftauth_jwt_pub_upgrade
+        name: ftauth_jwt; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart pub upgrade
+      - name: ftauth_jwt; dart test
+        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart test

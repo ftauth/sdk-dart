@@ -17,7 +17,9 @@ class InterceptorClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final response = await client.send(request);
-    interceptors.forEach((interceptor) => interceptor(request, response));
+    for (var interceptor in interceptors) {
+      interceptor(request, response);
+    }
     return response;
   }
 }

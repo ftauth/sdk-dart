@@ -105,34 +105,60 @@ Future<void> main() async {
   });
 
   group('request', () {
-    test('with valid cert chain, matching host', () {
-      sslRepo.pinCertChain(googleCertChain);
-      final client = sslRepo.client(googleHost);
-      expect(client.get(googleUri), completes);
+    group('with valid cert chain, matching host', () {
+      test('amazon', () {
+        sslRepo.pinCertChain(amazonCertChain);
+        final client = sslRepo.client(amazonHost);
+        expect(client.get(amazonUri), completes);
+      });
+
+      test('google', () {
+        sslRepo.pinCertChain(googleCertChain);
+        final client = sslRepo.client(googleHost);
+        expect(client.get(googleUri), completes);
+      });
     });
 
-    test('with valid cert chain, mismatched host', () {
-      sslRepo.pinCertChain(amazonCertChain);
-      final client = sslRepo.client(amazonHost);
-      expect(client.get(googleUri), throwsHandshakeException);
+    group('with valid leaf cert, matching host', () {
+      test('amazon', () {
+        sslRepo.pinCert(amazonCertChain.leaf);
+        final client = sslRepo.client(amazonHost);
+        expect(client.get(amazonUri), throwsHandshakeException);
+      });
+
+      test('google', () {
+        sslRepo.pinCert(googleCertChain.leaf);
+        final client = sslRepo.client(googleHost);
+        expect(client.get(googleUri), throwsHandshakeException);
+      });
     });
 
-    test('with valid leaf cert, matching host', () {
-      sslRepo.pinCert(googleCertChain.leaf);
-      final client = sslRepo.client(googleHost);
-      expect(client.get(googleUri), throwsHandshakeException);
+    group('with valid int cert, matching host', () {
+      test('amazon', () {
+        sslRepo.pinCert(amazonCertChain.intermediate);
+        final client = sslRepo.client(amazonHost);
+        expect(client.get(amazonUri), completes);
+      });
+
+      test('google', () {
+        sslRepo.pinCert(googleCertChain.intermediate);
+        final client = sslRepo.client(googleHost);
+        expect(client.get(googleUri), completes);
+      });
     });
 
-    test('with valid int cert, matching host', () {
-      sslRepo.pinCert(googleCertChain.intermediate);
-      final client = sslRepo.client(googleHost);
-      expect(client.get(googleUri), completes);
-    });
+    group('with valid root cert, matching host', () {
+      test('amazon', () {
+        sslRepo.pinCert(amazonCertChain.root);
+        final client = sslRepo.client(amazonHost);
+        expect(client.get(amazonUri), completes);
+      });
 
-    test('with valid root cert, matching host', () {
-      sslRepo.pinCert(googleCertChain.root);
-      final client = sslRepo.client(googleHost);
-      expect(client.get(googleUri), completes);
+      test('google', () {
+        sslRepo.pinCert(googleCertChain.root);
+        final client = sslRepo.client(googleHost);
+        expect(client.get(googleUri), completes);
+      });
     });
 
     test('with valid leaf cert, mismatched host', () {
@@ -149,6 +175,12 @@ Future<void> main() async {
 
     test('with valid root cert, mismatched host', () {
       sslRepo.pinCert(amazonCertChain.root);
+      final client = sslRepo.client(amazonHost);
+      expect(client.get(googleUri), throwsHandshakeException);
+    });
+
+    test('with valid cert chain, mismatched host', () async {
+      sslRepo.pinCertChain(amazonCertChain);
       final client = sslRepo.client(amazonHost);
       expect(client.get(googleUri), throwsHandshakeException);
     });

@@ -1,7 +1,6 @@
 name: ftauth_flutter
 description: FTAuth bindings and widget library for Flutter.
 version: 0.1.0
-author: FTAuth
 homepage: https://github.com/ftauth/sdk-dart
 
 environment:
@@ -25,14 +24,10 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  ftauth:
-    path: ../../ftauth
-  ftauth_flutter_web:
-    path: ../ftauth_flutter_web
-  ftauth_platform_interface:
-    path: ../ftauth_platform_interface
-  ftauth_storage:
-    path: ../../ftauth_storage/ftauth_storage
+  ftauth: ^0.1.0
+  ftauth_flutter_web: ^0.1.0
+  ftauth_platform_interface: ^0.1.0
+  ftauth_storage: ^0.1.0
   webview_flutter: ^2.0.0
 
 dev_dependencies:

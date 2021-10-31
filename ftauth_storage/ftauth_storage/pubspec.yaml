@@ -1,6 +1,6 @@
 name: ftauth_storage
 description: A new flutter plugin project.
-version: 0.0.1
+version: 0.1.0
 homepage:
 
 environment:
@@ -21,12 +21,9 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  ftauth:
-    path: ../../ftauth
-  ftauth_storage_platform_interface:
-    path: ../ftauth_storage_platform_interface
-  ftauth_storage_web:
-    path: ../ftauth_storage_web
+  ftauth: ^0.1.0
+  ftauth_storage_platform_interface: ^0.1.0
+  ftauth_storage_web: ^0.1.0
 
 dev_dependencies:
   flutter_test:

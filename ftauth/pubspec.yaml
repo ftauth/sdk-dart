@@ -10,8 +10,7 @@ dependencies:
   crypto: ^3.0.0
   equatable: ^2.0.0
   hive: ^2.0.0
-  ftauth_jwt:
-    path: ../ftauth_jwt
+  ftauth_jwt: ^0.1.0
   js: ^0.6.3
   json_annotation: ^4.3.0
   oauth2: ^2.0.0

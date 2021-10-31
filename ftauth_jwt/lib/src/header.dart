@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:canonical_json/canonical_json.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -79,12 +78,12 @@ class JsonWebHeader extends Equatable {
         x509sha256Thumbprint,
       ];
 
-  factory JsonWebHeader.fromJson(Map<String, dynamic> json) =>
+  factory JsonWebHeader.fromJson(Map<String, Object?> json) =>
       _$JsonWebHeaderFromJson(json);
 
-  Map<String, dynamic> toJson() => _$JsonWebHeaderToJson(this);
+  Map<String, Object?> toJson() => _$JsonWebHeaderToJson(this);
 
-  List<int> encode() => utf8.encode(jsonEncode(toJson()));
+  List<int> encode() => canonicalJson.encode(toJson());
 
   String encodeBase64() => base64RawUrl.encode(encode());
 

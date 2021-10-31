@@ -1,0 +1,16 @@
+github:
+  workflows:
+    lint:
+      name: Dart Lint
+      stages:
+        - analyze_and_format
+    test:
+      name: Test
+      stages:
+        - unit_test
+
+self_validate: analyze_and_format
+
+merge_stages:
+  - analyze_and_format
+  - unit_test

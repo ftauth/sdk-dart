@@ -37,7 +37,7 @@ class Config extends Equatable {
     this.scopes = const [],
     required String redirectUri,
     this.grantTypes,
-    this.accessTokenFormat = TokenFormat.JWT,
+    this.accessTokenFormat = TokenFormat.jwt,
     this.refreshTokenFormat = TokenFormat.custom,
     Uri? authorizationUri,
     Uri? tokenUri,

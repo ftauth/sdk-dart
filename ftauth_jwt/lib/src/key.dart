@@ -213,10 +213,10 @@ class JsonWebKey extends Equatable {
         otherPrimes,
       ];
 
-  factory JsonWebKey.fromJson(Map<String, dynamic> json) =>
+  factory JsonWebKey.fromJson(Map<String, Object?> json) =>
       _$JsonWebKeyFromJson(json);
 
-  Map<String, dynamic> toJson() {
+  Map<String, Object?> toJson() {
     final map = _$JsonWebKeyToJson(this);
 
     // Strip if not included originally.
@@ -286,8 +286,8 @@ class OtherPrime extends Equatable {
   @override
   List<Object?> get props => [r, d, t];
 
-  factory OtherPrime.fromJson(Map<String, dynamic> json) =>
+  factory OtherPrime.fromJson(Map<String, Object?> json) =>
       _$OtherPrimeFromJson(json);
 
-  Map<String, dynamic> toJson() => _$OtherPrimeToJson(this);
+  Map<String, Object?> toJson() => _$OtherPrimeToJson(this);
 }

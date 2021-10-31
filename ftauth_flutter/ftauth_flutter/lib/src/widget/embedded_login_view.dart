@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
-import 'package:ftauth_flutter/src/widget/login_error_popup_view.dart';
 import 'package:webview_flutter/platform_interface.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

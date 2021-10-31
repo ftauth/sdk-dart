@@ -35,7 +35,7 @@ Map<String, dynamic> _$JsonWebHeaderToJson(JsonWebHeader instance) {
   writeNotNull('alg', AlgorithmX.toJson(instance.algorithm));
   writeNotNull('cty', instance.contentType);
   writeNotNull('jwu', instance.jwkSetUri?.toString());
-  writeNotNull('jwk', instance.jwk);
+  writeNotNull('jwk', instance.jwk?.toJson());
   writeNotNull('kid', instance.keyId);
   writeNotNull('typ', TokenTypeX.toJson(instance.type));
   writeNotNull('x5c', instance.x509CertChain);

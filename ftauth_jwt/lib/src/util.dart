@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:pointycastle/export.dart';
-// ignore: implementation_imports
-import 'package:pointycastle/src/utils.dart';
 
-Map<String, dynamic> decodeBase64(String base64) {
+// ignore_for_file: implementation_imports
+import 'package:pointycastle/src/utils.dart';
+import 'package:pointycastle/src/platform_check/platform_check.dart';
+
+Map<String, Object?> decodeBase64(String base64) {
   final json = utf8.decode(base64RawUrl.decode(base64));
-  return jsonDecode(json) as Map<String, dynamic>;
+  return jsonDecode(json) as Map<String, Object?>;
 }
 
 const base64RawUrl = Base64RawUrlCodec();
@@ -51,7 +51,7 @@ class Base64UrlUintEncoder extends Converter<BigInt?, String?> {
       }
     }
 
-    return base64RawUrl.encode([0]);
+    return base64RawUrl.encode(const [0]);
   }
 }
 
@@ -129,13 +129,8 @@ SecureRandom initSecureRandom() {
     return _secureRandom!;
   }
   final secureRandom = FortunaRandom();
-
-  final seedSource = Random.secure();
-  final seeds = <int>[];
-  for (var i = 0; i < 32; i++) {
-    seeds.add(seedSource.nextInt(255));
-  }
-  secureRandom.seed(KeyParameter(Uint8List.fromList(seeds)));
+  final seed = Platform.instance.platformEntropySource().getBytes(32);
+  secureRandom.seed(KeyParameter(seed));
 
   return _secureRandom = secureRandom;
 }

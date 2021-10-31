@@ -1,0 +1,5 @@
+name: ftauth
+
+packages:
+  - example
+  - ftauth**

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth/src/model/exception.dart';
 import 'package:http/http.dart' as http;
 
 export 'config_loader_stub.dart'

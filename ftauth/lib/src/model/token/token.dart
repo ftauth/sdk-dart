@@ -16,7 +16,7 @@ class Token extends Equatable {
     this.type = TokenFormat.custom,
     DateTime? expiry,
   }) : _expiry = expiry {
-    if (type == TokenFormat.JWT) {
+    if (type == TokenFormat.jwt) {
       jwt = JsonWebToken.parse(raw);
     } else {
       jwt = null;
@@ -33,7 +33,7 @@ class Token extends Equatable {
   /// When the token expires.
   DateTime? get expiry {
     switch (type) {
-      case TokenFormat.JWT:
+      case TokenFormat.jwt:
         return jwt!.claims.expiration;
       case TokenFormat.custom:
         return _expiry;

@@ -41,7 +41,7 @@ Map<String, dynamic> _$JsonWebClaimsToJson(JsonWebClaims instance) {
   writeNotNull('iat', encodeDateTime(instance.issuedAt));
   writeNotNull('jti', instance.jwtId);
   writeNotNull('nonce', instance.nonce);
-  writeNotNull('cnf', instance.confirmation);
+  writeNotNull('cnf', instance.confirmation?.toJson());
   writeNotNull('scope', instance.scope);
   writeNotNull('htm', instance.httpMethod);
   writeNotNull('htu', instance.httpUri);
@@ -65,7 +65,7 @@ Map<String, dynamic> _$ConfirmationClaimToJson(ConfirmationClaim instance) {
     }
   }
 
-  writeNotNull('jwk', instance.key);
+  writeNotNull('jwk', instance.key?.toJson());
   writeNotNull('jkt', instance.sha256Thumbprint);
   return val;
 }

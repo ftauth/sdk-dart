@@ -1,8 +1,6 @@
 import 'package:ftauth/ftauth.dart';
 import 'package:http/http.dart' as http;
 
-import 'ssl_repo.dart';
-
 class SSLRepoImpl extends SSLRepo {
   static final _httpClient = http.Client();
 

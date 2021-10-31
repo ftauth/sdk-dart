@@ -15,5 +15,5 @@ JsonWebKeySet _$JsonWebKeySetFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$JsonWebKeySetToJson(JsonWebKeySet instance) =>
     <String, dynamic>{
-      'keys': instance.keys,
+      'keys': instance.keys.map((e) => e.toJson()).toList(),
     };
