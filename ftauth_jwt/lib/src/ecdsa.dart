@@ -38,9 +38,6 @@ class EcdsaPrivateKey implements Signer, Verifier {
         params = ECCurve_secp384r1();
         break;
       case Algorithm.ecdsaSha512:
-        digest = SHA512Digest();
-        params = ECCurve_secp521r1();
-        break;
       default:
         throw UnsupportedError('Unsupported ECDSA algorithm: ${jwk.algorithm}');
     }

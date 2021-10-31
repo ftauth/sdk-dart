@@ -192,31 +192,6 @@ const ES384_public_jwk = '''
 }
   ''';
 
-const ES512_private_jwk = '''
-  {
-  "use": "sig",
-  "kty": "EC",
-  "kid": "Pus15ssoDDJIkntJmn11TSZ8CnRlBHzUlIvXv8xMS5o",
-  "crv": "P-521",
-  "alg": "ES512",
-  "x": "AF-I7FcU8ltKQRBo3m0iBew8FbBJf5gBTA4UuWSNztdJldgQn9v9uqQ9UqRp9DtybPMYGqWt2Pq0EvMTLOjzm1LE",
-  "y": "AKFM5UnwieHPoFg97PausJrZDcZ6afiJJ1VRWbXsJP5-htC9_PRd0BTCU21uzpf1oSLtmSs__OVlmagGhP5J9q2b",
-  "d": "ATdHeTiIUkpAguh1Ss1tRjkC0666Hbbe9KXnVdJ_fhr4vr_PyC3zKz42-3DykW6fFpAgnTenUymVd83d_sE-6ace"
-}
-  ''';
-
-const ES512_public_jwk = '''
-  {
-  "use": "sig",
-  "kty": "EC",
-  "kid": "Pus15ssoDDJIkntJmn11TSZ8CnRlBHzUlIvXv8xMS5o",
-  "crv": "P-521",
-  "alg": "ES512",
-  "x": "AF-I7FcU8ltKQRBo3m0iBew8FbBJf5gBTA4UuWSNztdJldgQn9v9uqQ9UqRp9DtybPMYGqWt2Pq0EvMTLOjzm1LE",
-  "y": "AKFM5UnwieHPoFg97PausJrZDcZ6afiJJ1VRWbXsJP5-htC9_PRd0BTCU21uzpf1oSLtmSs__OVlmagGhP5J9q2b"
-}
-  ''';
-
 const HS256_jwt =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0ZXN0IiwiZXhwIjoxNjIxODI1NDQ0LCJpYXQiOjE2MjE4MjQ1NDQsImlzcyI6ImZ0YXV0aC5pbyIsImp0aSI6ImU0MmRkMjY2YmQ5NGZhN2Q1OGY0MzMxZDZlZTU5ZTMzMTE5Mzc1MmZmNGM1MDBiMjgyODM4MzFjMWMzMmRiNGMiLCJuYmYiOjE2MjE4MjQ1NDQsInN1YiI6InRlc3QifQ.Yb39HlDka29VVsq5tjirfK1VyXTtDGOuHblrfHT2g0U';
 
@@ -240,9 +215,6 @@ const ES256_jwt =
 
 const ES384_jwt =
     'eyJhbGciOiJFUzM4NCIsImtpZCI6IjVQM21WNVo5YmZiTGNMNlJJd01zU0ZVbk04aEpDU3pSUWNQdmN0T2pKTUkiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJ0ZXN0IiwiZXhwIjoxNjIxODI1NDQ0LCJpYXQiOjE2MjE4MjQ1NDQsImlzcyI6ImZ0YXV0aC5pbyIsImp0aSI6ImQ4NzlkOTk3YjdjOTZlMjc3MDRhODU0ZGU4M2E2YjVlYWFhZWE1MTA1ZTljZjMwMTAyOWZjOGNhNDA3OTdjOGQiLCJuYmYiOjE2MjE4MjQ1NDQsInN1YiI6InRlc3QifQ.VMCYW6dYoufDxoGsliZuJASHf-DLSZ8828Q6UVtMVvmqydmIR5cYGepGqcnDSoOrgMcXNDYklBHMagJYrecG-xXyPrU_pt5Y8MyOVt5j9-nAHkOIe90tsWL_JvFZo_CY';
-
-const ES512_jwt =
-    'eyJhbGciOiJFUzUxMiIsImtpZCI6IlB1czE1c3NvRERKSWtudEptbjExVFNaOENuUmxCSHpVbEl2WHY4eE1TNW8iLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJ0ZXN0IiwiZXhwIjoxNjIxODI1NDQ0LCJpYXQiOjE2MjE4MjQ1NDQsImlzcyI6ImZ0YXV0aC5pbyIsImp0aSI6IjI5OTJkZjkyOWY0NmQ1MWRmOGNlOTEwYjI3MjhiOTdhMWFlY2QxMTU5OWFkNDU3YzRmMDAzMTgxNjQ2OWIxNzkiLCJuYmYiOjE2MjE4MjQ1NDQsInN1YiI6InRlc3QifQ.ABt8qcwwMECL7XPM5f_j4IE-9qkFOETZA-8P-mb7duzB8dHSYknbG68Xe3bL6vIR0nwXcQSJuyf2r1lNiZLpQ8a-AIBJuad9b8oXGYLA-xkN8WfdhLwUaBYYSS6S6WEmLXGfXnPnRvU5TU3h-RXmZhr1qkGkDlc-mHKgbE494oJkwBH0';
 
 const testCases = <TestCase>[
   TestCase(
@@ -292,12 +264,6 @@ const testCases = <TestCase>[
     ES384_private_jwk,
     ES384_public_jwk,
     ES384_jwt,
-  ),
-  TestCase(
-    Algorithm.ecdsaSha512,
-    ES512_private_jwk,
-    ES512_public_jwk,
-    ES512_jwt,
   ),
 ];
 
@@ -363,15 +329,6 @@ const keySet = '''
       "alg": "ES384",
       "x": "hBJ2lVmzoeNnHm0Pap4VdX8R8KUlc5OGy6dxL34iIqGPx1VTSV47daSoWrFp_BNt",
       "y": "f8O-khxSdS6rpV9iKRpELk9kbhXXtLgq85hjt3LzcrzMbxDV2hnH7UiSIUXmeHME"
-    },
-    {
-      "use": "sig",
-      "kty": "EC",
-      "kid": "Pus15ssoDDJIkntJmn11TSZ8CnRlBHzUlIvXv8xMS5o",
-      "crv": "P-521",
-      "alg": "ES512",
-      "x": "AF-I7FcU8ltKQRBo3m0iBew8FbBJf5gBTA4UuWSNztdJldgQn9v9uqQ9UqRp9DtybPMYGqWt2Pq0EvMTLOjzm1LE",
-      "y": "AKFM5UnwieHPoFg97PausJrZDcZ6afiJJ1VRWbXsJP5-htC9_PRd0BTCU21uzpf1oSLtmSs__OVlmagGhP5J9q2b"
     }
   ]
 }
