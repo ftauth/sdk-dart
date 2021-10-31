@@ -11,7 +11,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.ftauth_storage
+        package: io.ftauth.ftauth_storage
         pluginClass: FtauthStoragePlugin
       ios:
         pluginClass: FtauthStoragePlugin

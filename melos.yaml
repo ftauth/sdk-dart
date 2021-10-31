@@ -1,5 +1,5 @@
 name: ftauth
 
 packages:
-  - example
+  - example/**
   - ftauth**

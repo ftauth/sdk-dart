@@ -1,3 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.example.ftauth_storage">
+  package="io.ftauth.ftauth_storage">
 </manifest>

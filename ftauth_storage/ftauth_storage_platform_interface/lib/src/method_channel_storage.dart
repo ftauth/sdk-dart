@@ -6,10 +6,8 @@ import 'package:ftauth_platform_interface/ftauth_platform_interface.dart';
 import 'package:ftauth_storage_platform_interface/ftauth_storage_plugin_interface.dart';
 
 class MethodChannelStorage extends FTAuthStoragePlatform {
-  // TODO: Add pigeon for IOSOptions
-  static const _iosKeychainService = 'io.ftauth.ftauth';
   static const MethodChannel _channel =
-      MethodChannel('io.ftauth.ftauth/storage');
+      MethodChannel('io.ftauth.ftauth_storage');
 
   /// iOS-only: App group specifies where to store Keychain items and thus,
   /// which bundle IDs have access to them.
