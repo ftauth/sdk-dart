@@ -80,8 +80,8 @@ for PKG in ${PKGS}; do
         dart test || EXIT_CODE=$?
         ;;
       test_1)
-        echo 'dart test -p "chrome,vm"'
-        dart test -p "chrome,vm" || EXIT_CODE=$?
+        echo 'dart test -p chrome'
+        dart test -p chrome || EXIT_CODE=$?
         ;;
       *)
         echo -e "\033[31mUnknown TASK '${TASK}' - TERMINATING JOB\033[0m"

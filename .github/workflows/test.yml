@@ -14,7 +14,7 @@ env:
 
 jobs:
   job_001:
-    name: "unit_test; Dart 2.14.0; `dart test -p \"chrome,vm\"`"
+    name: "unit_test; Dart 2.14.0; `dart test -p chrome`"
     runs-on: ubuntu-latest
     steps:
       - name: Cache Pub hosted dependencies
@@ -37,10 +37,10 @@ jobs:
         if: "always() && steps.checkout.conclusion == 'success'"
         working-directory: ftauth_jwt
         run: dart pub upgrade
-      - name: "ftauth_jwt; dart test -p \"chrome,vm\""
+      - name: "ftauth_jwt; dart test -p chrome"
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
-        run: "dart test -p \"chrome,vm\""
+        run: dart test -p chrome
   job_002:
     name: "unit_test; Dart 2.14.0; `dart test`"
     runs-on: ubuntu-latest
@@ -70,7 +70,7 @@ jobs:
         working-directory: ftauth_jwt
         run: dart test
   job_003:
-    name: "unit_test; Dart dev; `dart test -p \"chrome,vm\"`"
+    name: "unit_test; Dart dev; `dart test -p chrome`"
     runs-on: ubuntu-latest
     steps:
       - name: Cache Pub hosted dependencies
@@ -93,10 +93,10 @@ jobs:
         if: "always() && steps.checkout.conclusion == 'success'"
         working-directory: ftauth_jwt
         run: dart pub upgrade
-      - name: "ftauth_jwt; dart test -p \"chrome,vm\""
+      - name: "ftauth_jwt; dart test -p chrome"
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
-        run: "dart test -p \"chrome,vm\""
+        run: dart test -p chrome
   job_004:
     name: "unit_test; Dart dev; `dart test`"
     runs-on: ubuntu-latest

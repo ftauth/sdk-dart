@@ -9,4 +9,4 @@ stages:
       - analyze: --fatal-infos .
   - unit_test:
     - test:
-    - test: -p "chrome,vm"
+    - test: -p chrome
