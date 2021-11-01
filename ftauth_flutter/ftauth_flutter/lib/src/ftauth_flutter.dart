@@ -117,11 +117,12 @@ class FTAuthClient extends ftauth.FTAuth {
   }
 
   /// Performs the two-step OAuth process to login the user.
+  @override
   Future<void> login({
     String? language,
     String? countryCode,
   }) async {
-    if (await isLoggedIn) {
+    if (isLoggedIn) {
       FTAuth.info('User is already logged in.');
       return;
     }

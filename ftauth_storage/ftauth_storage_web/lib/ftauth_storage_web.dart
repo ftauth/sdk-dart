@@ -36,4 +36,17 @@ class FTAuthStorageWeb extends FTAuthStoragePlatform {
     html.window.localStorage['ftauth.$key'] = value;
     return SynchronousFuture(null);
   }
+
+  @override
+  Future<String?> getEphemeralString(String key) {
+    return SynchronousFuture(
+      html.window.sessionStorage['ftauth.$key'],
+    );
+  }
+
+  @override
+  Future<void> setEphemeralString(String key, String value) {
+    html.window.sessionStorage['ftauth.$key'] = value;
+    return SynchronousFuture(null);
+  }
 }

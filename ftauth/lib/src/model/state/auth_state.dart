@@ -37,7 +37,7 @@ class AuthFailure extends AuthState {
 
   const AuthFailure(this.code, [this.message = 'An unknown error occurred.']);
 
-  factory AuthFailure.fromException(dynamic e) =>
+  factory AuthFailure.fromException(Object e) =>
       AuthFailure('${e.runtimeType}', e.toString());
 
   @override

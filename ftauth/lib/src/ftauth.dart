@@ -8,7 +8,6 @@ typedef SetupHandler = FutureOr<void> Function(FTAuth);
 
 abstract class FTAuthInterface
     implements AuthorizerInterface, SSLPinningInterface {
-  Future<void> logout();
   Stream<AuthState> get authStates;
   bool get isLoggedIn;
   User? get currentUser;
@@ -107,6 +106,13 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
   @override
   Future<Client> exchange(Map<String, String> parameters) =>
       authorizer.exchange(parameters);
+
+  @override
+  Future<void> login({String? language, String? countryCode}) =>
+      authorizer.login(
+        language: language,
+        countryCode: countryCode,
+      );
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {

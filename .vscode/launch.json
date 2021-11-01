@@ -14,6 +14,12 @@
                 "-p",
                 "chrome"
             ]
+        },
+        {
+            "name": "Example",
+            "type": "dart",
+            "cwd": "example",
+            "request": "launch"
         }
     ]
 }

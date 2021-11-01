@@ -118,7 +118,7 @@ class EmbeddedLoginViewState extends State<EmbeddedLoginView> {
             onWebViewCreated: (WebViewController controller) async {
               this.controller = controller;
               try {
-                final isLoggedIn = await ssoClient.isLoggedIn;
+                final isLoggedIn = ssoClient.isLoggedIn;
                 if (isLoggedIn) {
                   _onLoggedIn();
                   return;

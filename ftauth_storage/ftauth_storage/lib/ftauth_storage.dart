@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:ftauth/ftauth.dart';
 import 'package:ftauth_storage_platform_interface/ftauth_storage_plugin_interface.dart';
 
-class FTAuthSecureStorage extends StorageRepo {
+class FTAuthSecureStorage implements StorageRepo {
   static FTAuthSecureStorage? _instance;
   late final FTAuthStoragePlatform _platform;
 

@@ -3,7 +3,7 @@ import 'package:ftauth_example/keys.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
 
 class AuthStateIndicator extends StatelessWidget {
-  static const _authStateKey = const Key(keyAuthStateText);
+  static const _authStateKey = Key(keyAuthStateText);
 
   const AuthStateIndicator({Key? key}) : super(key: key);
 

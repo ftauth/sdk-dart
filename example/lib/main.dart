@@ -21,10 +21,10 @@ final storageRepo = FTAuthSecureStorage(
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final config = Config(
-    gatewayUrl: 'http://localhost:8080',
-    clientId: '10ef6d61-1a83-44e0-94bb-1675ac50d397',
+    gatewayUrl: 'http://localhost:8000',
+    clientId: '7d903f93-55ae-4e3d-b50a-686694337ddf',
     redirectUri: 'myapp://auth',
-    grantTypes: [
+    grantTypes: const [
       'authorization_code',
       'refresh_token',
     ],
@@ -35,12 +35,14 @@ Future<void> main() async {
     FTAuth(
       config,
       storageRepo: storageRepo,
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -105,7 +107,8 @@ class _MyAppState extends State<MyApp> {
         }
       }),
     );
-    final json = JsonEncoder.withIndent('\t').convert(Map.fromEntries(entries));
+    final json =
+        const JsonEncoder.withIndent('\t').convert(Map.fromEntries(entries));
     debugPrint(json);
   }
 
@@ -127,9 +130,9 @@ class _MyAppState extends State<MyApp> {
                     const Text('Authorization State'),
                     const SizedBox(height: 5),
                     const AuthStateIndicator(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: const Divider(),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Divider(),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -170,12 +173,12 @@ class _MyAppState extends State<MyApp> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: const Divider(),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Divider(),
                     ),
                     ElevatedButton(
-                      key: Key(keyLoginButton),
+                      key: const Key(keyLoginButton),
                       child: const Text('Login'),
                       onPressed: () => FTAuth.of(context).login(
                         language: _selectedLanguage?.code,
@@ -184,7 +187,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      key: Key(keyLoginEmbeddedButton),
+                      key: const Key(keyLoginEmbeddedButton),
                       child: const Text('Login (Embedded)'),
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
@@ -197,23 +200,23 @@ class _MyAppState extends State<MyApp> {
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      key: Key(keyUserInfoButton),
+                      key: const Key(keyUserInfoButton),
                       child: const Text('Get User Info'),
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (_) => UserInfoScreen(),
+                          builder: (_) => const UserInfoScreen(),
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      key: Key(keyDumpKeychainButton),
+                      key: const Key(keyDumpKeychainButton),
                       child: const Text('Dump Keychain'),
                       onPressed: _dumpKeychain,
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      key: Key(keyLogoutButton),
+                      key: const Key(keyLogoutButton),
                       child: const Text('Logout'),
                       onPressed: () => FTAuth.of(context).logout(),
                     ),
@@ -227,3 +230,5 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+// ignore_for_file: implementation_imports

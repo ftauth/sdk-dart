@@ -14,7 +14,7 @@ Future<void> main() async {
   final config = await FlutterConfig.fromAsset();
   final ftauth = FTAuth(
     config,
-    child: app.MyApp(),
+    child: const app.MyApp(),
   );
   runApp(ftauth);
 }

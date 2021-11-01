@@ -10,7 +10,7 @@ class WebViewCommandResult extends Result {
       : success = json['success'],
         error = json['error'];
 
-  factory WebViewCommandResult.success() => WebViewCommandResult(true);
+  factory WebViewCommandResult.success() => const WebViewCommandResult(true);
   factory WebViewCommandResult.error(String error) =>
       WebViewCommandResult(false, error);
 

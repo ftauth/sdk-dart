@@ -8,7 +8,7 @@ import 'package:oauth2/oauth2.dart' as oauth2;
 /// refreshes access tokens when expired.
 class Client extends http.BaseClient {
   /// Used to logout user on authorization failure (i.e. 401).
-  final Authorizer _authorizer;
+  final AuthorizerInterface _authorizer;
 
   /// Base HTTP client which handles automatic token refreshing and injection
   /// of credentials into HTTP headers.
@@ -25,7 +25,7 @@ class Client extends http.BaseClient {
     required this.credentials,
     required String clientId,
     required SSLRepo sslRepository,
-    required Authorizer authorizer,
+    required AuthorizerInterface authorizer,
     http.Client? httpClient,
     Duration? timeout,
   })  : _authorizer = authorizer,
