@@ -1,0 +1,33 @@
+{
+  "auth": {},
+  "api": {
+    "ftauthtodos": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "OPENID_CONNECT",
+            "openIDConnectConfig": {
+              "name": "FTAuth",
+              "issuerUrl": "https://demo.ftauth.io/",
+              "clientId": "eb7fde5d-88f4-419c-aabb-eed3d6d88320",
+              "authTTL": "0",
+              "iatTTL": "3600000"
+            }
+          },
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "API_KEY",
+              "apiKeyConfig": {
+                "apiKeyExpirationDays": 7,
+                "apiKeyExpirationDate": "2021-12-04T21:28:43.350Z",
+                "description": "Admin API Key"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

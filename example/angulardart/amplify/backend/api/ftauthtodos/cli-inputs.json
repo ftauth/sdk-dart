@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "ftauthtodos",
+    "serviceName": "AppSync",
+    "gqlSchemaPath": "/home/dillon/dev/ftauth/sdk-dart/example/angulardart/amplify/backend/api/ftauthtodos/schema.graphql",
+    "defaultAuthType": {
+      "mode": "OPENID_CONNECT",
+      "openIDProviderName": "FTAuth",
+      "openIDIssuerURL": "https://demo.ftauth.io/",
+      "openIDClientID": "eb7fde5d-88f4-419c-aabb-eed3d6d88320",
+      "openIDAuthTTL": "0",
+      "openIDIatTTL": "3600000"
+    },
+    "additionalAuthTypes": [
+      {
+        "mode": "API_KEY",
+        "expirationTime": 7,
+        "apiKeyExpirationDate": "2021-12-04T21:28:43.350Z",
+        "keyDescription": "Admin API Key"
+      }
+    ]
+  }
+}

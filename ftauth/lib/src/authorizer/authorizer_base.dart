@@ -158,16 +158,24 @@ abstract class AuthorizerBase
       final codeVerifier = await _storageRepo.getString(keyCodeVerifier);
 
       if (state != null && codeVerifier != null) {
-        FTAuth.debug('State and code verifier found. Logging out.');
-        await _clearStorageForLogout();
+        return onFoundState(state: state, codeVerifier: codeVerifier);
       }
-
-      FTAuth.info('User is logged out.');
 
       return const AuthSignedOut();
     } catch (e) {
       return AuthFailure('${e.runtimeType}', e.toString());
     }
+  }
+
+  @protected
+  Future<AuthState> onFoundState({
+    required String state,
+    required String codeVerifier,
+  }) async {
+    FTAuth.debug('State and code verifier found. Logging out.');
+    await _clearStorageForLogout();
+    FTAuth.info('User is logged out.');
+    return const AuthSignedOut();
   }
 
   /// Reloads the current AuthState from storage, if present.
@@ -301,13 +309,8 @@ abstract class AuthorizerBase
       _storageRepo.setString(keyCodeVerifier, codeVerifier),
     ]);
 
-    _authCodeGrant = oauth2.AuthorizationCodeGrant(
-      config.clientId,
-      config.authorizationUri,
-      config.tokenUri,
-      // Must be included as empty string so that the client ID is sent
-      // in requests.
-      secret: config.clientSecret ?? '',
+    _authCodeGrant = OAuthUtil.createGrant(
+      config,
       codeVerifier: codeVerifier,
       httpClient: _httpClient,
     );
@@ -328,18 +331,7 @@ abstract class AuthorizerBase
   }
 
   @protected
-  Future<oauth2.Credentials> handleExchange(
-      Map<String, String> parameters) async {
-    final client =
-        await _authCodeGrant!.handleAuthorizationResponse(parameters);
-    return client.credentials;
-  }
-
-  /// Performs the second part of the authorization code flow, exhanging the
-  /// parameters retrieved via the WebView with the OAuth server for an access
-  /// and refresh token.
-  @override
-  Future<Client> exchange(Map<String, String> parameters) async {
+  Future<AuthSignedIn> handleExchange(Map<String, String> parameters) async {
     await init();
 
     if (_authCodeGrant == null) {
@@ -356,52 +348,62 @@ abstract class AuthorizerBase
 
     addState(const AuthLoading());
 
+    final client =
+        await _authCodeGrant!.handleAuthorizationResponse(parameters);
+    final oauthCredentials = client.credentials;
+    final credentials = Credentials.fromOAuthCredentials(
+      oauthCredentials,
+      config: config,
+      storageRepo: _storageRepo,
+      httpClient: _httpClient,
+    );
+
+    await Future.wait([
+      _storageRepo.setString(keyAccessToken, credentials.accessToken),
+      if (credentials.expirationSecondsSinceEpoch != null)
+        _storageRepo.setString(
+          keyAccessTokenExp,
+          credentials.expirationSecondsSinceEpoch!.toString(),
+        ),
+      if (credentials.refreshToken != null)
+        _storageRepo.setString(keyRefreshToken, credentials.refreshToken!),
+      if (credentials.idToken != null)
+        _storageRepo.setString(keyIdToken, credentials.idToken!),
+    ]);
+
+    final newClient = Client(
+      credentials: credentials,
+      clientId: config.clientId,
+      sslRepository: _sslRepository,
+      authorizer: this,
+      httpClient: _baseClient,
+    );
+
+    User? user;
     try {
-      final oauthCredentials = await handleExchange(parameters);
-      final credentials = Credentials.fromOAuthCredentials(
-        oauthCredentials,
-        config: config,
-        storageRepo: _storageRepo,
-        httpClient: _httpClient,
-      );
+      user = await UserRepo(config, newClient, _storageRepo).getUserInfo();
+    } on Exception catch (e) {
+      FTAuth.error('Error downloading user: $e');
+    }
 
-      await Future.wait([
-        _storageRepo.setString(keyAccessToken, credentials.accessToken),
-        if (credentials.expirationSecondsSinceEpoch != null)
-          _storageRepo.setString(
-            keyAccessTokenExp,
-            credentials.expirationSecondsSinceEpoch!.toString(),
-          ),
-        if (credentials.refreshToken != null)
-          _storageRepo.setString(keyRefreshToken, credentials.refreshToken!),
-        if (credentials.idToken != null)
-          _storageRepo.setString(keyIdToken, credentials.idToken!),
-      ]);
+    await Future.wait([
+      _storageRepo.delete(keyState),
+      _storageRepo.delete(keyCodeVerifier),
+    ]);
 
-      final newClient = Client(
-        credentials: credentials,
-        clientId: config.clientId,
-        sslRepository: _sslRepository,
-        authorizer: this,
-        httpClient: _baseClient,
-      );
+    return AuthSignedIn(newClient, user);
+  }
 
-      User? user;
-      try {
-        user = await UserRepo(config, newClient, _storageRepo).getUserInfo();
-      } on Exception catch (e) {
-        FTAuth.error('Error downloading user: $e');
-      }
-
-      addState(AuthSignedIn(newClient, user));
-
-      await Future.wait([
-        _storageRepo.delete(keyState),
-        _storageRepo.delete(keyCodeVerifier),
-      ]);
-
-      return newClient;
-    } catch (e) {
+  /// Performs the second part of the authorization code flow, exhanging the
+  /// parameters retrieved via the WebView with the OAuth server for an access
+  /// and refresh token.
+  @override
+  Future<Client> exchange(Map<String, String> parameters) async {
+    try {
+      final state = await handleExchange(parameters);
+      addState(state);
+      return state.client;
+    } on Exception catch (e) {
       addState(AuthFailure('${e.runtimeType}', e.toString()));
       rethrow;
     }

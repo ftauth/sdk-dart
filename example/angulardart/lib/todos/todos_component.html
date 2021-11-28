@@ -1,0 +1,17 @@
+<div class="container">
+  <h2>Todos</h2>
+  <div class="create">
+    <input type="text" #name />
+    <button (click)="createTodo()">+</button>
+  </div>
+  <div class="todos">
+    <todo
+      *ngFor="let todo of todos"
+      [todo]="todo"
+      (checked)="updateTodo(todo, $event)"
+    >
+      <div>Todo</div>
+    </todo>
+  </div>
+  <button (click)="logout()">Logout</button>
+</div>
