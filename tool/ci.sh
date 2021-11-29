@@ -84,8 +84,8 @@ for PKG in ${PKGS}; do
         dart test --coverage=coverage || EXIT_CODE=$?
         ;;
       test_1)
-        echo 'dart test -p chrome --coverage/coverage'
-        dart test -p chrome --coverage/coverage || EXIT_CODE=$?
+        echo 'dart test -p chrome --coverage=coverage'
+        dart test -p chrome --coverage=coverage || EXIT_CODE=$?
         ;;
       *)
         echo -e "\033[31mUnknown TASK '${TASK}' - TERMINATING JOB\033[0m"

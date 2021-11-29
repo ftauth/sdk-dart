@@ -10,5 +10,5 @@ stages:
   - unit_test:
     - group:
       - test: --coverage=coverage
-      - test: -p chrome --coverage/coverage
+      - test: -p chrome --coverage=coverage
       - command: ../tool/coverage.sh

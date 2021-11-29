@@ -14,7 +14,7 @@ env:
 
 jobs:
   job_001:
-    name: "unit_test; Dart 2.14.0; PKGS: ftauth, ftauth_jwt; `dart test --coverage=coverage`, `dart test -p chrome --coverage/coverage`, `../tool/coverage.sh`"
+    name: "unit_test; Dart 2.14.0; PKGS: ftauth, ftauth_jwt; `dart test --coverage=coverage`, `dart test -p chrome --coverage=coverage`, `../tool/coverage.sh`"
     runs-on: ubuntu-latest
     steps:
       - name: Cache Pub hosted dependencies
@@ -41,10 +41,10 @@ jobs:
         if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth
         run: "dart test --coverage=coverage"
-      - name: "ftauth; dart test -p chrome --coverage/coverage"
+      - name: "ftauth; dart test -p chrome --coverage=coverage"
         if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth
-        run: dart test -p chrome --coverage/coverage
+        run: "dart test -p chrome --coverage=coverage"
       - name: ftauth; ../tool/coverage.sh
         if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth
@@ -58,16 +58,16 @@ jobs:
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
         run: "dart test --coverage=coverage"
-      - name: "ftauth_jwt; dart test -p chrome --coverage/coverage"
+      - name: "ftauth_jwt; dart test -p chrome --coverage=coverage"
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
-        run: dart test -p chrome --coverage/coverage
+        run: "dart test -p chrome --coverage=coverage"
       - name: ftauth_jwt; ../tool/coverage.sh
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
         run: ../tool/coverage.sh
   job_002:
-    name: "unit_test; Dart dev; PKGS: ftauth, ftauth_jwt; `dart test --coverage=coverage`, `dart test -p chrome --coverage/coverage`, `../tool/coverage.sh`"
+    name: "unit_test; Dart dev; PKGS: ftauth, ftauth_jwt; `dart test --coverage=coverage`, `dart test -p chrome --coverage=coverage`, `../tool/coverage.sh`"
     runs-on: ubuntu-latest
     steps:
       - name: Cache Pub hosted dependencies
@@ -94,10 +94,10 @@ jobs:
         if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth
         run: "dart test --coverage=coverage"
-      - name: "ftauth; dart test -p chrome --coverage/coverage"
+      - name: "ftauth; dart test -p chrome --coverage=coverage"
         if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth
-        run: dart test -p chrome --coverage/coverage
+        run: "dart test -p chrome --coverage=coverage"
       - name: ftauth; ../tool/coverage.sh
         if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth
@@ -111,10 +111,10 @@ jobs:
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
         run: "dart test --coverage=coverage"
-      - name: "ftauth_jwt; dart test -p chrome --coverage/coverage"
+      - name: "ftauth_jwt; dart test -p chrome --coverage=coverage"
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
-        run: dart test -p chrome --coverage/coverage
+        run: "dart test -p chrome --coverage=coverage"
       - name: ftauth_jwt; ../tool/coverage.sh
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
