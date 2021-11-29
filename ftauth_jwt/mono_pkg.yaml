@@ -8,5 +8,7 @@ stages:
       - format
       - analyze: --fatal-infos .
   - unit_test:
-    - test:
-    - test: -p chrome
+    - group:
+      - test: --coverage=coverage
+      - test: -p chrome
+      - command: ../tool/coverage.sh

@@ -71,13 +71,17 @@ for PKG in ${PKGS}; do
         echo 'dart analyze --fatal-infos .'
         dart analyze --fatal-infos . || EXIT_CODE=$?
         ;;
+      command)
+        echo '../tool/coverage.sh'
+        ../tool/coverage.sh || EXIT_CODE=$?
+        ;;
       format)
         echo 'dart format --output=none --set-exit-if-changed .'
         dart format --output=none --set-exit-if-changed . || EXIT_CODE=$?
         ;;
       test_0)
-        echo 'dart test'
-        dart test || EXIT_CODE=$?
+        echo 'dart test --coverage=coverage'
+        dart test --coverage=coverage || EXIT_CODE=$?
         ;;
       test_1)
         echo 'dart test -p chrome'
