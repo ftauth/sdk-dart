@@ -2,7 +2,7 @@
 
 # Format coverage to lcov format
 dart pub global activate coverage
-dart run coverage:format_coverage -l -i coverage/test/*.json -o coverage/lcov.info --packages=.packages
+dart run coverage:format_coverage -l -i coverage/ -o coverage/lcov.info --packages=.packages
 
 # Download and integrity check Codecov
 curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
