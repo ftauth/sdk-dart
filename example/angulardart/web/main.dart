@@ -32,7 +32,7 @@ Config createConfig(AppConfig appConfig) {
   }
   return Config(
     gatewayUrl: appConfig.host,
-    clientId: 'b4f919f3-8599-4439-8dc6-18cd8ccf2859',
+    clientId: appConfig.clientId,
     redirectUri: redirectUrl,
   );
 }
@@ -50,13 +50,7 @@ LocationStrategy createLocationStrategy(
   }
 }
 
-AppConfig getAppConfig() {
-  if (_isDevMode) {
-    return AppConfig.dev();
-  } else {
-    return AppConfig.prod();
-  }
-}
+AppConfig getAppConfig() => AppConfig.prod();
 
 AmplifyConfig getAmplifyConfig() {
   final json = jsonDecode(amplifyconfig) as Map;

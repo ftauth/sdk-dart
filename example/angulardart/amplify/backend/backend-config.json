@@ -11,7 +11,7 @@
             "openIDConnectConfig": {
               "name": "FTAuth",
               "issuerUrl": "https://demo.ftauth.io/",
-              "clientId": "eb7fde5d-88f4-419c-aabb-eed3d6d88320",
+              "clientId": "b4f919f3-8599-4439-8dc6-18cd8ccf2859",
               "authTTL": "0",
               "iatTTL": "3600000"
             }

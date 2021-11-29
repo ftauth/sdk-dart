@@ -4,7 +4,9 @@ import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
+import 'package:ftauth/src/repo/crypto/js/crypto_subtle.dart';
 import 'package:http/http.dart' as http;
+import 'package:js/js_util.dart';
 
 import 'authorizer_base.dart';
 
@@ -35,12 +37,28 @@ class Authorizer extends AuthorizerBase {
     required String codeVerifier,
   }) async {
     final location = Uri.parse(window.location.href);
-    final parameters = location.queryParameters;
+    final parameters = {...location.queryParameters};
+
+    // Handle fragment as well e.g. /#/auth?code=...&state=...
+    final fragment = location.fragment;
+    final parts = fragment.split('?');
+    if (parts.length == 2) {
+      parameters.addAll(Uri.splitQueryString(parts[1]));
+    }
 
     // If this is a redirect, handle it.
     if (parameters.containsKey('code') && parameters.containsKey('state') ||
         parameters.containsKey('error')) {
       try {
+        authCodeGrant = OAuthUtil.createGrant(
+          config,
+          codeVerifier: codeVerifier,
+          httpClient: httpClient,
+        )..getAuthorizationUrl(
+            config.redirectUri,
+            scopes: config.scopes,
+            state: state,
+          );
         return await handleExchange(parameters);
       } on Exception catch (e) {
         return AuthFailure.fromException(e);
@@ -69,9 +87,9 @@ class Authorizer extends AuthorizerBase {
       );
     }
 
-    if (popupWindow == null) {
-      // TODO: Popup refused to open.
-      throw Exception('Could not open popup');
+    // If the popup fails to open
+    if (getProperty(popupWindow!, 'window') == null) {
+      window.location.href = url;
     }
 
     final event = await window.onMessage.firstWhere((event) {

@@ -15,10 +15,10 @@ class TodoComponent implements AfterContentInit {
   @Input()
   late Todo todo;
 
-  final StreamController<bool> _completedController = StreamController();
+  final StreamController<bool> _checkedController = StreamController();
 
   @Output()
-  Stream<bool> get checked => _completedController.stream;
+  Stream<bool> get checked => _checkedController.stream;
 
   @ViewChild('checkbox')
   InputElement? checkbox;
@@ -28,7 +28,7 @@ class TodoComponent implements AfterContentInit {
     checkbox!.checked = todo.completed;
     checkbox!.onChange.listen((event) {
       final value = checkbox!.checked ?? false;
-      _completedController.add(value);
+      _checkedController.add(value);
     });
   }
 }

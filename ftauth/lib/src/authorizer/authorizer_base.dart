@@ -64,7 +64,8 @@ abstract class AuthorizerBase
   }
 
   /// Internal representation of the OAuth flow.
-  oauth2.AuthorizationCodeGrant? _authCodeGrant;
+  @protected
+  oauth2.AuthorizationCodeGrant? authCodeGrant;
 
   AuthorizerBase(
     this.config, {
@@ -86,7 +87,8 @@ abstract class AuthorizerBase
   }
 
   /// Handles internal HTTP requests.
-  http.Client get _httpClient {
+  @protected
+  http.Client get httpClient {
     return InlineClient(
       send: (http.BaseRequest request) async {
         Exception? _e;
@@ -217,7 +219,7 @@ abstract class AuthorizerBase
       config,
       idToken: idToken,
       storageRepo: _storageRepo,
-      httpClient: _httpClient,
+      httpClient: httpClient,
     );
 
     if (accessToken.expiry == null || accessToken.isExpired) {
@@ -309,12 +311,12 @@ abstract class AuthorizerBase
       _storageRepo.setString(keyCodeVerifier, codeVerifier),
     ]);
 
-    _authCodeGrant = OAuthUtil.createGrant(
+    authCodeGrant = OAuthUtil.createGrant(
       config,
       codeVerifier: codeVerifier,
-      httpClient: _httpClient,
+      httpClient: httpClient,
     );
-    return _authCodeGrant!
+    return authCodeGrant!
         .getAuthorizationUrl(
           redirectUri ?? config.redirectUri,
           scopes: config.scopes,
@@ -332,9 +334,7 @@ abstract class AuthorizerBase
 
   @protected
   Future<AuthSignedIn> handleExchange(Map<String, String> parameters) async {
-    await init();
-
-    if (_authCodeGrant == null) {
+    if (authCodeGrant == null) {
       throw StateError('Must call authorize first.');
     }
 
@@ -348,14 +348,13 @@ abstract class AuthorizerBase
 
     addState(const AuthLoading());
 
-    final client =
-        await _authCodeGrant!.handleAuthorizationResponse(parameters);
+    final client = await authCodeGrant!.handleAuthorizationResponse(parameters);
     final oauthCredentials = client.credentials;
     final credentials = Credentials.fromOAuthCredentials(
       oauthCredentials,
       config: config,
       storageRepo: _storageRepo,
-      httpClient: _httpClient,
+      httpClient: httpClient,
     );
 
     await Future.wait([

@@ -8,7 +8,7 @@
       "mode": "OPENID_CONNECT",
       "openIDProviderName": "FTAuth",
       "openIDIssuerURL": "https://demo.ftauth.io/",
-      "openIDClientID": "eb7fde5d-88f4-419c-aabb-eed3d6d88320",
+      "openIDClientID": "b4f919f3-8599-4439-8dc6-18cd8ccf2859",
       "openIDAuthTTL": "0",
       "openIDIatTTL": "3600000"
     },
@@ -19,6 +19,7 @@
         "apiKeyExpirationDate": "2021-12-04T21:28:43.350Z",
         "keyDescription": "Admin API Key"
       }
-    ]
+    ],
+    "conflictResolution": {}
   }
 }
