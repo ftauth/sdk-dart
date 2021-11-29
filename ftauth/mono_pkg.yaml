@@ -1,0 +1,14 @@
+dart:
+  - 2.14.0
+  - dev
+
+stages:
+  - analyze_and_format:
+    - group:
+      - format
+      - analyze: --fatal-infos .
+  - unit_test:
+    - group:
+      - test: --coverage=coverage
+      - test: -p chrome
+      - command: ../tool/coverage.sh

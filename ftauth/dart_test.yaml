@@ -1,4 +1,0 @@
-override_platforms:
-  chrome:
-    settings:
-      executable: /Applications/Chromium.app/Contents/MacOS/Chromium
