@@ -4,7 +4,6 @@ import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth/src/repo/crypto/js/crypto_subtle.dart';
 import 'package:http/http.dart' as http;
 import 'package:js/js_util.dart';
 

@@ -24,7 +24,7 @@ class Certificate extends Equatable {
     required this.host,
     required this.certificate,
     required this.type,
-  })   : assert(
+  })  : assert(
           Uri.parse('https://$host').host == host,
           'Invalid host format. Use only the domain name.',
         ),

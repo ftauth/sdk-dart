@@ -68,7 +68,8 @@ class ClientInfo extends Equatable {
       clientType: clientType ?? this.clientType,
       clientName: clientName ?? this.clientName,
       clientSecret: clientSecret ?? this.clientSecret,
-      clientSecretExpiresAt: clientSecretExpiresAt ?? this.clientSecretExpiresAt,
+      clientSecretExpiresAt:
+          clientSecretExpiresAt ?? this.clientSecretExpiresAt,
       redirectUris: redirectUris ?? this.redirectUris,
       scopes: scopes ?? this.scopes,
       jwksUri: jwksUri ?? this.jwksUri,
@@ -77,7 +78,8 @@ class ClientInfo extends Equatable {
     );
   }
 
-  factory ClientInfo.fromJson(Map<String, dynamic> json) => _$ClientInfoFromJson(json);
+  factory ClientInfo.fromJson(Map<String, dynamic> json) =>
+      _$ClientInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ClientInfoToJson(this);
 
