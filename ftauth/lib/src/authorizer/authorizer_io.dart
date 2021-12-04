@@ -26,20 +26,25 @@ class Authorizer extends AuthorizerBase {
         );
 
   @override
+  Future<void> launchUrl(String url) async {
+    FTAuth.info('Open the following url: $url');
+  }
+
+  @override
   Future<void> login({
     String? language,
     String? countryCode,
   }) async {
     await init();
 
-    final bool isLocalhost =
-        InternetAddress.tryParse(config.redirectUri.host) ==
-                InternetAddress.loopbackIPv4 ||
-            config.redirectUri.host == 'localhost';
+    // final bool isLocalhost =
+    //     InternetAddress.tryParse(config.redirectUri.host) ==
+    //             InternetAddress.loopbackIPv4 ||
+    //         config.redirectUri.host == 'localhost';
 
-    if (!isLocalhost) {
-      throw ArgumentError('Use authorize/exchange instead');
-    }
+    // if (!isLocalhost) {
+    //   throw ArgumentError('Use authorize/exchange instead');
+    // }
 
     final listenServer = await HttpServer.bind(
       InternetAddress.loopbackIPv4,
@@ -56,7 +61,7 @@ class Authorizer extends AuthorizerBase {
         countryCode: countryCode,
         redirectUri: localRedirectUri,
       );
-      print('Open the following url: $authUrl');
+      await launchUrl(authUrl);
 
       late Map<String, String> queryParams;
       await for (var request in listenServer) {

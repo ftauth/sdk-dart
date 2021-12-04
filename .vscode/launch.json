@@ -18,7 +18,7 @@
         {
             "name": "Example",
             "type": "dart",
-            "cwd": "example",
+            "cwd": "example/flutter",
             "request": "launch"
         }
     ]

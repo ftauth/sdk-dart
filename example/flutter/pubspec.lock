@@ -151,6 +151,48 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  flutter_secure_storage:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.2"
+  flutter_secure_storage_linux:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
+  flutter_secure_storage_macos:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
+  flutter_secure_storage_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  flutter_secure_storage_web:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
+  flutter_secure_storage_windows:
+    dependency: transitive
+    description:
+      name: flutter_secure_storage_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -182,6 +224,41 @@ packages:
       relative: true
     source: path
     version: "0.1.0"
+  ftauth_flutter_android:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_flutter/ftauth_flutter_android"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_flutter_ios:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_flutter/ftauth_flutter_ios"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_flutter_linux:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_flutter/ftauth_flutter_linux"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_flutter_macos:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_flutter/ftauth_flutter_macos"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_flutter_platform_interface:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_flutter/ftauth_flutter_platform_interface"
+      relative: true
+    source: path
+    version: "0.1.0"
   ftauth_flutter_web:
     dependency: "direct overridden"
     description:
@@ -189,38 +266,17 @@ packages:
       relative: true
     source: path
     version: "0.1.0"
+  ftauth_flutter_windows:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_flutter/ftauth_flutter_windows"
+      relative: true
+    source: path
+    version: "0.1.0"
   ftauth_jwt:
     dependency: "direct overridden"
     description:
       path: "../../ftauth_jwt"
-      relative: true
-    source: path
-    version: "0.1.0"
-  ftauth_platform_interface:
-    dependency: "direct overridden"
-    description:
-      path: "../../ftauth_flutter/ftauth_platform_interface"
-      relative: true
-    source: path
-    version: "0.1.0"
-  ftauth_storage:
-    dependency: "direct overridden"
-    description:
-      path: "../../ftauth_storage/ftauth_storage"
-      relative: true
-    source: path
-    version: "0.1.0"
-  ftauth_storage_platform_interface:
-    dependency: "direct overridden"
-    description:
-      path: "../../ftauth_storage/ftauth_storage_platform_interface"
-      relative: true
-    source: path
-    version: "0.1.0"
-  ftauth_storage_web:
-    dependency: "direct overridden"
-    description:
-      path: "../../ftauth_storage/ftauth_storage_web"
       relative: true
     source: path
     version: "0.1.0"
@@ -584,6 +640,62 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
+  url_launcher:
+    dependency: transitive
+    description:
+      name: url_launcher
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.17"
+  url_launcher_android:
+    dependency: transitive
+    description:
+      name: url_launcher_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.13"
+  url_launcher_ios:
+    dependency: transitive
+    description:
+      name: url_launcher_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.13"
+  url_launcher_linux:
+    dependency: transitive
+    description:
+      name: url_launcher_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  url_launcher_macos:
+    dependency: transitive
+    description:
+      name: url_launcher_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  url_launcher_platform_interface:
+    dependency: transitive
+    description:
+      name: url_launcher_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.4"
+  url_launcher_web:
+    dependency: transitive
+    description:
+      name: url_launcher_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.5"
+  url_launcher_windows:
+    dependency: transitive
+    description:
+      name: url_launcher_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   uuid:
     dependency: transitive
     description:

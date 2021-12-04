@@ -1,4 +1,5 @@
 name: ftauth
 
 packages:
+  - example/flutter**
   - ftauth**

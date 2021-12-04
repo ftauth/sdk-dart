@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ftauth/src/authorizer/keys.dart';
 import 'package:ftauth/src/repo/ssl/keys.dart';
 import 'package:ftauth_example/embedded_login_screen.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
+import 'package:equatable/equatable.dart';
 
 import 'auth_state_indicator.dart';
 import 'data/locales.dart';
@@ -22,7 +25,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final config = Config(
     gatewayUrl: 'http://localhost:8000',
-    clientId: '7d903f93-55ae-4e3d-b50a-686694337ddf',
+    clientId: 'a26ac33c-1b27-4354-ab88-1fdec1a46326',
     redirectUri: 'myapp://auth',
     grantTypes: const [
       'authorization_code',

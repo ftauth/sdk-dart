@@ -47,6 +47,7 @@ abstract class AuthorizerBase
   Future<AuthState>? _initStateFuture;
 
   /// Returns the stream of authorization states.
+  @override
   Stream<AuthState> get authStates async* {
     await init();
     yield _latestAuthState!;
@@ -252,8 +253,7 @@ abstract class AuthorizerBase
     return AuthSignedIn(client, user);
   }
 
-  /// Pull the latest auth state from the keychain. If, for example, an app extension
-  /// refreshed it, we may not have the latest.
+  @override
   Future<void> refreshAuthState() async {
     final state = await _reloadFromStorage();
     if (state != null) {
@@ -268,7 +268,6 @@ abstract class AuthorizerBase
     }
   }
 
-  /// Initiates the authorization code flow.
   @override
   Future<String> authorize({
     String? language,
@@ -393,9 +392,9 @@ abstract class AuthorizerBase
     return AuthSignedIn(newClient, user);
   }
 
-  /// Performs the second part of the authorization code flow, exhanging the
-  /// parameters retrieved via the WebView with the OAuth server for an access
-  /// and refresh token.
+  @override
+  Future<void> launchUrl(String url) async {}
+
   @override
   Future<Client> exchange(Map<String, String> parameters) async {
     try {

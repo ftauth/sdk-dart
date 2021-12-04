@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
-import 'package:ftauth_platform_interface/ftauth_platform_interface.dart';
+import 'package:ftauth_flutter_platform_interface/ftauth_flutter_platform_interface.dart';
 import 'package:ftauth_storage_platform_interface/ftauth_storage_plugin_interface.dart';
 
 class MethodChannelStorage extends FTAuthStoragePlatform {

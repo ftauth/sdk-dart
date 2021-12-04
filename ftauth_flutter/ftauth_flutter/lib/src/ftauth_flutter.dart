@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:ftauth/ftauth.dart' hide FTAuth;
 import 'package:ftauth/ftauth.dart' as ftauth show FTAuth;
-import 'package:ftauth_platform_interface/ftauth_platform_interface.dart';
-import 'package:ftauth_storage/ftauth_storage.dart';
+import 'package:ftauth_flutter_platform_interface/ftauth_flutter_platform_interface.dart';
+// import 'package:ftauth_storage/ftauth_storage.dart';
 import 'package:http/http.dart' as http;
+
+import 'secure_storage.dart';
 
 /// Wrapper class used for providing a [FTAuthClient] to descendant widgets.
 ///
@@ -87,7 +89,7 @@ class FTAuthClient extends ftauth.FTAuth {
     Config config, {
     StorageRepo? storageRepo,
     Uint8List? encryptionKey,
-    Authorizer? authorizer,
+    AuthorizerInterface? authorizer,
     http.Client? baseClient,
     Duration? timeout,
     String? appGroup,
@@ -105,7 +107,9 @@ class FTAuthClient extends ftauth.FTAuth {
                 appGroup: appGroup,
               ),
           clearOnFreshInstall: clearOnFreshInstall,
-        );
+        ) {
+    _platform.registerClient(this);
+  }
 
   static FTAuthPlatformInterface get _platform =>
       FTAuthPlatformInterface.instance;
@@ -116,7 +120,9 @@ class FTAuthClient extends ftauth.FTAuth {
     return ftauth!.client;
   }
 
-  /// Performs the two-step OAuth process to login the user.
+  @override
+  Future<void> launchUrl(String url) => _platform.launchUrl(url);
+
   @override
   Future<void> login({
     String? language,
@@ -127,16 +133,11 @@ class FTAuthClient extends ftauth.FTAuth {
       return;
     }
 
-    final url = await authorizer.authorize(
-      language: language,
-      countryCode: countryCode,
-    );
-
-    FTAuth.debug('Launching url: $url');
     try {
-      final Map<String, String> parameters = await _platform.login(url);
-
-      await authorizer.exchange(parameters);
+      await super.login(
+        language: language,
+        countryCode: countryCode,
+      );
     } on Exception catch (e) {
       if (e is PlatformException &&
           e.code == PlatformExceptionCodes.authCancelled) {
@@ -145,7 +146,7 @@ class FTAuthClient extends ftauth.FTAuth {
         FTAuth.error('Error logging in: $e');
       }
       // Cancel the login process
-      await authorizer.logout();
+      await logout();
       rethrow;
     }
   }

@@ -3,9 +3,6 @@ import 'package:ftauth_example/keys.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
 
 class UserInfoScreen extends StatefulWidget {
-  static const userInfoUrl =
-      'https://carelink-stage.minimed.eu/patient/users/me';
-
   const UserInfoScreen({Key? key}) : super(key: key);
 
   @override
@@ -50,10 +47,9 @@ class _UserInfoScreenState extends State<UserInfoScreen>
       _isLoading = true;
     });
     try {
-      final resp = await _getUserInfo(ssoClient);
       setState(() {
         _isLoading = false;
-        _response = resp;
+        // _response = resp;
         _error = null;
       });
     } on Exception catch (e) {
@@ -65,15 +61,6 @@ class _UserInfoScreenState extends State<UserInfoScreen>
     }
   }
 
-  Future<String> _getUserInfo(FTAuthClient ssoClient) async {
-    final userInfoUri = Uri.parse(UserInfoScreen.userInfoUrl);
-    final resp = await ssoClient.get(userInfoUri);
-    if (resp.statusCode != 200) {
-      throw ApiException.get(userInfoUri, resp.statusCode, resp.body);
-    }
-    return resp.body;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,19 +69,7 @@ class _UserInfoScreenState extends State<UserInfoScreen>
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('GET ${UserInfoScreen.userInfoUrl}'),
-              const Divider(),
-              if (_isLoading)
-                const CircularProgressIndicator()
-              else
-                Text(_response != null
-                    ? _response!
-                    : _error ?? 'An unknown error occurred'),
-            ],
-          ),
+          child: Text(FTAuth.of(context).currentUser.toString()),
         ),
       ),
     );

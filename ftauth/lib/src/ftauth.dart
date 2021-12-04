@@ -8,8 +8,10 @@ typedef SetupHandler = FutureOr<void> Function(FTAuth);
 
 abstract class FTAuthInterface
     implements AuthorizerInterface, SSLPinningInterface {
-  Stream<AuthState> get authStates;
+  /// Whether or not a user is currently logged in.
   bool get isLoggedIn;
+
+  /// Retrieves the currently logged in user.
   User? get currentUser;
 }
 
@@ -27,12 +29,14 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
   final http.Client _baseClient;
   final Duration _timeout;
   final Config config;
-  late final Authorizer authorizer;
+  late final AuthorizerInterface authorizer;
+  late final SSLPinningInterface sslPinner;
 
   FTAuth(
     this.config, {
     StorageRepo? storageRepo,
-    Authorizer? authorizer,
+    AuthorizerInterface? authorizer,
+    SSLPinningInterface? sslPinner,
     http.Client? baseClient,
     Duration? timeout,
     Uint8List? encryptionKey,
@@ -49,37 +53,29 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
               baseClient: baseClient,
               clearOnFreshInstall: clearOnFreshInstall,
             );
+        this.sslPinner = sslPinner ?? this.authorizer;
         break;
     }
 
     // Perform setup tasks after init
-    init().then((_) => scheduleMicrotask(() => setup?.call(this)));
+    scheduleMicrotask(() => init().then((_) => setup?.call(this)));
   }
 
-  /// Initializes the SDK. **Must** be called before performing any activities
-  /// like SSL pinning.
   @override
   Future<void> init() => authorizer.init();
 
-  /// Returns the stream of authorization states.
-  ///
-  /// Possible [AuthState] values include:
-  /// * [AuthLoading]: Information is refreshing or being retrieved.
-  /// * [AuthSignedIn]: User is logged in with valid credentials.
-  /// * [AuthSignedOut]: User is logged out or has expired credentials.
-  /// * [AuthFailure]: An error has occurred during authentication or during an HTTP request.
   @override
   Stream<AuthState> get authStates => authorizer.authStates;
 
-  /// The current authorization state.
   @override
   AuthState get currentState => authorizer.currentState;
 
-  /// Whether or not a user is currently logged in.
+  @override
+  Future<void> refreshAuthState() => authorizer.refreshAuthState();
+
   @override
   bool get isLoggedIn => currentState is AuthSignedIn;
 
-  /// Retrieves the currently logged in user.
   @override
   User? get currentUser {
     final state = currentState;
@@ -89,7 +85,6 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     return null;
   }
 
-  /// Logs out the current user.
   @override
   Future<void> logout() {
     FTAuth.info('Logging out...');
@@ -126,11 +121,16 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
 
   @override
   bool isPinning(String host) {
-    return authorizer.isPinning(host);
+    return sslPinner.isPinning(host);
   }
 
   @override
   void pinCert(Certificate certificate) {
-    authorizer.pinCert(certificate);
+    sslPinner.pinCert(certificate);
+  }
+
+  @override
+  Future<void> launchUrl(String url) {
+    return authorizer.launchUrl(url);
   }
 }
