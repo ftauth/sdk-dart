@@ -94,7 +94,7 @@ packages:
     source: sdk
     version: "0.0.0"
   ftauth:
-    dependency: "direct main"
+    dependency: "direct overridden"
     description:
       path: "../../ftauth"
       relative: true

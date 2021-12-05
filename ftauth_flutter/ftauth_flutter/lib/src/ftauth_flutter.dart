@@ -6,10 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:ftauth/ftauth.dart' hide FTAuth;
 import 'package:ftauth/ftauth.dart' as ftauth show FTAuth;
 import 'package:ftauth_flutter_platform_interface/ftauth_flutter_platform_interface.dart';
-// import 'package:ftauth_storage/ftauth_storage.dart';
+import 'package:ftauth_storage/ftauth_storage.dart';
 import 'package:http/http.dart' as http;
-
-import 'secure_storage.dart';
 
 /// Wrapper class used for providing a [FTAuthClient] to descendant widgets.
 ///
@@ -96,10 +94,7 @@ class FTAuthClient extends ftauth.FTAuth {
     bool? clearOnFreshInstall,
   }) : super(
           config,
-          storageRepo: storageRepo ??
-              FTAuthSecureStorage(
-                appGroup: appGroup,
-              ),
+          storageRepo: storageRepo ?? FTAuthSecureStorage(),
           encryptionKey: encryptionKey,
           baseClient: baseClient,
           timeout: timeout,
@@ -109,10 +104,7 @@ class FTAuthClient extends ftauth.FTAuth {
         ) {
     _platform.createAuthorizer(
       config,
-      storageRepo: storageRepo ??
-          FTAuthSecureStorage(
-            appGroup: appGroup,
-          ),
+      storageRepo: storageRepo ?? FTAuthSecureStorage(),
       encryptionKey: encryptionKey,
       baseClient: baseClient,
       timeout: timeout,

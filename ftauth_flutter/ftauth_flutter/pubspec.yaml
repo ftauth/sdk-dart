@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_secure_storage: ^5.0.0
   ftauth: ^0.1.0
   ftauth_flutter_platform_interface: ^0.1.0
   ftauth_flutter_android: ^0.1.0
@@ -19,6 +18,7 @@ dependencies:
   ftauth_flutter_macos: ^0.1.0
   ftauth_flutter_windows: ^0.1.0
   ftauth_flutter_linux: ^0.1.0
+  ftauth_storage: ^0.1.0
   shared_preferences: ^2.0.0
   webview_flutter: ^2.0.0
 

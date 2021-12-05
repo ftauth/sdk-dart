@@ -1,19 +1,11 @@
 name: ftauth_storage_web
-description: A new flutter plugin project.
+description: Web bindings for FTAuth secure storage adapter.
 version: 0.1.0
-homepage:
+homepage: https://github.com/ftauth/sdk-dart
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=2.0.0"
-
-flutter:
-  plugin:
-    implements: ftauth_storage
-    platforms:
-      web:
-        pluginClass: FTAuthStorageWeb
-        fileName: ftauth_storage_web.dart
+  flutter: ">=1.20.0"
 
 dependencies:
   flutter:
@@ -25,4 +17,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+
+flutter:
+  plugin:
+    platforms:
+      web:
+        pluginClass: FTAuthStoragePlugin
+        fileName: ftauth_storage_web.dart

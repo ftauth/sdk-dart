@@ -2,19 +2,10 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
-import 'package:ftauth_storage_platform_interface/ftauth_storage_plugin_interface.dart';
+import 'package:ftauth_storage_platform_interface/ftauth_storage_platform_interface.dart';
 
 class FTAuthSecureStorage implements StorageRepo {
-  static FTAuthSecureStorage? _instance;
-  late final FTAuthStoragePlatform _platform;
-
-  factory FTAuthSecureStorage({String? appGroup}) {
-    return _instance ??= FTAuthSecureStorage._(appGroup: appGroup);
-  }
-
-  FTAuthSecureStorage._({String? appGroup}) {
-    _platform = FTAuthStoragePlatform.getInstance(appGroup: appGroup);
-  }
+  static FTAuthStoragePlatform get _platform => FTAuthStoragePlatform.instance;
 
   @override
   Future<void> clear() {

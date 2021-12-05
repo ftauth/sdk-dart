@@ -104,48 +104,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
-  flutter_secure_storage:
-    dependency: "direct main"
-    description:
-      name: flutter_secure_storage
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.0.2"
-  flutter_secure_storage_linux:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_linux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
-  flutter_secure_storage_macos:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_macos
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
-  flutter_secure_storage_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
-  flutter_secure_storage_web:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
-  flutter_secure_storage_windows:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_windows
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -216,6 +174,41 @@ packages:
     dependency: "direct overridden"
     description:
       path: "../../ftauth_jwt"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_storage:
+    dependency: "direct main"
+    description:
+      path: "../../ftauth_storage/ftauth_storage"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_storage_android:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_storage/ftauth_storage_android"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_storage_ios:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_storage/ftauth_storage_ios"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_storage_platform_interface:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_storage/ftauth_storage_platform_interface"
+      relative: true
+    source: path
+    version: "0.1.0"
+  ftauth_storage_web:
+    dependency: "direct overridden"
+    description:
+      path: "../../ftauth_storage/ftauth_storage_web"
       relative: true
     source: path
     version: "0.1.0"

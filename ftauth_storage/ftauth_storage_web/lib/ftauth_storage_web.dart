@@ -1,52 +1,51 @@
 import 'dart:async';
-import 'dart:html' as html show window;
+import 'dart:html';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:ftauth_storage_platform_interface/ftauth_storage_plugin_interface.dart';
+import 'package:ftauth_storage_platform_interface/ftauth_storage_platform_interface.dart';
 
-/// A web implementation of the FtauthStorageWeb plugin.
-class FTAuthStorageWeb extends FTAuthStoragePlatform {
-  static void registerWith(Registrar registrar) {
-    FTAuthStoragePlatform.instance = FTAuthStorageWeb();
+/// A web implementation of the ftauth_storage plugin.
+class FTAuthStoragePlugin extends FTAuthStoragePlatform {
+  static void registerWith(Registrar? registrar) {
+    FTAuthStoragePlatform.instance = FTAuthStoragePlugin();
   }
 
   @override
   Future<void> clear() {
-    html.window.localStorage
-        .removeWhere((key, value) => key.startsWith('ftauth.'));
+    window.localStorage.removeWhere((key, value) => key.startsWith('ftauth.'));
     return SynchronousFuture(null);
   }
 
   @override
   Future<void> delete(String key) {
-    html.window.localStorage.remove('ftauth.$key');
+    window.localStorage.remove('ftauth.$key');
     return SynchronousFuture(null);
   }
 
   @override
   Future<String?> getString(String key) {
     return SynchronousFuture(
-      html.window.localStorage['ftauth.$key'],
+      window.localStorage['ftauth.$key'],
     );
   }
 
   @override
   Future<void> setString(String key, String value) {
-    html.window.localStorage['ftauth.$key'] = value;
+    window.localStorage['ftauth.$key'] = value;
     return SynchronousFuture(null);
   }
 
   @override
   Future<String?> getEphemeralString(String key) {
     return SynchronousFuture(
-      html.window.sessionStorage['ftauth.$key'],
+      window.sessionStorage['ftauth.$key'],
     );
   }
 
   @override
   Future<void> setEphemeralString(String key, String value) {
-    html.window.sessionStorage['ftauth.$key'] = value;
+    window.sessionStorage['ftauth.$key'] = value;
     return SynchronousFuture(null);
   }
 }

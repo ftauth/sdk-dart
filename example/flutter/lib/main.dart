@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ftauth/src/authorizer/keys.dart';
 import 'package:ftauth/src/repo/ssl/keys.dart';
 import 'package:ftauth_example/embedded_login_screen.dart';
 import 'package:ftauth_flutter/ftauth_flutter.dart';
-import 'package:equatable/equatable.dart';
 
 import 'auth_state_indicator.dart';
 import 'data/locales.dart';
@@ -17,9 +14,7 @@ import 'keys.dart';
 import 'user_info_screen.dart';
 
 const appGroup = 'group.io.ftauth.ftauth_example';
-final storageRepo = FTAuthSecureStorage(
-  appGroup: appGroup,
-);
+final storageRepo = FTAuthSecureStorage();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
