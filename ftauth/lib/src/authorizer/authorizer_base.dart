@@ -12,8 +12,7 @@ import 'keys.dart';
 
 /// Handles the generic OAuth flow by interfacing with native layer components and
 /// maintaining the state of the client.
-abstract class AuthorizerBase
-    implements AuthorizerInterface, SSLPinningInterface {
+abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   /// The configuration for this authorizer. This may be updated throughout the
   /// OAuth flow as new information is available.
   final Config config;
@@ -68,7 +67,7 @@ abstract class AuthorizerBase
   @protected
   oauth2.AuthorizationCodeGrant? authCodeGrant;
 
-  AuthorizerBase(
+  Authorizer(
     this.config, {
     required StorageRepo storageRepo,
     SSLRepo? sslRepository,
@@ -287,7 +286,7 @@ abstract class AuthorizerBase
 
   /// Returns the URL to direct the user to via a WebView.
   ///
-  /// Classes which extend [Authorizer] may override this method.
+  /// Classes which extend [AuthorizerImpl] may override this method.
   @protected
   @visibleForTesting
   @mustCallSuper
@@ -391,9 +390,6 @@ abstract class AuthorizerBase
 
     return AuthSignedIn(newClient, user);
   }
-
-  @override
-  Future<void> launchUrl(String url) async {}
 
   @override
   Future<Client> exchange(Map<String, String> parameters) async {

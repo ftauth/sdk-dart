@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'authorizer_base.dart';
 
-class Authorizer extends AuthorizerBase {
-  Authorizer(
+class AuthorizerImpl extends Authorizer {
+  AuthorizerImpl(
     Config config, {
     required StorageRepo storageRepo,
     SSLRepo? sslRepository,
@@ -23,6 +23,11 @@ class Authorizer extends AuthorizerBase {
           encryptionKey: encryptionKey,
           clearOnFreshInstall: clearOnFreshInstall,
         );
+
+  @override
+  Future<void> launchUrl(String url) {
+    throw UnimplementedError();
+  }
 
   @override
   Future<void> login({String? language, String? countryCode}) {

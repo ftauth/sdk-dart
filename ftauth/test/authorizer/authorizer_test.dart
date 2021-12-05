@@ -47,7 +47,7 @@ void main() {
 
   group('getAuthorizationUrl', () {
     test('with valid public config', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
       );
@@ -91,7 +91,7 @@ void main() {
         scopes: ['default'],
       );
 
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         config,
         storageRepo: storageRepo,
       );
@@ -116,7 +116,7 @@ void main() {
 
   group('initState', () {
     test('nothing in storage', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
       );
@@ -130,7 +130,7 @@ void main() {
     });
 
     test('state/code verifier in storage', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
       );
@@ -145,7 +145,7 @@ void main() {
 
     group('access/refresh token in storage', () {
       test('valid tokens', () async {
-        final authorizer = Authorizer(
+        final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
           baseClient: baseHttpClient,
@@ -161,7 +161,7 @@ void main() {
       });
 
       test('fresh install', () async {
-        final authorizer = Authorizer(
+        final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
           baseClient: baseHttpClient,
@@ -192,7 +192,7 @@ void main() {
             );
           },
         );
-        final authorizer = Authorizer(
+        final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
           baseClient: httpClient,
@@ -217,7 +217,7 @@ void main() {
           userInfoHandler: (_) async => Response('Unauthorized', 401),
         );
 
-        final authorizer = Authorizer(
+        final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
           baseClient: httpClient,
@@ -236,7 +236,7 @@ void main() {
 
   group('authorize', () {
     test('user is logged in', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
         baseClient: baseHttpClient,
@@ -248,7 +248,7 @@ void main() {
     });
 
     test('returns auth code and modifies state', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
         baseClient: baseHttpClient,
@@ -269,7 +269,7 @@ void main() {
 
   group('exchange', () {
     test('authorize has not been called', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
         baseClient: baseHttpClient,
@@ -279,7 +279,7 @@ void main() {
     });
 
     test('successful exchange', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
         baseClient: mockOAuthServer.mockHttpClient,
@@ -301,7 +301,7 @@ void main() {
     });
 
     test('failedExchange', () async {
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
         baseClient: mockOAuthServer.mockHttpClient.copyWith(
@@ -347,7 +347,7 @@ void main() {
         storageRepo.setString(keyPinnedCertificateChains, 'pinned_cert_chains'),
       ]);
 
-      final authorizer = Authorizer(
+      final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
         baseClient: mockOAuthServer.mockHttpClient,

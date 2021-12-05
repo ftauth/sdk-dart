@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
 import 'package:ftauth/ftauth.dart';
-import 'package:http/http.dart' as http;
 import 'package:ftauth_flutter_platform_interface/ftauth_flutter_platform_interface.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
-class _MethodChannelAuthorizer extends AuthorizerImpl {
-  _MethodChannelAuthorizer(
+class _LinuxAuthorizer extends AuthorizerImpl {
+  _LinuxAuthorizer(
     Config config, {
     required StorageRepo storageRepo,
     SSLRepo? sslRepository,
@@ -24,34 +24,19 @@ class _MethodChannelAuthorizer extends AuthorizerImpl {
           clearOnFreshInstall: clearOnFreshInstall,
         );
 
-  static const _channel = MethodChannel('ftauth_flutter');
-
   @override
-  Future<void> login({
-    String? language,
-    String? countryCode,
-  }) async {
-    final url = await authorize(
-      language: language,
-      countryCode: countryCode,
-    );
-
-    FTAuth.debug('Launching url: $url');
-    final Map<String, String>? parameters =
-        await _channel.invokeMapMethod<String, String>('login', url);
-
-    if (parameters == null) {
-      throw PlatformException(
-        code: PlatformExceptionCodes.unknown,
-        message: 'Login process failed.',
-      );
+  Future<void> launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
     }
-
-    await exchange(parameters);
   }
 }
 
-class MethodChannelFTAuth extends FTAuthPlatformInterface {
+class FTAuthFlutterLinux extends FTAuthPlatformInterface {
+  static void registerWith() {
+    FTAuthPlatformInterface.instance = FTAuthFlutterLinux();
+  }
+
   @override
   void createAuthorizer(
     Config config, {
@@ -62,7 +47,7 @@ class MethodChannelFTAuth extends FTAuthPlatformInterface {
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
   }) {
-    authorizer = _MethodChannelAuthorizer(
+    authorizer = _LinuxAuthorizer(
       config,
       storageRepo: storageRepo,
       sslRepository: sslRepository,

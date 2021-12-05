@@ -89,7 +89,6 @@ class FTAuthClient extends ftauth.FTAuth {
     Config config, {
     StorageRepo? storageRepo,
     Uint8List? encryptionKey,
-    AuthorizerInterface? authorizer,
     http.Client? baseClient,
     Duration? timeout,
     String? appGroup,
@@ -97,18 +96,28 @@ class FTAuthClient extends ftauth.FTAuth {
     bool? clearOnFreshInstall,
   }) : super(
           config,
-          authorizer: authorizer,
-          baseClient: baseClient,
-          timeout: timeout,
-          setup: setup,
-          encryptionKey: encryptionKey,
           storageRepo: storageRepo ??
               FTAuthSecureStorage(
                 appGroup: appGroup,
               ),
+          encryptionKey: encryptionKey,
+          baseClient: baseClient,
+          timeout: timeout,
+          setup: setup,
+          authorizer: _platform,
           clearOnFreshInstall: clearOnFreshInstall,
         ) {
-    _platform.registerClient(this);
+    _platform.createAuthorizer(
+      config,
+      storageRepo: storageRepo ??
+          FTAuthSecureStorage(
+            appGroup: appGroup,
+          ),
+      encryptionKey: encryptionKey,
+      baseClient: baseClient,
+      timeout: timeout,
+      clearOnFreshInstall: clearOnFreshInstall,
+    );
   }
 
   static FTAuthPlatformInterface get _platform =>
@@ -119,9 +128,6 @@ class FTAuthClient extends ftauth.FTAuth {
     assert(ftauth != null, 'No FTAuth widget found above this one.');
     return ftauth!.client;
   }
-
-  @override
-  Future<void> launchUrl(String url) => _platform.launchUrl(url);
 
   @override
   Future<void> login({

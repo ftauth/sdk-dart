@@ -1,5 +1,6 @@
 import 'package:ftauth/ftauth.dart';
 
+export 'authorizer_base.dart';
 export 'authorizer_stub.dart'
     if (dart.library.io) 'authorizer_io.dart'
     if (dart.library.html) 'authorizer_html.dart';
@@ -15,13 +16,13 @@ abstract class AuthorizerInterface implements SSLPinningInterface {
     String? countryCode,
   });
 
+  /// Launches the given URL.
+  Future<void> launchUrl(String url);
+
   /// Performs the second part of the authorization code flow, exhanging the
   /// parameters retrieved via the WebView with the OAuth server for an access
   /// and refresh token.
   Future<Client> exchange(Map<String, String> parameters);
-
-  /// Launches the given URL.
-  Future<void> launchUrl(String url);
 
   /// Performs the full two-step OAuth process.
   ///

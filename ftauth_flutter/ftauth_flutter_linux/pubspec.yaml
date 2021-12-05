@@ -15,9 +15,19 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  url_launcher: ^6.0.0
+
+dependency_overrides:
+  ftauth_flutter_platform_interface:
+    path: ../ftauth_flutter_platform_interface
+  ftauth:
+    path: ../../ftauth
+  ftauth_jwt:
+    path: ../../ftauth_jwt
 
 flutter:
   plugin:
+    implements: ftauth_flutter
     platforms:
       linux:
-        pluginClass: FtauthFlutterPlugin
+        dartPluginClass: FTAuthFlutterLinux

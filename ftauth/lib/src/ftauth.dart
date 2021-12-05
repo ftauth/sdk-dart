@@ -30,13 +30,11 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
   final Duration _timeout;
   final Config config;
   late final AuthorizerInterface authorizer;
-  late final SSLPinningInterface sslPinner;
 
   FTAuth(
     this.config, {
     StorageRepo? storageRepo,
     AuthorizerInterface? authorizer,
-    SSLPinningInterface? sslPinner,
     http.Client? baseClient,
     Duration? timeout,
     Uint8List? encryptionKey,
@@ -47,13 +45,12 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     switch (config.provider) {
       default:
         this.authorizer = authorizer ??
-            Authorizer(
+            AuthorizerImpl(
               config,
               storageRepo: storageRepo ?? StorageRepo.instance,
               baseClient: baseClient,
               clearOnFreshInstall: clearOnFreshInstall,
             );
-        this.sslPinner = sslPinner ?? this.authorizer;
         break;
     }
 
@@ -99,6 +96,11 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
       authorizer.authorize(language: language, countryCode: countryCode);
 
   @override
+  Future<void> launchUrl(String url) {
+    return authorizer.launchUrl(url);
+  }
+
+  @override
   Future<Client> exchange(Map<String, String> parameters) =>
       authorizer.exchange(parameters);
 
@@ -121,16 +123,11 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
 
   @override
   bool isPinning(String host) {
-    return sslPinner.isPinning(host);
+    return authorizer.isPinning(host);
   }
 
   @override
   void pinCert(Certificate certificate) {
-    sslPinner.pinCert(certificate);
-  }
-
-  @override
-  Future<void> launchUrl(String url) {
-    return authorizer.launchUrl(url);
+    authorizer.pinCert(certificate);
   }
 }

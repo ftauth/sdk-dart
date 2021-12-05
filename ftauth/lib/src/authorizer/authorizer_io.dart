@@ -6,8 +6,8 @@ import 'package:http/http.dart' as http;
 
 import 'authorizer_base.dart';
 
-class Authorizer extends AuthorizerBase {
-  Authorizer(
+class AuthorizerImpl extends Authorizer {
+  AuthorizerImpl(
     Config config, {
     required StorageRepo storageRepo,
     SSLRepo? sslRepository,
@@ -56,12 +56,12 @@ class Authorizer extends AuthorizerBase {
         host: 'localhost',
         port: listenServer.port,
       );
-      final authUrl = await getAuthorizationUrl(
+      final url = await getAuthorizationUrl(
         language: language,
         countryCode: countryCode,
         redirectUri: localRedirectUri,
       );
-      await launchUrl(authUrl);
+      await launchUrl(url);
 
       late Map<String, String> queryParams;
       await for (var request in listenServer) {

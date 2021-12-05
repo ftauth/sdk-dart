@@ -9,8 +9,8 @@ import 'package:js/js_util.dart';
 
 import 'authorizer_base.dart';
 
-class Authorizer extends AuthorizerBase {
-  Authorizer(
+class AuthorizerImpl extends Authorizer {
+  AuthorizerImpl(
     Config config, {
     required StorageRepo storageRepo,
     SSLRepo? sslRepository,
@@ -67,14 +67,7 @@ class Authorizer extends AuthorizerBase {
   }
 
   @override
-  Future<void> login({
-    String? language,
-    String? countryCode,
-  }) async {
-    final url = await authorize(
-      language: language,
-      countryCode: countryCode,
-    );
+  Future<void> launchUrl(String url) async {
     if (popupWindow is WindowClient && (popupWindow!.closed != true)) {
       (popupWindow as WindowClient).focus();
     } else {
@@ -85,6 +78,18 @@ class Authorizer extends AuthorizerBase {
             'toolbar=no,width=550,height=450,popup=yes,noreferer=yes',
       );
     }
+  }
+
+  @override
+  Future<void> login({
+    String? language,
+    String? countryCode,
+  }) async {
+    final url = await authorize(
+      language: language,
+      countryCode: countryCode,
+    );
+    await launchUrl(url);
 
     // If the popup fails to open
     if (getProperty(popupWindow!, 'window') == null) {
