@@ -1,6 +1,6 @@
 sdk:
   - stable
-  - dev
+  - beta
 
 stages:
   - analyze_and_format:
@@ -9,6 +9,4 @@ stages:
       - analyze: --fatal-infos .
   - unit_test:
     - group:
-      - test: --coverage=coverage
-      - test: -p chrome --coverage=coverage
-      - command: ../tool/coverage.sh
+      - test

@@ -1,4 +1,4 @@
-# Created with package:mono_repo v5.0.4
+# Created with package:mono_repo v6.0.0
 name: Dart Lint
 on:
   push:
@@ -18,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Cache Pub hosted dependencies
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: "~/.pub-cache/hosted"
-          key: "os:ubuntu-latest;pub-cache-hosted;dart:stable"
+          key: "os:ubuntu-latest;pub-cache-hosted;sdk:stable"
           restore-keys: |
             os:ubuntu-latest;pub-cache-hosted
             os:ubuntu-latest
@@ -29,75 +29,75 @@ jobs:
         with:
           sdk: stable
       - id: checkout
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
       - name: mono_repo self validate
-        run: dart pub global activate mono_repo 5.0.4
+        run: dart pub global activate mono_repo 6.0.0
       - name: mono_repo self validate
         run: dart pub global run mono_repo generate --validate
   job_002:
-    name: "analyze_and_format; Dart 2.14.0; PKGS: ftauth, ftauth_jwt; `dart format --output=none --set-exit-if-changed .`, `dart analyze --fatal-infos .`"
+    name: "analyze_and_format; Flutter beta; PKGS: ftauth_flutter/ftauth_flutter_platform_interface, ftauth_storage/ftauth_storage_platform_interface; `dart format --output=none --set-exit-if-changed .`, `dart analyze --fatal-infos .`"
     runs-on: ubuntu-latest
     steps:
       - name: Cache Pub hosted dependencies
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: "~/.pub-cache/hosted"
-          key: "os:ubuntu-latest;pub-cache-hosted;dart:2.14.0;packages:ftauth-ftauth_jwt;commands:format-analyze"
+          key: "os:ubuntu-latest;pub-cache-hosted;sdk:beta;packages:ftauth_flutter/ftauth_flutter_platform_interface-ftauth_storage/ftauth_storage_platform_interface;commands:format-analyze"
           restore-keys: |
-            os:ubuntu-latest;pub-cache-hosted;dart:2.14.0;packages:ftauth-ftauth_jwt
-            os:ubuntu-latest;pub-cache-hosted;dart:2.14.0
+            os:ubuntu-latest;pub-cache-hosted;sdk:beta;packages:ftauth_flutter/ftauth_flutter_platform_interface-ftauth_storage/ftauth_storage_platform_interface
+            os:ubuntu-latest;pub-cache-hosted;sdk:beta
             os:ubuntu-latest;pub-cache-hosted
             os:ubuntu-latest
-      - uses: dart-lang/setup-dart@v1.3
+      - uses: subosito/flutter-action@v1.5.3
         with:
-          sdk: "2.14.0"
+          channel: beta
       - id: checkout
-        uses: actions/checkout@v2.3.5
-      - id: ftauth_pub_upgrade
-        name: ftauth; dart pub upgrade
+        uses: actions/checkout@v2.4.0
+      - id: ftauth_flutter_ftauth_flutter_platform_interface_pub_upgrade
+        name: ftauth_flutter/ftauth_flutter_platform_interface; dart pub upgrade
         if: "always() && steps.checkout.conclusion == 'success'"
-        working-directory: ftauth
+        working-directory: ftauth_flutter/ftauth_flutter_platform_interface
         run: dart pub upgrade
-      - name: "ftauth; dart format --output=none --set-exit-if-changed ."
-        if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
-        working-directory: ftauth
+      - name: "ftauth_flutter/ftauth_flutter_platform_interface; dart format --output=none --set-exit-if-changed ."
+        if: "always() && steps.ftauth_flutter_ftauth_flutter_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_flutter/ftauth_flutter_platform_interface
         run: "dart format --output=none --set-exit-if-changed ."
-      - name: "ftauth; dart analyze --fatal-infos ."
-        if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
-        working-directory: ftauth
+      - name: "ftauth_flutter/ftauth_flutter_platform_interface; dart analyze --fatal-infos ."
+        if: "always() && steps.ftauth_flutter_ftauth_flutter_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_flutter/ftauth_flutter_platform_interface
         run: dart analyze --fatal-infos .
-      - id: ftauth_jwt_pub_upgrade
-        name: ftauth_jwt; dart pub upgrade
+      - id: ftauth_storage_ftauth_storage_platform_interface_pub_upgrade
+        name: ftauth_storage/ftauth_storage_platform_interface; dart pub upgrade
         if: "always() && steps.checkout.conclusion == 'success'"
-        working-directory: ftauth_jwt
+        working-directory: ftauth_storage/ftauth_storage_platform_interface
         run: dart pub upgrade
-      - name: "ftauth_jwt; dart format --output=none --set-exit-if-changed ."
-        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
-        working-directory: ftauth_jwt
+      - name: "ftauth_storage/ftauth_storage_platform_interface; dart format --output=none --set-exit-if-changed ."
+        if: "always() && steps.ftauth_storage_ftauth_storage_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_storage/ftauth_storage_platform_interface
         run: "dart format --output=none --set-exit-if-changed ."
-      - name: "ftauth_jwt; dart analyze --fatal-infos ."
-        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
-        working-directory: ftauth_jwt
+      - name: "ftauth_storage/ftauth_storage_platform_interface; dart analyze --fatal-infos ."
+        if: "always() && steps.ftauth_storage_ftauth_storage_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_storage/ftauth_storage_platform_interface
         run: dart analyze --fatal-infos .
   job_003:
     name: "analyze_and_format; Dart dev; PKGS: ftauth, ftauth_jwt; `dart format --output=none --set-exit-if-changed .`, `dart analyze --fatal-infos .`"
     runs-on: ubuntu-latest
     steps:
       - name: Cache Pub hosted dependencies
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: "~/.pub-cache/hosted"
-          key: "os:ubuntu-latest;pub-cache-hosted;dart:dev;packages:ftauth-ftauth_jwt;commands:format-analyze"
+          key: "os:ubuntu-latest;pub-cache-hosted;sdk:dev;packages:ftauth-ftauth_jwt;commands:format-analyze"
           restore-keys: |
-            os:ubuntu-latest;pub-cache-hosted;dart:dev;packages:ftauth-ftauth_jwt
-            os:ubuntu-latest;pub-cache-hosted;dart:dev
+            os:ubuntu-latest;pub-cache-hosted;sdk:dev;packages:ftauth-ftauth_jwt
+            os:ubuntu-latest;pub-cache-hosted;sdk:dev
             os:ubuntu-latest;pub-cache-hosted
             os:ubuntu-latest
       - uses: dart-lang/setup-dart@v1.3
         with:
           sdk: dev
       - id: checkout
-        uses: actions/checkout@v2.3.5
+        uses: actions/checkout@v2.4.0
       - id: ftauth_pub_upgrade
         name: ftauth; dart pub upgrade
         if: "always() && steps.checkout.conclusion == 'success'"
@@ -123,4 +123,75 @@ jobs:
       - name: "ftauth_jwt; dart analyze --fatal-infos ."
         if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
         working-directory: ftauth_jwt
+        run: dart analyze --fatal-infos .
+  job_004:
+    name: "analyze_and_format; Dart stable; PKGS: ftauth, ftauth_flutter/ftauth_flutter_platform_interface, ftauth_jwt, ftauth_storage/ftauth_storage_platform_interface; `dart format --output=none --set-exit-if-changed .`, `dart analyze --fatal-infos .`"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Pub hosted dependencies
+        uses: actions/cache@v2.1.7
+        with:
+          path: "~/.pub-cache/hosted"
+          key: "os:ubuntu-latest;pub-cache-hosted;sdk:stable;packages:ftauth-ftauth_flutter/ftauth_flutter_platform_interface-ftauth_jwt-ftauth_storage/ftauth_storage_platform_interface;commands:format-analyze"
+          restore-keys: |
+            os:ubuntu-latest;pub-cache-hosted;sdk:stable;packages:ftauth-ftauth_flutter/ftauth_flutter_platform_interface-ftauth_jwt-ftauth_storage/ftauth_storage_platform_interface
+            os:ubuntu-latest;pub-cache-hosted;sdk:stable
+            os:ubuntu-latest;pub-cache-hosted
+            os:ubuntu-latest
+      - uses: dart-lang/setup-dart@v1.3
+        with:
+          sdk: stable
+      - id: checkout
+        uses: actions/checkout@v2.4.0
+      - id: ftauth_pub_upgrade
+        name: ftauth; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth
+        run: dart pub upgrade
+      - name: "ftauth; dart format --output=none --set-exit-if-changed ."
+        if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth
+        run: "dart format --output=none --set-exit-if-changed ."
+      - name: "ftauth; dart analyze --fatal-infos ."
+        if: "always() && steps.ftauth_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth
+        run: dart analyze --fatal-infos .
+      - id: ftauth_flutter_ftauth_flutter_platform_interface_pub_upgrade
+        name: ftauth_flutter/ftauth_flutter_platform_interface; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth_flutter/ftauth_flutter_platform_interface
+        run: dart pub upgrade
+      - name: "ftauth_flutter/ftauth_flutter_platform_interface; dart format --output=none --set-exit-if-changed ."
+        if: "always() && steps.ftauth_flutter_ftauth_flutter_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_flutter/ftauth_flutter_platform_interface
+        run: "dart format --output=none --set-exit-if-changed ."
+      - name: "ftauth_flutter/ftauth_flutter_platform_interface; dart analyze --fatal-infos ."
+        if: "always() && steps.ftauth_flutter_ftauth_flutter_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_flutter/ftauth_flutter_platform_interface
+        run: dart analyze --fatal-infos .
+      - id: ftauth_jwt_pub_upgrade
+        name: ftauth_jwt; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart pub upgrade
+      - name: "ftauth_jwt; dart format --output=none --set-exit-if-changed ."
+        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: "dart format --output=none --set-exit-if-changed ."
+      - name: "ftauth_jwt; dart analyze --fatal-infos ."
+        if: "always() && steps.ftauth_jwt_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_jwt
+        run: dart analyze --fatal-infos .
+      - id: ftauth_storage_ftauth_storage_platform_interface_pub_upgrade
+        name: ftauth_storage/ftauth_storage_platform_interface; dart pub upgrade
+        if: "always() && steps.checkout.conclusion == 'success'"
+        working-directory: ftauth_storage/ftauth_storage_platform_interface
+        run: dart pub upgrade
+      - name: "ftauth_storage/ftauth_storage_platform_interface; dart format --output=none --set-exit-if-changed ."
+        if: "always() && steps.ftauth_storage_ftauth_storage_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_storage/ftauth_storage_platform_interface
+        run: "dart format --output=none --set-exit-if-changed ."
+      - name: "ftauth_storage/ftauth_storage_platform_interface; dart analyze --fatal-infos ."
+        if: "always() && steps.ftauth_storage_ftauth_storage_platform_interface_pub_upgrade.conclusion == 'success'"
+        working-directory: ftauth_storage/ftauth_storage_platform_interface
         run: dart analyze --fatal-infos .
