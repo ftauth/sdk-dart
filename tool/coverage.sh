@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ -z $CI ]; then
+    exit 0
+fi
+
 # Format coverage to lcov format
 dart pub global activate coverage
 dart run coverage:format_coverage -l -i coverage/ -o coverage/lcov.info --packages=.packages --report-on=lib

@@ -5,9 +5,6 @@ import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
 import 'package:http/http.dart' as http;
-import 'package:js/js_util.dart';
-
-import 'authorizer_base.dart';
 
 class AuthorizerImpl extends Authorizer {
   AuthorizerImpl(
