@@ -9,3 +9,5 @@ flutter pub run pigeon \
 --objc_header_out ../ftauth_storage_ios/ios/Classes/GeneratedBindings.h \
 --objc_source_out ../ftauth_storage_ios/ios/Classes/GeneratedBindings.m \
 --objc_prefix FTAuth
+
+flutter format .

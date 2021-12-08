@@ -1,5 +1,5 @@
 sdk:
-  - stable
+  # - stable (does not support mono_pkg action)
   - beta
 
 stages:

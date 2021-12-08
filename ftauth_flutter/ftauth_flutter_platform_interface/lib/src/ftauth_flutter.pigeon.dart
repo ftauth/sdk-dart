@@ -52,20 +52,19 @@ class _NativeLoginCodec extends StandardMessageCodec {
     if (value is ClientConfiguration) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else 
-{
+    } else {
       super.writeValue(buffer, value);
     }
   }
+
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:       
+      case 128:
         return ClientConfiguration.decode(readValue(buffer)!);
-      
-      default:      
+
+      default:
         return super.readValueOfType(type, buffer);
-      
     }
   }
 }
@@ -74,7 +73,8 @@ class NativeLogin {
   /// Constructor for [NativeLogin].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NativeLogin({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
+  NativeLogin({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? _binaryMessenger;
 
@@ -82,7 +82,8 @@ class NativeLogin {
 
   Future<Map<String?, String?>> login(ClientConfiguration arg_config) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.NativeLogin.login', codec, binaryMessenger: _binaryMessenger);
+        'dev.flutter.pigeon.NativeLogin.login', codec,
+        binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(<Object>[arg_config]) as Map<Object?, Object?>?;
     if (replyMap == null) {
@@ -92,14 +93,16 @@ class NativeLogin {
         details: null,
       );
     } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      final Map<Object?, Object?> error =
+          (replyMap['error'] as Map<Object?, Object?>?)!;
       throw PlatformException(
         code: (error['code'] as String?)!,
         message: error['message'] as String?,
         details: error['details'],
       );
     } else {
-      return (replyMap['result'] as Map<Object?, Object?>?)!.cast<String?, String?>();
+      return (replyMap['result'] as Map<Object?, Object?>?)!
+          .cast<String?, String?>();
     }
   }
 }
