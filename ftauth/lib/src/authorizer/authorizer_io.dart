@@ -35,14 +35,14 @@ class AuthorizerImpl extends Authorizer {
   }) async {
     await init();
 
-    // final bool isLocalhost =
-    //     InternetAddress.tryParse(config.redirectUri.host) ==
-    //             InternetAddress.loopbackIPv4 ||
-    //         config.redirectUri.host == 'localhost';
+    final bool isLocalhost =
+        InternetAddress.tryParse(config.redirectUri.host) ==
+                InternetAddress.loopbackIPv4 ||
+            config.redirectUri.host == 'localhost';
 
-    // if (!isLocalhost) {
-    //   throw ArgumentError('Use authorize/exchange instead');
-    // }
+    if (!isLocalhost) {
+      throw ArgumentError('Use authorize/exchange instead');
+    }
 
     final listenServer = await HttpServer.bind(
       InternetAddress.loopbackIPv4,

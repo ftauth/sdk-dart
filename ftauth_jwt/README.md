@@ -1,19 +1,5 @@
-A library for Dart developers.
+# ftauth_jwt
 
-## Usage
+> This library is still in development and should not be used in production.
 
-A simple usage example:
-
-```dart
-import 'package:ftauth_jwt/ftauth_jwt.dart';
-
-main() {
-  var awesome = new Awesome();
-}
-```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+A simple, robust JWT library used in the [FTAuth SDK](https://pub.dev/packages/ftauth).

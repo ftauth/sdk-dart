@@ -9,7 +9,7 @@ part 'certificate.g.dart';
 class Certificate extends Equatable {
   /// The domain name of the pinned certificate.
   ///
-  /// e.g. For a URL `https://medtronic.com:443/path`, the host is `medtronic.com`
+  /// e.g. For a URL `https://google.com:443/path`, the host is `google.com`
   final String host;
 
   /// The PEM-encoded certificate.

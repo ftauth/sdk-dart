@@ -92,17 +92,6 @@ class Config extends Equatable {
 
   factory Config.fromJson(Map<String, dynamic> json) => _$ConfigFromJson(json);
 
-  /// Used by native components, e.g. iOS widget, to refresh the token, if needed.
-  Map<String, dynamic> toJson() {
-    return {
-      'authorizationEndpoint': authorizationUri.toString(),
-      'tokenEndpoint': tokenUri.toString(),
-      'clientID': clientId,
-      'scopes': scopes,
-      'redirectURL': redirectUri.toString(),
-    };
-  }
-
   static Future<Config> fromFile(String filename) {
     return _configLoader.fromFile(filename);
   }

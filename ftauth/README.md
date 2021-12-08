@@ -1,22 +1,5 @@
-A library for Dart developers.
+# ftauth
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+> This library is still in development and should not be used in production.
 
-## Usage
-
-A simple usage example:
-
-```dart
-import 'package:ftauth/ftauth.dart';
-
-main() {
-  var awesome = new Awesome();
-}
-```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
+A client-side library for the [FTAuth](https://github.com/ftauth/ftauth) server which works in the browser, VM, and Flutter. 

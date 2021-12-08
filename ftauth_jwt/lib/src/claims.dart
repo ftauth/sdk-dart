@@ -1,4 +1,5 @@
 import 'package:canonical_json/canonical_json.dart';
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -23,16 +24,6 @@ const _standardClaims = [
   'scope',
   'htm',
   'htu',
-];
-
-const _ftauthClaims = [
-  'client_id',
-  'userInfo',
-];
-
-const _reservedClaims = [
-  ..._standardClaims,
-  ..._ftauthClaims,
 ];
 
 @serialize
@@ -73,8 +64,8 @@ class JsonWebClaims extends Equatable {
   @JsonKey(name: 'htu')
   final String? httpUri;
 
-  @JsonKey(ignore: true)
-  final Map<String, Object?> customClaims;
+  final Map<String, Object?> _customClaims;
+  Map<String, Object?> get customClaims => UnmodifiableMapView(_customClaims);
 
   JsonWebClaims({
     this.issuer,
@@ -90,7 +81,7 @@ class JsonWebClaims extends Equatable {
     this.httpMethod,
     this.httpUri,
     Map<String, Object?>? customClaims,
-  }) : customClaims = customClaims ?? {};
+  }) : _customClaims = customClaims ?? {};
 
   @override
   List<Object?> get props => [
@@ -109,14 +100,17 @@ class JsonWebClaims extends Equatable {
         customClaims,
       ];
 
-  Map<String, Object?>? get ftauthClaims =>
-      customClaims['https://ftauth.io'] as Map<String, Object?>?;
+  Map<String, Object?> get ftauthClaims {
+    final claims =
+        customClaims['https://ftauth.io'] as Map<String, Object?>? ?? const {};
+    return UnmodifiableMapView(claims);
+  }
 
   factory JsonWebClaims.fromJson(Map<String, Object?> json) {
     var instance = _$JsonWebClaimsFromJson(json);
     final customClaims =
-        json.keys.where((key) => !_reservedClaims.contains(key));
-    instance.customClaims
+        json.keys.where((key) => !_standardClaims.contains(key));
+    instance._customClaims
         .addEntries(customClaims.map((key) => MapEntry(key, json[key])));
     return instance;
   }

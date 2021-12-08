@@ -65,7 +65,7 @@ class OAuthUtil {
       httpClient: httpClient,
     );
 
-    // Sets the state string internally, and advances the active state.
+    // Advances the internal state.
     grant.getAuthorizationUrl(
       config.redirectUri,
       scopes: config.scopes,

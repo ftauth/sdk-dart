@@ -10,8 +10,8 @@ class ConfigLoader extends ConfigLoaderInterface {
 
   @override
   Future<Config> fromFile(String filename) async {
-    final data = File(filename).readAsStringSync();
-    final json = (jsonDecode(data) as Map).cast<String, dynamic>();
+    final data = await File(filename).readAsString();
+    final json = (jsonDecode(data) as Map).cast<String, Object?>();
     return Config.fromJson(json);
   }
 }

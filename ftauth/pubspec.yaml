@@ -2,7 +2,7 @@ name: ftauth
 description: Client-side library for the FTAuth server.
 version: 0.1.0
 homepage: https://github.com/ftauth/sdk-dart
-publish_to: none
+issue_tracker: https://github.com/ftauth/sdk-dart/issues
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -11,11 +11,13 @@ dependencies:
   crypto: ^3.0.0
   equatable: ^2.0.0
   hive: ^2.0.0
-  ftauth_jwt:
-    path: ../ftauth_jwt
+  http: ^0.13.0
+  ftauth_jwt: ^0.1.0
   js: ^0.6.3
   json_annotation: ^4.3.0
+  meta: ^1.7.0
   oauth2: ^2.0.0
+  path: ^1.8.0
   pointycastle: ^3.0.0
   uuid: ^3.0.0
 
