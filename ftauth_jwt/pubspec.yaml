@@ -1,6 +1,6 @@
 name: ftauth_jwt
 description: A simple, robust JWT library.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/ftauth/sdk-dart
 issue_tracker: https://github.com/ftauth/sdk-dart/issues
 
@@ -11,12 +11,12 @@ dependencies:
   canonical_json: ^1.1.0
   collection: ^1.15.0
   equatable: ^2.0.0
-  json_annotation: ^4.3.0
+  json_annotation: '>=4.4.0 <4.5.0'
   meta: ^1.7.0
   pointycastle: ^3.0.0
 
 dev_dependencies:
   build_runner: ^2.0.0
-  json_serializable: ^6.0.0
+  json_serializable: ^6.1.0
   lints: ^1.0.0
   test: ^1.16.0

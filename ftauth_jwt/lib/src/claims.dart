@@ -65,6 +65,8 @@ class JsonWebClaims extends Equatable {
   final String? httpUri;
 
   final Map<String, Object?> _customClaims;
+
+  @JsonKey(ignore: true)
   Map<String, Object?> get customClaims => UnmodifiableMapView(_customClaims);
 
   JsonWebClaims({
