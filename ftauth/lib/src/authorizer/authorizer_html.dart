@@ -75,6 +75,8 @@ class AuthorizerImpl extends Authorizer {
             'toolbar=no,width=550,height=450,popup=yes,noreferer=yes',
       );
     }
+
+    // TODO: If the popup fails to open
   }
 
   @override
@@ -87,11 +89,6 @@ class AuthorizerImpl extends Authorizer {
       countryCode: countryCode,
     );
     await launchUrl(url);
-
-    // If the popup fails to open
-    if (getProperty(popupWindow!, 'window') == null) {
-      window.location.href = url;
-    }
 
     final event = await window.onMessage.firstWhere((event) {
       final origin = Uri.tryParse(event.origin);

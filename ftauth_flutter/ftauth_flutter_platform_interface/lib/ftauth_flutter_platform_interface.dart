@@ -8,9 +8,27 @@ import 'package:meta/meta.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'src/method_channel_ftauth.dart';
+import 'src/ftauth_flutter.pigeon.dart';
 
 export 'src/config.dart';
+export 'src/ftauth_flutter.pigeon.dart';
 export 'src/platform_exception_codes.dart';
+
+ClientConfiguration createClientConfiguration(
+  Config config, {
+  required String state,
+  required String codeVerifier,
+}) {
+  return ClientConfiguration()
+    ..authorizationEndpoint = config.authorizationUri.toString()
+    ..tokenEndpoint = config.tokenUri.toString()
+    ..clientId = config.clientId
+    ..clientSecret = config.clientSecret
+    ..redirectUri = config.redirectUri.toString()
+    ..scopes = config.scopes
+    ..state = state
+    ..codeVerifier = codeVerifier;
+}
 
 /// The interface that implementations of FTAuth must implement.
 ///
@@ -18,18 +36,18 @@ export 'src/platform_exception_codes.dart';
 /// does not consider newly added methods to be breaking changes. Extending this class
 /// (using `extends`) ensures that the subclass will get the default implementation, while
 /// platform implementations that `implements` this interface will be broken by newly added
-/// [FTAuthPlatformInterface] methods.
-abstract class FTAuthPlatformInterface extends PlatformInterface
+/// [FTAuthPlatform] methods.
+abstract class FTAuthPlatform extends PlatformInterface
     implements AuthorizerInterface {
-  FTAuthPlatformInterface() : super(token: _token);
+  FTAuthPlatform() : super(token: _token);
 
   static final Object _token = Object();
 
-  static FTAuthPlatformInterface _instance = MethodChannelFTAuth();
+  static FTAuthPlatform _instance = MethodChannelFTAuth();
 
-  static FTAuthPlatformInterface get instance => _instance;
+  static FTAuthPlatform get instance => _instance;
 
-  static set instance(FTAuthPlatformInterface instance) {
+  static set instance(FTAuthPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }
@@ -42,6 +60,7 @@ abstract class FTAuthPlatformInterface extends PlatformInterface
     return _authorizer!;
   }
 
+  @protected
   set authorizer(Authorizer authorizer) {
     if (_authorizer != null) {
       throw StateError('Cannot register multiple authorizers');

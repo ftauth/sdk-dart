@@ -19,6 +19,10 @@ dependencies:
   pointycastle: ^3.0.0
   uuid: ^3.0.0
 
+# dependency_overrides:
+#   ftauth_jwt:
+#     path: ../ftauth_jwt
+
 dev_dependencies:
   build_runner: ^2.0.0
   json_serializable: ^6.0.1

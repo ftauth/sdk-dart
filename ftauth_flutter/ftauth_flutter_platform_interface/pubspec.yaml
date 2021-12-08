@@ -15,7 +15,14 @@ dependencies:
   plugin_platform_interface: ^2.0.1
   url_launcher: ^6.0.0
 
+# dependency_overrides:
+#   ftauth:
+#     path: ../../ftauth
+#   ftauth_jwt:
+#     path: ../../ftauth_jwt
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.0.0
+  pigeon: ^1.0.0

@@ -7,30 +7,29 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 void main() {
   group('FTAuthFlutterPlugin', () {
     test('MethodChannelFTAuthFlutter is the default instance', () {
-      expect(FTAuthPlatformInterface.instance, isA<MethodChannelFTAuth>());
+      expect(FTAuthPlatform.instance, isA<MethodChannelFTAuth>());
     });
 
     test('Cannot be implemented with `implements`', () {
       expect(() {
-        FTAuthPlatformInterface.instance = ImplementsFTAuthFlutterPlugin();
+        FTAuthPlatform.instance = ImplementsFTAuthFlutterPlugin();
       }, throwsA(isA<Error>()));
     });
 
     test('Can be extended', () {
-      FTAuthPlatformInterface.instance = ExtendsFTAuthFlutterPlugin();
+      FTAuthPlatform.instance = ExtendsFTAuthFlutterPlugin();
     });
 
     test('Can be mocked with `implements`', () {
-      FTAuthPlatformInterface.instance = ImplementsWithIsMock();
+      FTAuthPlatform.instance = ImplementsWithIsMock();
     });
   });
 }
 
 class ImplementsWithIsMock extends Mock
     with MockPlatformInterfaceMixin
-    implements FTAuthPlatformInterface {}
+    implements FTAuthPlatform {}
 
-class ImplementsFTAuthFlutterPlugin extends Mock
-    implements FTAuthPlatformInterface {}
+class ImplementsFTAuthFlutterPlugin extends Mock implements FTAuthPlatform {}
 
-class ExtendsFTAuthFlutterPlugin extends FTAuthPlatformInterface {}
+class ExtendsFTAuthFlutterPlugin extends FTAuthPlatform {}

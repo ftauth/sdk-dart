@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
@@ -56,6 +58,45 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
 
     // Perform setup tasks after init
     scheduleMicrotask(() => init().then((_) => setup?.call(this)));
+  }
+
+  /// {@template ftauth.retrieve_demo_config}
+  /// Creates a temporary client configuration with the hosted FTAuth Demo
+  /// server (https://demo.ftauth.io).
+  ///
+  /// Clients created with this method are valid for 24 hours before they are
+  /// removed from the server.
+  /// {@endtemplate}
+  static Future<Config> retrieveDemoConfig({
+    String? name,
+    ClientType type = ClientType.public,
+    List<String> redirectUris = const ['localhost', 'myapp://'],
+  }) async {
+    const gatewayUrl = 'https://demo.ftauth.io';
+    final registerUri = Uri.parse('$gatewayUrl/client/register');
+    final random = Random();
+    final resp = await http.post(
+      registerUri,
+      body: jsonEncode({
+        'name': name ?? 'demo_client_${random.nextInt(2 << 30)}',
+        'type': type.toString().split('.').last,
+        'redirect_uris': redirectUris,
+        'scopes': [
+          {'name': 'default'}
+        ],
+      }),
+    );
+    final data = jsonDecode(resp.body) as Map;
+    final clientInfo = ClientInfo.fromJson(data.cast());
+    return Config(
+      gatewayUrl: gatewayUrl,
+      clientId: clientInfo.id,
+      clientSecret: clientInfo.secret,
+      clientType: clientInfo.type,
+      redirectUri: clientInfo.redirectUris.first,
+      scopes: clientInfo.scopes,
+      grantTypes: clientInfo.grantTypes,
+    );
   }
 
   @override

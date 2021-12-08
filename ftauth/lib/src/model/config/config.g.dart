@@ -51,6 +51,6 @@ const _$ClientTypeEnumMap = {
 };
 
 const _$TokenFormatEnumMap = {
-  TokenFormat.jwt: 'JWT',
+  TokenFormat.jwt: 'jwt',
   TokenFormat.custom: 'custom',
 };

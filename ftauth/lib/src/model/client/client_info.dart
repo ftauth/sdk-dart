@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:ftauth/ftauth.dart';
 import 'package:json_annotation/json_annotation.dart';
-
-import 'client_type.dart';
 
 part 'client_info.g.dart';
 
@@ -10,12 +9,14 @@ part 'client_info.g.dart';
   fieldRename: FieldRename.snake,
 )
 class ClientInfo extends Equatable {
-  final String clientId;
-  final String? clientName;
-  final ClientType clientType;
-  final String? clientSecret;
-  final DateTime? clientSecretExpiresAt;
+  final String id;
+  final String? name;
+  final ClientType type;
+  final String? secret;
+  final DateTime? secretExpiresAt;
   final List<String> redirectUris;
+
+  @JsonKey(ignore: true)
   final bool isDevClient;
 
   @JsonKey(fromJson: _scopesFromJson)
@@ -23,18 +24,24 @@ class ClientInfo extends Equatable {
   final String? jwksUri;
   final String? logoUri;
   final List<String> grantTypes;
+  final int accessTokenLife;
+  final int refreshTokenLife;
+  final List<Provider> providers;
 
   ClientInfo({
-    required this.clientId,
-    this.clientName,
-    required this.clientType,
-    this.clientSecret,
-    this.clientSecretExpiresAt,
+    required this.id,
+    this.name,
+    required this.type,
+    this.secret,
+    this.secretExpiresAt,
     required this.redirectUris,
     required this.scopes,
     this.jwksUri,
     this.logoUri,
     required this.grantTypes,
+    required this.accessTokenLife,
+    required this.refreshTokenLife,
+    this.providers = const [Provider.ftauth],
   }) : isDevClient = redirectUris.contains('localhost');
 
   static List<String> _scopesFromJson(dynamic json) {
@@ -52,29 +59,34 @@ class ClientInfo extends Equatable {
   }
 
   ClientInfo copyWith({
-    String? clientId,
-    String? clientName,
-    ClientType? clientType,
-    String? clientSecret,
-    DateTime? clientSecretExpiresAt,
+    String? id,
+    String? name,
+    ClientType? type,
+    String? secret,
+    DateTime? secretExpiresAt,
     List<String>? redirectUris,
     List<String>? scopes,
     String? jwksUri,
     String? logoUri,
     List<String>? grantTypes,
+    int? accessTokenLife,
+    int? refreshTokenLife,
+    List<Provider>? providers,
   }) {
     return ClientInfo(
-      clientId: clientId ?? this.clientId,
-      clientType: clientType ?? this.clientType,
-      clientName: clientName ?? this.clientName,
-      clientSecret: clientSecret ?? this.clientSecret,
-      clientSecretExpiresAt:
-          clientSecretExpiresAt ?? this.clientSecretExpiresAt,
+      id: id ?? this.id,
+      type: type ?? this.type,
+      name: name ?? this.name,
+      secret: secret ?? this.secret,
+      secretExpiresAt: secretExpiresAt ?? this.secretExpiresAt,
       redirectUris: redirectUris ?? this.redirectUris,
       scopes: scopes ?? this.scopes,
       jwksUri: jwksUri ?? this.jwksUri,
       logoUri: logoUri ?? this.logoUri,
       grantTypes: grantTypes ?? this.grantTypes,
+      accessTokenLife: accessTokenLife ?? this.accessTokenLife,
+      refreshTokenLife: refreshTokenLife ?? this.refreshTokenLife,
+      providers: providers ?? this.providers,
     );
   }
 
@@ -85,11 +97,11 @@ class ClientInfo extends Equatable {
 
   @override
   List<Object> get props => [
-        clientId,
-        if (clientName != null) clientName!,
-        clientType,
-        if (clientSecret != null) clientSecret!,
-        if (clientSecretExpiresAt != null) clientSecretExpiresAt!,
+        id,
+        if (name != null) name!,
+        type,
+        if (secret != null) secret!,
+        if (secretExpiresAt != null) secretExpiresAt!,
         redirectUris,
         scopes,
         if (jwksUri != null) jwksUri!,

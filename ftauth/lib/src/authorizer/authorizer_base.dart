@@ -22,9 +22,10 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
   /// Stores client-sensitive information related to the OAuth flow. Must be
   /// persistent, so that state can be recovered on startup.
-  final StorageRepo _storageRepo;
+  @protected
+  final StorageRepo storageRepo;
 
-  /// Encryption key used for [_storageRepo].
+  /// Encryption key used for [storageRepo].
   final Uint8List? _encryptionKey;
 
   /// Whether to clear previous Keychain items on a fresh install.
@@ -69,14 +70,13 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
   Authorizer(
     this.config, {
-    required StorageRepo storageRepo,
+    required this.storageRepo,
     SSLRepo? sslRepository,
     http.Client? baseClient,
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
-  })  : _storageRepo = storageRepo,
-        _sslRepository = sslRepository ?? SSLRepoImpl(storageRepo),
+  })  : _sslRepository = sslRepository ?? SSLRepoImpl(storageRepo),
         _encryptionKey = encryptionKey,
         clearOnFreshInstall = clearOnFreshInstall ?? true {
     _baseClient = SSLPinningClient(
@@ -131,24 +131,24 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
     FTAuth.debug('Inititalizing SSO module...');
 
-    await _storageRepo.init(encryptionKey: _encryptionKey);
+    await storageRepo.init(encryptionKey: _encryptionKey);
 
     // Checks if this is the first time starting the app from a fresh install.
     // If it is, clear any old Keychain information which may be left behind
     // from previous installs.
     final isFreshInstall =
-        await _storageRepo.getEphemeralString(keyFreshInstall) == null;
+        await storageRepo.getEphemeralString(keyFreshInstall) == null;
     if (isFreshInstall && clearOnFreshInstall) {
       FTAuth.debug('Clearing old Keychain items...');
-      await _storageRepo.clear();
-      await _storageRepo.setEphemeralString(keyFreshInstall, 'flag');
+      await storageRepo.clear();
+      await storageRepo.setEphemeralString(keyFreshInstall, 'flag');
     }
 
     // Initialize the SSL repository
     await _sslRepository.init();
 
     // Store locally the current config
-    await _storageRepo.setString(keyConfig, jsonEncode(config));
+    await storageRepo.setString(keyConfig, jsonEncode(config));
 
     try {
       final stateFromStorage = await _reloadFromStorage();
@@ -156,8 +156,8 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
         return stateFromStorage;
       }
 
-      final state = await _storageRepo.getString(keyState);
-      final codeVerifier = await _storageRepo.getString(keyCodeVerifier);
+      final state = await storageRepo.getString(keyState);
+      final codeVerifier = await storageRepo.getString(keyCodeVerifier);
 
       if (state != null && codeVerifier != null) {
         return onFoundState(state: state, codeVerifier: codeVerifier);
@@ -183,9 +183,9 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   /// Reloads the current AuthState from storage, if present.
   Future<AuthState?> _reloadFromStorage() async {
     FTAuth.debug('Reloading tokens from storage...');
-    final accessTokenEnc = await _storageRepo.getString(keyAccessToken);
-    final refreshTokenEnc = await _storageRepo.getString(keyRefreshToken);
-    final idTokenEnc = await _storageRepo.getString(keyIdToken);
+    final accessTokenEnc = await storageRepo.getString(keyAccessToken);
+    final refreshTokenEnc = await storageRepo.getString(keyRefreshToken);
+    final idTokenEnc = await storageRepo.getString(keyIdToken);
 
     if (accessTokenEnc == null) {
       FTAuth.debug('No tokens found in storage.');
@@ -218,7 +218,7 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       refreshToken,
       config,
       idToken: idToken,
-      storageRepo: _storageRepo,
+      storageRepo: storageRepo,
       httpClient: httpClient,
     );
 
@@ -242,7 +242,7 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
     User? user;
     try {
-      user = await UserRepo(config, client, _storageRepo).getUserInfo();
+      user = await UserRepo(config, client, storageRepo).getUserInfo();
     } on Exception catch (e) {
       FTAuth.error('Error downloading user: $e');
     }
@@ -305,8 +305,8 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     final codeVerifier = OAuthUtil.createCodeVerifier();
 
     await Future.wait([
-      _storageRepo.setString(keyState, state),
-      _storageRepo.setString(keyCodeVerifier, codeVerifier),
+      storageRepo.setString(keyState, state),
+      storageRepo.setString(keyCodeVerifier, codeVerifier),
     ]);
 
     authCodeGrant = OAuthUtil.createGrant(
@@ -351,21 +351,21 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     final credentials = Credentials.fromOAuthCredentials(
       oauthCredentials,
       config: config,
-      storageRepo: _storageRepo,
+      storageRepo: storageRepo,
       httpClient: httpClient,
     );
 
     await Future.wait([
-      _storageRepo.setString(keyAccessToken, credentials.accessToken),
+      storageRepo.setString(keyAccessToken, credentials.accessToken),
       if (credentials.expirationSecondsSinceEpoch != null)
-        _storageRepo.setString(
+        storageRepo.setString(
           keyAccessTokenExp,
           credentials.expirationSecondsSinceEpoch!.toString(),
         ),
       if (credentials.refreshToken != null)
-        _storageRepo.setString(keyRefreshToken, credentials.refreshToken!),
+        storageRepo.setString(keyRefreshToken, credentials.refreshToken!),
       if (credentials.idToken != null)
-        _storageRepo.setString(keyIdToken, credentials.idToken!),
+        storageRepo.setString(keyIdToken, credentials.idToken!),
     ]);
 
     final newClient = Client(
@@ -378,14 +378,14 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
     User? user;
     try {
-      user = await UserRepo(config, newClient, _storageRepo).getUserInfo();
+      user = await UserRepo(config, newClient, storageRepo).getUserInfo();
     } on Exception catch (e) {
       FTAuth.error('Error downloading user: $e');
     }
 
     await Future.wait([
-      _storageRepo.delete(keyState),
-      _storageRepo.delete(keyCodeVerifier),
+      storageRepo.delete(keyState),
+      storageRepo.delete(keyCodeVerifier),
     ]);
 
     return AuthSignedIn(newClient, user);
@@ -416,7 +416,7 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
         keyState,
         keyCodeVerifier,
         keyUserInfo,
-      ].map(_storageRepo.delete),
+      ].map(storageRepo.delete),
     );
   }
 

@@ -32,9 +32,10 @@ class _LinuxAuthorizer extends AuthorizerImpl {
   }
 }
 
-class FTAuthFlutterLinux extends FTAuthPlatformInterface {
+class FTAuthFlutterLinux extends FTAuthPlatform {
+  /// Registers this class as the default instance of [FTAuthPlatform]
   static void registerWith() {
-    FTAuthPlatformInterface.instance = FTAuthFlutterLinux();
+    FTAuthPlatform.instance = FTAuthFlutterLinux();
   }
 
   @override

@@ -1,7 +1,7 @@
 name: angulardart
 description: FTAuth example with AngularDart
 version: 1.0.0
-# homepage: https://www.example.com
+publish_to: none
 
 environment:
   sdk: '>=2.15.0-0 <3.0.0'

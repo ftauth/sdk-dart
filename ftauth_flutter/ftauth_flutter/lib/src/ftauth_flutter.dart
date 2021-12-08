@@ -41,6 +41,18 @@ class FTAuth extends InheritedWidget {
   static void warn(String log) => ftauth.FTAuth.warn(log);
   static void error(String log) => ftauth.FTAuth.error(log);
 
+  /// {@macro ftauth.retrieve_demo_config}
+  static Future<Config> retrieveDemoConfig({
+    String? name,
+    ClientType type = ClientType.public,
+    List<String> redirectUris = const ['localhost', 'myapp://'],
+  }) =>
+      ftauth.FTAuth.retrieveDemoConfig(
+        name: name,
+        type: type,
+        redirectUris: redirectUris,
+      );
+
   final FTAuthClient client;
 
   FTAuth(
@@ -112,8 +124,7 @@ class FTAuthClient extends ftauth.FTAuth {
     );
   }
 
-  static FTAuthPlatformInterface get _platform =>
-      FTAuthPlatformInterface.instance;
+  static FTAuthPlatform get _platform => FTAuthPlatform.instance;
 
   static FTAuthClient of(BuildContext context) {
     final ftauth = context.dependOnInheritedWidgetOfExactType<FTAuth>();

@@ -13,10 +13,14 @@ flutter:
       android:
         package: io.ftauth.ftauth_flutter_android
         pluginClass: FTAuthFlutterPlugin
+        dartPluginClass: FTAuthFlutterAndroid
 
 dependencies:
   flutter:
     sdk: flutter
+  ftauth: ^0.1.0
+  ftauth_flutter_platform_interface: ^0.1.0
+  http: ^0.13.0
 
 dev_dependencies:
   flutter_test:

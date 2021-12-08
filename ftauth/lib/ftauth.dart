@@ -11,7 +11,6 @@ export 'src/logger/logger.dart';
 export 'src/model/model.dart';
 
 export 'src/authorizer/authorizer.dart';
-// export 'src/demo/demo.dart';
 
 export 'src/model/config/config.dart';
 

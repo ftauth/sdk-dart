@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
 import 'package:ftauth/ftauth.dart';
+import 'package:ftauth/src/authorizer/keys.dart';
 import 'package:http/http.dart' as http;
 import 'package:ftauth_flutter_platform_interface/ftauth_flutter_platform_interface.dart';
 
-class _MethodChannelAuthorizer extends AuthorizerImpl {
-  _MethodChannelAuthorizer(
+class _AndroidAuthorizer extends AuthorizerImpl {
+  _AndroidAuthorizer(
     Config config, {
     required StorageRepo storageRepo,
     SSLRepo? sslRepository,
@@ -24,7 +24,7 @@ class _MethodChannelAuthorizer extends AuthorizerImpl {
           clearOnFreshInstall: clearOnFreshInstall,
         );
 
-  static const _channel = MethodChannel('ftauth_flutter');
+  static final _nativeLogin = NativeLogin();
 
   @override
   Future<void> login({
@@ -36,22 +36,28 @@ class _MethodChannelAuthorizer extends AuthorizerImpl {
       countryCode: countryCode,
     );
 
-    FTAuth.debug('Launching url: $url');
-    final Map<String, String>? parameters =
-        await _channel.invokeMapMethod<String, String>('login', url);
+    final state = await storageRepo.getString(keyState);
+    final codeVerifier = await storageRepo.getString(keyCodeVerifier);
 
-    if (parameters == null) {
-      throw PlatformException(
-        code: PlatformExceptionCodes.unknown,
-        message: 'Login process failed.',
-      );
-    }
+    FTAuth.debug('Launching url: $url');
+    final clientConfiguration = createClientConfiguration(
+      config,
+      state: state!,
+      codeVerifier: codeVerifier!,
+    );
+    final Map<String, String> parameters =
+        (await _nativeLogin.login(clientConfiguration)).cast();
 
     await exchange(parameters);
   }
 }
 
-class MethodChannelFTAuth extends FTAuthPlatform {
+class FTAuthFlutterAndroid extends FTAuthPlatform {
+  /// Registers this class as the default instance of [FTAuthPlatform]
+  static void registerWith() {
+    FTAuthPlatform.instance = FTAuthFlutterAndroid();
+  }
+
   @override
   void createAuthorizer(
     Config config, {
@@ -62,7 +68,7 @@ class MethodChannelFTAuth extends FTAuthPlatform {
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
   }) {
-    authorizer = _MethodChannelAuthorizer(
+    authorizer = _AndroidAuthorizer(
       config,
       storageRepo: storageRepo,
       sslRepository: sslRepository,
