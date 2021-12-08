@@ -40,6 +40,22 @@ Config _$ConfigFromJson(Map<String, dynamic> json) => Config(
           : Uri.parse(json['user_info_uri'] as String),
     );
 
+Map<String, dynamic> _$ConfigToJson(Config instance) => <String, dynamic>{
+      'provider': _$ProviderEnumMap[instance.provider],
+      'gateway_url': instance.gatewayUrl.toString(),
+      'redirect_uri': instance.redirectUri.toString(),
+      'client_id': instance.clientId,
+      'client_secret': instance.clientSecret,
+      'client_type': _$ClientTypeEnumMap[instance.clientType],
+      'scopes': instance.scopes,
+      'grant_types': instance.grantTypes,
+      'access_token_format': _$TokenFormatEnumMap[instance.accessTokenFormat],
+      'refresh_token_format': _$TokenFormatEnumMap[instance.refreshTokenFormat],
+      'authorization_uri': instance.authorizationUri.toString(),
+      'token_uri': instance.tokenUri.toString(),
+      'user_info_uri': instance.userInfoUri.toString(),
+    };
+
 const _$ProviderEnumMap = {
   Provider.ftauth: 'ftauth',
   Provider.generic: 'generic',

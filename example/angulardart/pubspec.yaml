@@ -15,7 +15,7 @@ dependencies:
   angular_router: ^3.0.1
   ftauth:
     path: ../../ftauth
-  json_annotation: ^4.3.0
+  json_annotation: '>=4.4.0 <4.5.0'
 
 dependency_overrides:
   ftauth_jwt:
@@ -24,6 +24,6 @@ dependency_overrides:
 dev_dependencies:
   build_runner: ^2.1.5
   build_web_compilers: ^3.2.1
-  json_serializable: ^6.0.0
+  json_serializable: ^6.1.0
   lints: ^1.0.0
   sass_builder: ^2.1.4

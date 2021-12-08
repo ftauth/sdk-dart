@@ -9,7 +9,6 @@ part 'config.g.dart';
 /// to connect to a running server instance.
 @JsonSerializable(
   fieldRename: FieldRename.snake,
-  createToJson: false,
 )
 class Config extends Equatable {
   static final ConfigLoader _configLoader = ConfigLoader();
@@ -92,16 +91,7 @@ class Config extends Equatable {
 
   factory Config.fromJson(Map<String, dynamic> json) => _$ConfigFromJson(json);
 
-  /// Used by native components, e.g. iOS widget, to refresh the token, if needed.
-  Map<String, dynamic> toJson() {
-    return {
-      'authorizationEndpoint': authorizationUri.toString(),
-      'tokenEndpoint': tokenUri.toString(),
-      'clientID': clientId,
-      'scopes': scopes,
-      'redirectURL': redirectUri.toString(),
-    };
-  }
+  Map<String, Object?> toJson() => _$ConfigToJson(this);
 
   static Future<Config> fromFile(String filename) {
     return _configLoader.fromFile(filename);
