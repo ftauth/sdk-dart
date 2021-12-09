@@ -2,5 +2,5 @@
   "AppSyncApiName": "ftauthtodos",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2021-11-28T15:08:08.244Z"
+  "AuthModeLastUpdated": "2021-12-09T00:50:48.337Z"
 }

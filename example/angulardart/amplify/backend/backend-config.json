@@ -11,7 +11,7 @@
             "openIDConnectConfig": {
               "name": "FTAuth",
               "issuerUrl": "https://demo.ftauth.io/",
-              "clientId": "b4f919f3-8599-4439-8dc6-18cd8ccf2859",
+              "clientId": "",
               "authTTL": "0",
               "iatTTL": "3600000"
             }
@@ -21,7 +21,7 @@
               "authenticationType": "API_KEY",
               "apiKeyConfig": {
                 "apiKeyExpirationDays": 7,
-                "apiKeyExpirationDate": "2021-12-04T21:28:43.350Z",
+                "apiKeyExpirationDate": "2021-12-16T00:52:02.328Z",
                 "description": "Admin API Key"
               }
             }
