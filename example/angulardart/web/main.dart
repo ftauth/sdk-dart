@@ -15,6 +15,9 @@ import 'package:ftauth/ftauth.dart';
 
 import 'main.template.dart' as self;
 
+late AppConfig _appConfig;
+AppConfig getAppConfig() => _appConfig;
+
 bool get _isDevMode {
   var enabled = false;
   assert(enabled = true);
@@ -49,8 +52,6 @@ LocationStrategy createLocationStrategy(
     return PathLocationStrategy(platformLocation, baseUrl);
   }
 }
-
-AppConfig getAppConfig() => AppConfig.prod();
 
 AmplifyConfig getAmplifyConfig() {
   final json = jsonDecode(amplifyconfig) as Map;
@@ -97,6 +98,11 @@ GraphQLClient createGraphQLClient(AppSyncConfig config) =>
 )
 final InjectorFactory injector = self.injector$Injector;
 
-void main() {
+Future<void> main() async {
+  _appConfig = //
+      // _isDevMode
+      //     ? AppConfig.dev()
+      //     : //
+      await AppConfig.prod();
   runApp(app_component.AppComponentNgFactory, createInjector: injector);
 }

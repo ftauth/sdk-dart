@@ -16,10 +16,17 @@
             ]
         },
         {
-            "name": "Example",
+            "name": "Example (Flutter)",
             "type": "dart",
             "cwd": "example/flutter",
             "request": "launch"
+        },
+        {
+            "name": "Example (AngularDart)",
+            "type": "dart",
+            "cwd": "example/angulardart",
+            "request": "launch",
+            "program": "web"
         }
     ]
 }

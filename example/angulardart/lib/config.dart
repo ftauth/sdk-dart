@@ -1,3 +1,5 @@
+import 'package:ftauth/ftauth.dart';
+
 enum Environment { dev, prod }
 
 class AppConfig {
@@ -15,15 +17,18 @@ class AppConfig {
     return AppConfig(
       Environment.dev,
       'http://localhost:8000',
-      'e2b5eb85-4010-4bd9-ab35-33a766adc3e3',
+      '3cf9a7ac-9198-469e-92a7-cc2f15d8b87d',
     );
   }
 
-  factory AppConfig.prod() {
+  static Future<AppConfig> prod() async {
+    final config = await FTAuth.retrieveDemoConfig(
+      redirectUris: ['localhost'],
+    );
     return AppConfig(
       Environment.prod,
       'https://demo.ftauth.io',
-      'b4f919f3-8599-4439-8dc6-18cd8ccf2859',
+      config.clientId,
     );
   }
 }

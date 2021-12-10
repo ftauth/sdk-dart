@@ -1,0 +1,11 @@
+# Defines a default set of lint rules enforced for projects at Google. For
+# details and rationale, see
+# https://github.com/dart-lang/pedantic#enabled-lints.
+
+include: package:amplify_lints/dart.yaml
+
+analyzer:
+  errors:
+    public_member_api_docs: ignore
+  exclude:
+    - lib/**/*.g.dart
