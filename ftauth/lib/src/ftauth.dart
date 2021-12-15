@@ -86,6 +86,9 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
         ],
       }),
     );
+    if (resp.statusCode != 200) {
+      throw ApiException.post(registerUri, resp.statusCode, resp.body);
+    }
     final data = jsonDecode(resp.body) as Map;
     final clientInfo = ClientInfo.fromJson(data.cast());
     return Config(

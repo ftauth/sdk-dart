@@ -18,6 +18,7 @@ mixin AuthRedirector implements OnInit {
       }
       if (router.current?.path != RoutePaths.todos.path) {
         router.navigate(RoutePaths.todos.path);
+        return;
       }
     });
   }

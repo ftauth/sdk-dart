@@ -67,7 +67,6 @@ AppSyncConfig getAppSyncConfig(AmplifyConfig config, FTAuth ftauth) {
       if (state is! AuthSignedIn) {
         return null;
       }
-      print('Access Token: ${state.client.credentials.accessToken}');
       return state.client.credentials.accessToken;
     }),
   );
