@@ -71,19 +71,21 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     String? name,
     ClientType type = ClientType.public,
     List<String> redirectUris = const ['localhost', 'myapp://'],
+    String username = 'test',
+    String password = 'test',
   }) async {
-    const gatewayUrl = 'https://demo.ftauth.io';
-    final registerUri = Uri.parse('$gatewayUrl/client/register');
+    final gatewayUrl = 'https://demo.ftauth.io';
+    final registerUri = Uri.parse(gatewayUrl).resolve('client/register');
     final random = Random();
+
+    // Register a new demo client.
     final resp = await http.post(
       registerUri,
       body: jsonEncode({
         'name': name ?? 'demo_client_${random.nextInt(2 << 30)}',
         'type': type.toString().split('.').last,
         'redirect_uris': redirectUris,
-        'scopes': [
-          {'name': 'default'}
-        ],
+        'scopes': ['default'],
       }),
     );
     if (resp.statusCode != 200) {
@@ -91,6 +93,23 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     }
     final data = jsonDecode(resp.body) as Map;
     final clientInfo = ClientInfo.fromJson(data.cast());
+
+    // Create the default user.
+    final signUpUri = Uri.parse(gatewayUrl).resolve('register');
+    final user = await http.post(
+      signUpUri,
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+      }),
+      headers: {
+        'Authorization': createBasicAuthorization(clientInfo.id),
+      },
+    );
+    if (user.statusCode != 200) {
+      throw ApiException.post(signUpUri, user.statusCode, user.body);
+    }
+
     return Config(
       gatewayUrl: gatewayUrl,
       clientId: clientInfo.id,

@@ -87,7 +87,7 @@ class MockOAuthServer {
             return _missingParameter(paramScope, state: state);
           }
 
-          final authCode = OAuthUtil.generateState();
+          final authCode = generateState();
 
           final session = _Request(
             clientId: clientId,

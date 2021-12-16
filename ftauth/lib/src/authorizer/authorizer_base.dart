@@ -301,15 +301,15 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       );
     }
 
-    final state = OAuthUtil.generateState();
-    final codeVerifier = OAuthUtil.createCodeVerifier();
+    final state = generateState();
+    final codeVerifier = createCodeVerifier();
 
     await Future.wait([
       storageRepo.setString(keyState, state),
       storageRepo.setString(keyCodeVerifier, codeVerifier),
     ]);
 
-    authCodeGrant = OAuthUtil.createGrant(
+    authCodeGrant = createGrant(
       config,
       codeVerifier: codeVerifier,
       httpClient: httpClient,
