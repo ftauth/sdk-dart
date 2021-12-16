@@ -120,7 +120,7 @@ packages:
       path: "../../ftauth"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   ftauth_flutter_android:
     dependency: "direct main"
     description:
@@ -176,7 +176,7 @@ packages:
       path: "../../ftauth_jwt"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   ftauth_storage:
     dependency: "direct main"
     description:

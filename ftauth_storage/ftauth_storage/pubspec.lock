@@ -120,14 +120,14 @@ packages:
       path: "../../ftauth"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   ftauth_jwt:
     dependency: "direct overridden"
     description:
       path: "../../ftauth_jwt"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   ftauth_storage_android:
     dependency: "direct main"
     description:

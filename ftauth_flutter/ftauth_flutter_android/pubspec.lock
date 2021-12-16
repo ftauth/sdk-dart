@@ -99,7 +99,7 @@ packages:
       path: "../../ftauth"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   ftauth_flutter_platform_interface:
     dependency: "direct main"
     description:
@@ -113,7 +113,7 @@ packages:
       path: "../../ftauth_jwt"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   hive:
     dependency: transitive
     description:
