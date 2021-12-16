@@ -15,6 +15,8 @@ import 'package:ftauth/ftauth.dart';
 
 import 'main.template.dart' as self;
 
+String get baseHref => _isDevMode ? '/' : '/todos/';
+
 late AppConfig _appConfig;
 AppConfig getAppConfig() => _appConfig;
 
@@ -27,12 +29,12 @@ bool get _isDevMode {
 Config createConfig(AppConfig appConfig) {
   final currentUri =
       Uri.parse(window.location.href.replaceAll('127.0.0.1', 'localhost'));
-  String redirectUrl;
-  if (appConfig.env == Environment.dev) {
-    redirectUrl = currentUri.resolve('/#/auth').toString();
-  } else {
-    redirectUrl = currentUri.resolve('/auth').toString();
-  }
+  final redirectUrl = currentUri
+      .replace(
+        path: baseHref,
+        fragment: '/auth',
+      )
+      .toString();
   return Config(
     gatewayUrl: appConfig.host,
     clientId: appConfig.clientId,
@@ -46,11 +48,7 @@ LocationStrategy createLocationStrategy(
   PlatformLocation platformLocation,
   @Optional() String? baseUrl,
 ) {
-  if (_isDevMode) {
-    return HashLocationStrategy(platformLocation, baseUrl);
-  } else {
-    return PathLocationStrategy(platformLocation, baseUrl);
-  }
+  return HashLocationStrategy(platformLocation, baseUrl);
 }
 
 AmplifyConfig getAmplifyConfig() {
@@ -103,5 +101,8 @@ Future<void> main() async {
       //     ? AppConfig.dev()
       //     : //
       await AppConfig.prod();
-  runApp(app_component.AppComponentNgFactory, createInjector: injector);
+  runApp(
+    app_component.AppComponentNgFactory,
+    createInjector: injector,
+  );
 }

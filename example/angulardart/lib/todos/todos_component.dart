@@ -72,6 +72,7 @@ class TodosComponent with AuthRedirector {
     }
     final todo = resp.data!['createTodo'] as Map;
     todos.add(Todo.fromJson(todo.cast()));
+    nameInput?.value = '';
   }
 
   Future<void> updateTodo(Todo todo, bool checked) async {

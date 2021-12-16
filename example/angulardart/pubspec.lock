@@ -305,9 +305,9 @@ packages:
   ftauth:
     dependency: "direct main"
     description:
-      name: ftauth
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../../ftauth"
+      relative: true
+    source: path
     version: "0.1.1"
   ftauth_jwt:
     dependency: transitive
