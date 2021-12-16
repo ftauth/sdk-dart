@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ftauth/src/authorizer/keys.dart';
 import 'package:ftauth/src/repo/ssl/keys.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   static const _defaultLanguage = 'en';
-  static const _defaultCountryCode = 'gb';
+  static const _defaultCountryCode = 'us';
 
   late final List<Language> _languages;
   late final List<Country> _countries;

@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 /// Wrapper class used for providing a [FTAuthClient] to descendant widgets.
 ///
 /// ```
-/// final config = await FlutterConfig.fromAsset();
+/// final config = await FTAuthConfig.fromAsset();
 /// runApp(
 ///   FTAuth(
 ///     config,
@@ -46,11 +46,15 @@ class FTAuth extends InheritedWidget {
     String? name,
     ClientType type = ClientType.public,
     List<String> redirectUris = const ['localhost', 'myapp://'],
+    String username = 'test',
+    String password = 'test',
   }) =>
       ftauth.FTAuth.retrieveDemoConfig(
         name: name,
         type: type,
         redirectUris: redirectUris,
+        username: username,
+        password: password,
       );
 
   final FTAuthClient client;
@@ -161,7 +165,7 @@ class FTAuthClient extends ftauth.FTAuth {
   }
 }
 
-class FlutterConfig {
+class FTAuthConfig {
   static Future<Config> fromAsset([String? configPath]) async {
     configPath ??= kConfigPath;
     try {

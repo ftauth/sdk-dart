@@ -11,7 +11,7 @@ Future<void> main() async {
     ],
   );
   WidgetsFlutterBinding.ensureInitialized();
-  final config = await FlutterConfig.fromAsset();
+  final config = await FTAuthConfig.fromAsset();
   final ftauth = FTAuth(
     config,
     child: const app.MyApp(),
