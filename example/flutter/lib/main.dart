@@ -19,7 +19,10 @@ final storageRepo = FTAuthSecureStorage();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final config = await FTAuth.retrieveDemoConfig();
+  final config = await FTAuth.retrieveDemoConfig(
+    redirectUri:
+        Uri.parse(kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://'),
+  );
 
   runApp(
     FTAuth(

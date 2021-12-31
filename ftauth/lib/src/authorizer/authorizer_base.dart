@@ -254,6 +254,7 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
   @override
   Future<void> refreshAuthState() async {
+    await init();
     final state = await _reloadFromStorage();
     if (state != null) {
       // Only update the credentials when refreshing. Otherwise, add new states

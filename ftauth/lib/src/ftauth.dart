@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:ftauth/ftauth.dart';
+import 'package:ftauth/src/http/inline_client.dart';
 import 'package:http/http.dart' as http;
 
 typedef SetupHandler = FutureOr<void> Function(FTAuth);
@@ -68,23 +69,26 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
   /// removed from the server.
   /// {@endtemplate}
   static Future<Config> retrieveDemoConfig({
+    required Uri redirectUri,
     String? name,
     ClientType type = ClientType.public,
-    List<String> redirectUris = const ['localhost', 'myapp://'],
     String username = 'test',
     String password = 'test',
+    http.Client? httpClient,
   }) async {
-    final gatewayUrl = 'https://demo.ftauth.io';
-    final registerUri = Uri.parse(gatewayUrl).resolve('client/register');
+    httpClient ??= http.Client();
+
+    final gatewayUri = Uri.parse('https://demo.ftauth.io');
+    final registerUri = gatewayUri.resolve('client/register');
     final random = Random();
 
     // Register a new demo client.
-    final resp = await http.post(
+    final resp = await httpClient.post(
       registerUri,
       body: jsonEncode({
         'name': name ?? 'demo_client_${random.nextInt(2 << 30)}',
         'type': type.toString().split('.').last,
-        'redirect_uris': redirectUris,
+        'redirect_uris': const ['localhost', 'myapp://'],
         'scopes': ['default'],
       }),
     );
@@ -93,33 +97,42 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     }
     final data = jsonDecode(resp.body) as Map;
     final clientInfo = ClientInfo.fromJson(data.cast());
+    final config = Config(
+      gatewayUri: gatewayUri,
+      clientId: clientInfo.id,
+      clientSecret: clientInfo.secret,
+      clientType: clientInfo.type,
+      redirectUri: redirectUri,
+      scopes: clientInfo.scopes,
+      grantTypes: clientInfo.grantTypes,
+    );
+    final client = FTAuth(config, baseClient: httpClient);
 
     // Create the default user.
-    final signUpUri = Uri.parse(gatewayUrl).resolve('register');
-    final user = await http.post(
+    final signUpUri = gatewayUri.resolve('/register');
+    final user = await client._basicAuthClient.post(
       signUpUri,
       body: jsonEncode({
         'username': username,
         'password': password,
       }),
-      headers: {
-        'Authorization': createBasicAuthorization(clientInfo.id),
-      },
     );
     if (user.statusCode != 200) {
       throw ApiException.post(signUpUri, user.statusCode, user.body);
     }
 
-    return Config(
-      gatewayUrl: gatewayUrl,
-      clientId: clientInfo.id,
-      clientSecret: clientInfo.secret,
-      clientType: clientInfo.type,
-      redirectUri: clientInfo.redirectUris.first,
-      scopes: clientInfo.scopes,
-      grantTypes: clientInfo.grantTypes,
-    );
+    return config;
   }
+
+  /// A client with `Basic` authorization, used for identifying to the server
+  /// with the client ID and secret.
+  http.Client get _basicAuthClient => InlineClient(send: (request) {
+        if (!request.headers.containsKey('Authorization')) {
+          request.headers['Authorization'] =
+              createBasicAuthorization(config.clientId, config.clientSecret);
+        }
+        return _baseClient.send(request);
+      });
 
   @override
   Future<void> init() => authorizer.init();
@@ -181,7 +194,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     if (state is AuthSignedIn) {
       return state.client.send(request).timeout(_timeout);
     }
-    return _baseClient.send(request).timeout(_timeout);
+    return _basicAuthClient.send(request).timeout(_timeout);
   }
 
   @override

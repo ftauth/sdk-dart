@@ -14,7 +14,7 @@ class Config extends Equatable {
   static final ConfigLoader _configLoader = ConfigLoader();
 
   final Provider provider;
-  final Uri gatewayUrl;
+  final Uri gatewayUri;
   final Uri? _authorizationUri;
   final Uri? _tokenUri;
   final Uri? _userInfoUri;
@@ -28,16 +28,16 @@ class Config extends Equatable {
   final TokenFormat refreshTokenFormat;
 
   Config({
-    this.provider = Provider.generic,
-    required String gatewayUrl,
+    this.provider = Provider.ftauth,
+    required this.gatewayUri,
     required this.clientId,
     this.clientSecret,
     this.clientType = ClientType.public,
     this.scopes = const [],
-    required String redirectUri,
+    required this.redirectUri,
     this.grantTypes,
     this.accessTokenFormat = TokenFormat.jwt,
-    this.refreshTokenFormat = TokenFormat.custom,
+    this.refreshTokenFormat = TokenFormat.jwt,
     Uri? authorizationUri,
     Uri? tokenUri,
     Uri? userInfoUri,
@@ -45,8 +45,6 @@ class Config extends Equatable {
           clientType == ClientType.public || clientSecret != null,
           'Client secret must be included for confidential clients.',
         ),
-        gatewayUrl = Uri.parse(gatewayUrl),
-        redirectUri = Uri.parse(redirectUri),
         _authorizationUri = authorizationUri,
         _tokenUri = tokenUri,
         _userInfoUri = userInfoUri;
@@ -54,7 +52,7 @@ class Config extends Equatable {
   @override
   List<Object?> get props => [
         provider,
-        gatewayUrl,
+        gatewayUri,
         clientId,
         clientSecret,
         clientType,
@@ -70,22 +68,22 @@ class Config extends Equatable {
 
   Uri get authorizationUri {
     return _authorizationUri ??
-        gatewayUrl.replace(
-          pathSegments: [...gatewayUrl.pathSegments, 'authorize'],
+        gatewayUri.replace(
+          pathSegments: [...gatewayUri.pathSegments, 'authorize'],
         );
   }
 
   Uri get tokenUri {
     return _tokenUri ??
-        gatewayUrl.replace(
-          pathSegments: [...gatewayUrl.pathSegments, 'token'],
+        gatewayUri.replace(
+          pathSegments: [...gatewayUri.pathSegments, 'token'],
         );
   }
 
   Uri get userInfoUri {
     return _userInfoUri ??
-        gatewayUrl.replace(
-          pathSegments: [...gatewayUrl.pathSegments, 'userinfo'],
+        gatewayUri.replace(
+          pathSegments: [...gatewayUri.pathSegments, 'userinfo'],
         );
   }
 
@@ -99,5 +97,37 @@ class Config extends Equatable {
 
   static Future<Config> fromUrl(Uri uri) {
     return _configLoader.fromUrl(uri);
+  }
+
+  Config copyWith({
+    Provider? provider,
+    Uri? gatewayUri,
+    Uri? authorizationUri,
+    Uri? tokenUri,
+    Uri? userInfoUri,
+    Uri? redirectUri,
+    String? clientId,
+    String? clientSecret,
+    ClientType? clientType,
+    List<String>? scopes,
+    List<String>? grantTypes,
+    TokenFormat? accessTokenFormat,
+    TokenFormat? refreshTokenFormat,
+  }) {
+    return Config(
+      provider: provider ?? this.provider,
+      gatewayUri: gatewayUri ?? this.gatewayUri,
+      clientId: clientId ?? this.clientId,
+      clientSecret: clientSecret ?? this.clientSecret,
+      clientType: clientType ?? this.clientType,
+      scopes: scopes ?? this.scopes,
+      redirectUri: redirectUri ?? this.redirectUri,
+      grantTypes: grantTypes ?? this.grantTypes,
+      accessTokenFormat: accessTokenFormat ?? this.accessTokenFormat,
+      refreshTokenFormat: refreshTokenFormat ?? this.refreshTokenFormat,
+      authorizationUri: authorizationUri ?? this.authorizationUri,
+      userInfoUri: userInfoUri ?? this.userInfoUri,
+      tokenUri: tokenUri ?? this.tokenUri,
+    );
   }
 }

@@ -77,6 +77,7 @@ oauth2.AuthorizationCodeGrant restoreGrant(
 }
 
 // Creates a `Basic` authorization header for identifiying clients.
-String createBasicAuthorization(String clientId, [String clientSecret = '']) {
+String createBasicAuthorization(String clientId, [String? clientSecret]) {
+  clientSecret ??= '';
   return 'Basic ' + base64Encode('$clientId:$clientSecret'.codeUnits);
 }

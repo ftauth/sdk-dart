@@ -110,7 +110,7 @@ class AuthorizerImpl extends Authorizer {
 
     final event = await window.onMessage.firstWhere((event) {
       final origin = Uri.tryParse(event.origin);
-      final gateway = config.gatewayUrl;
+      final gateway = config.gatewayUri;
       return origin?.authority == gateway.authority;
     });
 

@@ -10,6 +10,7 @@ import 'package:angulardart/models/todo.dart';
   styleUrls: [
     'todo_component.css',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 )
 class TodoComponent implements AfterContentInit {
   @Input()

@@ -16,9 +16,9 @@ class DiscoveryRepoImpl extends DiscoveryRepo {
 
   @override
   Future<OpenIDDiscoveryData?> retrieveOIDCData() async {
-    final openidUrl = _config.gatewayUrl.replace(
+    final openidUrl = _config.gatewayUri.replace(
       pathSegments: [
-        ..._config.gatewayUrl.pathSegments,
+        ..._config.gatewayUri.pathSegments,
         '.well-known',
         'openid-configuration',
       ],

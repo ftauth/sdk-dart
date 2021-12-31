@@ -7,13 +7,13 @@ class GraphQLRequest<T extends AWSSerializable>
   final String query;
   final Map<String, dynamic> variables;
   final String? operationName;
-  final T? Function(Map<String, Object?>)? constructor;
+  final T? Function(Map<String, Object?>)? fromJson;
 
   const GraphQLRequest(
     this.query, {
     this.variables = const <String, dynamic>{},
     this.operationName,
-    this.constructor,
+    this.fromJson,
   });
 
   @override

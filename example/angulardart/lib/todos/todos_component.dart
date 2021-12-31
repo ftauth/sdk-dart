@@ -18,12 +18,14 @@ import 'package:ftauth/ftauth.dart';
     coreDirectives,
     TodoComponent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 )
 class TodosComponent with AuthRedirector {
   TodosComponent(
     this.ftauth,
     this.router,
     this.gqlClient,
+    this.ref,
   );
 
   @override
@@ -33,6 +35,8 @@ class TodosComponent with AuthRedirector {
   final FTAuth ftauth;
 
   final GraphQLClient gqlClient;
+
+  final ChangeDetectorRef ref;
 
   List<Todo> todos = [];
 
@@ -46,10 +50,12 @@ class TodosComponent with AuthRedirector {
   }
 
   Future<void> createTodo() async {
-    final name = nameInput?.value ?? '';
-    final resp = await gqlClient.send(
-      GraphQLRequest<Todo>(
-        '''
+    try {
+      final name = nameInput?.value ?? '';
+      if (name.isEmpty) return;
+      final resp = await gqlClient.send(
+        GraphQLRequest<Todo>(
+          '''
           mutation CompleteTodo {
             createTodo(input: {
               name: "$name"
@@ -62,23 +68,27 @@ class TodosComponent with AuthRedirector {
             }
           }
         ''',
-        constructor: Todo.fromJson,
-      ),
-    );
-    print('Got todo: ${resp.data}');
-    print('Got errors: ${resp.errors}');
-    if (resp.errors.isNotEmpty) {
-      return;
+          fromJson: Todo.fromJson,
+        ),
+      );
+      print('Got todo: ${resp.data}');
+      print('Got errors: ${resp.errors}');
+      if (resp.errors.isNotEmpty) {
+        return;
+      }
+      final todo = resp.data!['createTodo'] as Map;
+      todos.add(Todo.fromJson(todo.cast()));
+      nameInput?.value = '';
+    } finally {
+      ref.markForCheck();
     }
-    final todo = resp.data!['createTodo'] as Map;
-    todos.add(Todo.fromJson(todo.cast()));
-    nameInput?.value = '';
   }
 
   Future<void> updateTodo(Todo todo, bool checked) async {
-    final resp = await gqlClient.send(
-      GraphQLRequest<Todo>(
-        '''
+    try {
+      final resp = await gqlClient.send(
+        GraphQLRequest<Todo>(
+          '''
           mutation {
             updateTodo(input: {
               id: "${todo.id}"
@@ -88,20 +98,24 @@ class TodosComponent with AuthRedirector {
             }
           }
         ''',
-        constructor: Todo.fromJson,
-      ),
-    );
-    print('Got resp for $checked: ${resp.data}');
-    print('Got errors: ${resp.errors}');
-    if (resp.errors.isNotEmpty) {
-      return;
+          fromJson: Todo.fromJson,
+        ),
+      );
+      print('Got resp for $checked: ${resp.data}');
+      print('Got errors: ${resp.errors}');
+      if (resp.errors.isNotEmpty) {
+        return;
+      }
+    } finally {
+      ref.markForCheck();
     }
   }
 
   Future<void> fetchTodos() async {
-    final resp = await gqlClient.send(
-      GraphQLRequest<Todo>(
-        r'''
+    try {
+      final resp = await gqlClient.send(
+        GraphQLRequest<Todo>(
+          r'''
           query {
             listTodos {
               items {
@@ -113,17 +127,21 @@ class TodosComponent with AuthRedirector {
             }
           }
         ''',
-        constructor: Todo.fromJson,
-      ),
-    );
-    print('Got todos: ${resp.data}');
-    print('Got errors: ${resp.errors}');
+          fromJson: Todo.fromJson,
+        ),
+      );
+      print('Got todos: ${resp.data}');
+      print('Got errors: ${resp.errors}');
 
-    if (resp.errors.isNotEmpty) {
-      return;
+      if (resp.errors.isNotEmpty) {
+        return;
+      }
+      final todos = resp.data!['listTodos']['items'] as List;
+      this.todos =
+          todos.cast<Map>().map((m) => Todo.fromJson(m.cast())).toList();
+    } finally {
+      ref.markForCheck();
     }
-    final todos = resp.data!['listTodos']['items'] as List;
-    this.todos = todos.cast<Map>().map((m) => Todo.fromJson(m.cast())).toList();
   }
 
   Future<void> logout() => ftauth.logout();

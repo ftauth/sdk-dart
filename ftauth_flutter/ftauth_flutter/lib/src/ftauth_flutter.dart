@@ -43,16 +43,16 @@ class FTAuth extends InheritedWidget {
 
   /// {@macro ftauth.retrieve_demo_config}
   static Future<Config> retrieveDemoConfig({
+    required Uri redirectUri,
     String? name,
     ClientType type = ClientType.public,
-    List<String> redirectUris = const ['localhost', 'myapp://'],
     String username = 'test',
     String password = 'test',
   }) =>
       ftauth.FTAuth.retrieveDemoConfig(
         name: name,
         type: type,
-        redirectUris: redirectUris,
+        redirectUri: redirectUri,
         username: username,
         password: password,
       );

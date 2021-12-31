@@ -15,32 +15,8 @@ import 'package:ftauth/ftauth.dart';
 
 import 'main.template.dart' as self;
 
-String get baseHref => _isDevMode ? '/' : '/todos/';
-
 late AppConfig _appConfig;
 AppConfig getAppConfig() => _appConfig;
-
-bool get _isDevMode {
-  var enabled = false;
-  assert(enabled = true);
-  return enabled;
-}
-
-Config createConfig(AppConfig appConfig) {
-  final currentUri =
-      Uri.parse(window.location.href.replaceAll('127.0.0.1', 'localhost'));
-  final redirectUrl = currentUri
-      .replace(
-        path: baseHref,
-        fragment: '/auth',
-      )
-      .toString();
-  return Config(
-    gatewayUrl: appConfig.host,
-    clientId: appConfig.clientId,
-    redirectUri: redirectUrl,
-  );
-}
 
 StorageRepo getStorageRepo() => StorageRepo.instance;
 
@@ -70,6 +46,10 @@ AppSyncConfig getAppSyncConfig(AmplifyConfig config, FTAuth ftauth) {
   );
 }
 
+FTAuth getFTAuthClient(AppConfig config, StorageRepo storageRepo) {
+  return FTAuth(config.config, storageRepo: storageRepo);
+}
+
 GraphQLClient createGraphQLClient(AppSyncConfig config) =>
     GraphQLClient(config: config);
 
@@ -77,7 +57,6 @@ GraphQLClient createGraphQLClient(AppSyncConfig config) =>
   [
     ClassProvider(http.Client, useClass: BrowserClient),
     FactoryProvider(AppConfig, getAppConfig),
-    FactoryProvider(Config, createConfig),
     FactoryProvider(StorageRepo, getStorageRepo),
     FactoryProvider(AmplifyConfig, getAmplifyConfig),
     FactoryProvider(
@@ -86,7 +65,7 @@ GraphQLClient createGraphQLClient(AppSyncConfig config) =>
       deps: [AmplifyConfig, FTAuth],
     ),
     FactoryProvider(GraphQLClient, createGraphQLClient),
-    ClassProvider(FTAuth),
+    FactoryProvider(FTAuth, getFTAuthClient),
     ClassProvider(MetadataRepo),
     ClassProvider(CryptoRepo, useClass: CryptoRepoImpl),
     routerProviders,

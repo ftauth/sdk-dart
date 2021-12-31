@@ -19,7 +19,7 @@ class MetadataRepoImpl implements MetadataRepo {
   }) async {
     if (_cached == null || force) {
       final path =
-          '${_config.gatewayUrl}/.well-known/oauth-authorization-server';
+          '${_config.gatewayUri}/.well-known/oauth-authorization-server';
       final uri = Uri.parse(path);
       final res = await _httpClient.get(uri);
       if (res.statusCode != 200) {
@@ -36,7 +36,7 @@ class MetadataRepoImpl implements MetadataRepo {
   Future<AuthorizationServerMetadata> updateServerMetadata(
     AuthorizationServerMetadata metadata,
   ) async {
-    final path = '${_config.gatewayUrl}/.well-known/oauth-authorization-server';
+    final path = '${_config.gatewayUri}/.well-known/oauth-authorization-server';
     final uri = Uri.parse(path);
     final res = await _httpClient.put(uri, body: metadata.toJson());
     if (res.statusCode != 200) {
@@ -55,7 +55,7 @@ class MetadataRepoImpl implements MetadataRepo {
     }
 
     if (_keySet == null) {
-      final path = '${_config.gatewayUrl}/jwks.json';
+      final path = '${_config.gatewayUri}/jwks.json';
       final uri = Uri.parse(path);
       try {
         final res = await _httpClient.get(uri);

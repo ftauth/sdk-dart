@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 import 'storage_repo.dart';
 
 class StorageRepoImpl implements StorageRepo {
-  late final Box<String> _box;
+  late Box<String> _box;
 
   @override
   Future<void> init({

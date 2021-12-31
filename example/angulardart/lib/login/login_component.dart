@@ -9,6 +9,7 @@ import 'package:ftauth/ftauth.dart';
   styleUrls: [
     'login_component.css',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 )
 class LoginComponent with AuthRedirector {
   LoginComponent(this.ftauth, this.router);

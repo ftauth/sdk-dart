@@ -8,8 +8,8 @@ part of 'config.dart';
 
 Config _$ConfigFromJson(Map<String, dynamic> json) => Config(
       provider: $enumDecodeNullable(_$ProviderEnumMap, json['provider']) ??
-          Provider.generic,
-      gatewayUrl: json['gateway_url'] as String,
+          Provider.ftauth,
+      gatewayUri: Uri.parse(json['gateway_uri'] as String),
       clientId: json['client_id'] as String,
       clientSecret: json['client_secret'] as String?,
       clientType:
@@ -19,7 +19,7 @@ Config _$ConfigFromJson(Map<String, dynamic> json) => Config(
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      redirectUri: json['redirect_uri'] as String,
+      redirectUri: Uri.parse(json['redirect_uri'] as String),
       grantTypes: (json['grant_types'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -28,7 +28,7 @@ Config _$ConfigFromJson(Map<String, dynamic> json) => Config(
           TokenFormat.jwt,
       refreshTokenFormat: $enumDecodeNullable(
               _$TokenFormatEnumMap, json['refresh_token_format']) ??
-          TokenFormat.custom,
+          TokenFormat.jwt,
       authorizationUri: json['authorization_uri'] == null
           ? null
           : Uri.parse(json['authorization_uri'] as String),
@@ -42,7 +42,7 @@ Config _$ConfigFromJson(Map<String, dynamic> json) => Config(
 
 Map<String, dynamic> _$ConfigToJson(Config instance) => <String, dynamic>{
       'provider': _$ProviderEnumMap[instance.provider],
-      'gateway_url': instance.gatewayUrl.toString(),
+      'gateway_uri': instance.gatewayUri.toString(),
       'redirect_uri': instance.redirectUri.toString(),
       'client_id': instance.clientId,
       'client_secret': instance.clientSecret,

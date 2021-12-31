@@ -27,12 +27,15 @@ void main() {
   late final MockOAuthServer mockOAuthServer;
 
   const clientId = 'some-client-id';
+  final gatewayUri = Uri.parse('http://localhost:8000');
+  final redirectUri = Uri.parse('http://localhost:8080/auth');
   final mockPublicConfig = Config(
-    gatewayUrl: 'http://localhost:8080',
+    gatewayUri: gatewayUri,
     clientType: ClientType.public,
     clientId: clientId,
-    redirectUri: 'http://localhost:8080/auth',
+    redirectUri: redirectUri,
     scopes: ['default'],
+    refreshTokenFormat: TokenFormat.custom,
   );
 
   setUpAll(() async {
@@ -83,11 +86,11 @@ void main() {
       const clientSecret = 'some-client-secret';
 
       final config = Config(
-        gatewayUrl: 'http://localhost:8080',
+        gatewayUri: gatewayUri,
         clientType: ClientType.confidential,
         clientId: clientId,
         clientSecret: clientSecret,
-        redirectUri: 'http://localhost:8080/auth',
+        redirectUri: redirectUri,
         scopes: ['default'],
       );
 

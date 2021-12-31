@@ -13,5 +13,15 @@ import 'routes.dart';
     routerDirectives,
   ],
   exports: [Routes, RoutePaths],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 )
-class AppComponent {}
+class AppComponent implements OnInit {
+  AppComponent(this.ref);
+
+  final ChangeDetectorRef ref;
+
+  @override
+  void ngOnInit() {
+    // ref.ma
+  }
+}
