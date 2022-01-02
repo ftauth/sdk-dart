@@ -11,7 +11,7 @@ import 'package:js/js.dart';
 
 /// Launches a popup via JavaScript. Returns `null` if the popup fails to launch.
 ///
-/// We use a native function because Dart's [window.open] does not provide a
+/// We use a native function because Dart's [Window.open] does not provide a
 /// good way to check whether the popup successfully opened.
 @JS()
 external WindowBase? launchPopup(String url, [WindowBase? popupWindow]);
