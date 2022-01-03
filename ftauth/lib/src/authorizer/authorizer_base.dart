@@ -144,6 +144,17 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
       await storageRepo.setEphemeralString(keyFreshInstall, 'flag');
     }
 
+    // Checks if re-configuring with a new configuration. In this case, we
+    // should also clear the storage.
+    final currentConfigStr = await storageRepo.getString(keyConfig);
+    if (currentConfigStr != null) {
+      final currentConfig = Config.fromJson(jsonDecode(currentConfigStr));
+      if (config.clientId != currentConfig.clientId) {
+        FTAuth.debug('New client ID. Clearing old Keychain items...');
+        await storageRepo.clear();
+      }
+    }
+
     // Initialize the SSL repository
     await _sslRepository.init();
 
