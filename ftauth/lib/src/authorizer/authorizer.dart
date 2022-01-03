@@ -6,8 +6,7 @@ export 'authorizer_stub.dart'
     if (dart.library.html) 'authorizer_html.dart';
 
 abstract class AuthorizerInterface implements SSLPinningInterface {
-  /// Initializes the SDK. **Must** be called before performing any activities
-  /// like SSL pinning.
+  /// Initializes the SDK. **Must** be called before performing any activities.
   Future<void> init();
 
   /// Initiates the authorization code flow.

@@ -12,25 +12,23 @@ class SSLRepoImpl extends SSLRepo {
 
   @override
   http.Client client(String host) {
-    FTAuth.info('SSL Pinning is not supported on Web');
+    FTAuth.warn('SSL Pinning is not supported on Web');
     return _httpClient;
   }
 
   @override
-  Future<void> init() async {
-    FTAuth.info('SSL Pinning is not supported on Web');
-  }
+  Future<void> init() async {}
 
   @override
   bool isPinning(String host) => false;
 
   @override
   void pinCert(Certificate certificate) {
-    FTAuth.info('SSL Pinning is not supported on Web');
+    FTAuth.warn('SSL Pinning is not supported on Web');
   }
 
   @override
   void pinCertChain(CertificateChain certificateChain) {
-    FTAuth.info('SSL Pinning is not supported on Web');
+    FTAuth.warn('SSL Pinning is not supported on Web');
   }
 }

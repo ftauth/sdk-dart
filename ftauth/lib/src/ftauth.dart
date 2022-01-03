@@ -62,11 +62,11 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
   }
 
   /// {@template ftauth.retrieve_demo_config}
-  /// Creates a temporary client configuration with the hosted FTAuth Demo
-  /// server (https://demo.ftauth.io).
+  /// Creates a temporary client configuration on the hosted FTAuth Demo
+  /// server (https://demo.ftauth.io), with a single [username] and [password].
   ///
-  /// Clients created with this method are valid for 24 hours before they are
-  /// removed from the server.
+  /// Clients created with this method are not guaranteed to be always be
+  /// available and should be regarded as ephemeral.
   /// {@endtemplate}
   static Future<Config> retrieveDemoConfig({
     required Uri redirectUri,
@@ -83,12 +83,13 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     final random = Random();
 
     // Register a new demo client.
+    final redirectUris = {'localhost', 'myapp://'}..add(redirectUri.toString());
     final resp = await httpClient.post(
       registerUri,
       body: jsonEncode({
         'name': name ?? 'demo_client_${random.nextInt(2 << 30)}',
         'type': type.toString().split('.').last,
-        'redirect_uris': const ['localhost', 'myapp://'],
+        'redirect_uris': redirectUris.toList(),
         'scopes': ['default'],
       }),
     );
