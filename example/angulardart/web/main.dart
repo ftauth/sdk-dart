@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:amplify_appsync/amplify_appsync.dart';
 import 'package:amplify_common/amplify_common.dart';

@@ -3,3 +3,4 @@
 *.iml
 **/.dart_tool/
 **/coverage/
+**/node_modules/

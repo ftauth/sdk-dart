@@ -6,8 +6,6 @@ import 'package:ftauth/ftauth.dart';
 import 'package:http/http.dart' as http;
 import 'package:stream_transform/stream_transform.dart';
 
-String get baseHref => isDevMode ? '/' : '/todos/';
-
 bool get isDevMode {
   var enabled = false;
   assert(enabled = true);
@@ -17,10 +15,7 @@ bool get isDevMode {
 final currentUri =
     Uri.parse(window.location.href.replaceAll('127.0.0.1', 'localhost'));
 
-final redirectUri = currentUri.replace(
-  path: baseHref,
-  fragment: '/auth',
-);
+final redirectUri = currentUri.replace(path: '/', fragment: '/auth');
 
 enum Environment { dev, prod }
 
