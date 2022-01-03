@@ -21,60 +21,60 @@ part of 'cognito_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CognitoPluginConfig _$CognitoPluginConfigFromJson(Map<String, dynamic> json) =>
+CognitoPluginConfig _$CognitoPluginConfigFromJson(Map<String, Object?> json) =>
     CognitoPluginConfig(
       userAgent: json['UserAgent'] as String? ?? 'aws-amplify-cli/0.1.0',
       version: json['Version'] as String? ?? '0.1.0',
       identityManager: json['IdentityManager'] == null
           ? null
           : AWSConfigMap<CognitoIdentityManager>.fromJson(
-              json['IdentityManager'] as Map<String, dynamic>,
+              json['IdentityManager'] as Map<String, Object?>,
               (value) => CognitoIdentityManager.fromJson(
-                  value as Map<String, dynamic>)),
+                  value as Map<String, Object?>)),
       credentialsProvider: json['CredentialsProvider'] == null
           ? null
           : CredentialsProviders.fromJson(
-              json['CredentialsProvider'] as Map<String, dynamic>),
+              json['CredentialsProvider'] as Map<String, Object?>),
       cognitoUserPool: json['CognitoUserPool'] == null
           ? null
           : AWSConfigMap<CognitoUserPoolConfig>.fromJson(
-              json['CognitoUserPool'] as Map<String, dynamic>,
+              json['CognitoUserPool'] as Map<String, Object?>,
               (value) => CognitoUserPoolConfig.fromJson(
-                  value as Map<String, dynamic>)),
+                  value as Map<String, Object?>)),
       auth: json['Auth'] == null
           ? null
           : AWSConfigMap<CognitoAuthConfig>.fromJson(
-              json['Auth'] as Map<String, dynamic>,
+              json['Auth'] as Map<String, Object?>,
               (value) =>
-                  CognitoAuthConfig.fromJson(value as Map<String, dynamic>)),
+                  CognitoAuthConfig.fromJson(value as Map<String, Object?>)),
       appSync: json['AppSync'] == null
           ? null
           : AWSConfigMap<CognitoAppSyncConfig>.fromJson(
-              json['AppSync'] as Map<String, dynamic>,
+              json['AppSync'] as Map<String, Object?>,
               (value) =>
-                  CognitoAppSyncConfig.fromJson(value as Map<String, dynamic>)),
+                  CognitoAppSyncConfig.fromJson(value as Map<String, Object?>)),
       pinpointAnalytics: json['PinpointAnalytics'] == null
           ? null
           : AWSConfigMap<CognitoPinpointAnalyticsConfig>.fromJson(
-              json['PinpointAnalytics'] as Map<String, dynamic>,
+              json['PinpointAnalytics'] as Map<String, Object?>,
               (value) => CognitoPinpointAnalyticsConfig.fromJson(
-                  value as Map<String, dynamic>)),
+                  value as Map<String, Object?>)),
       pinpointTargeting: json['PinpointTargeting'] == null
           ? null
           : AWSConfigMap<CognitoPinpointTargetingConfig>.fromJson(
-              json['PinpointTargeting'] as Map<String, dynamic>,
+              json['PinpointTargeting'] as Map<String, Object?>,
               (value) => CognitoPinpointTargetingConfig.fromJson(
-                  value as Map<String, dynamic>)),
+                  value as Map<String, Object?>)),
       s3TransferUtility: json['S3TransferUtility'] == null
           ? null
           : AWSConfigMap<S3TransferUtility>.fromJson(
-              json['S3TransferUtility'] as Map<String, dynamic>,
+              json['S3TransferUtility'] as Map<String, Object?>,
               (value) =>
-                  S3TransferUtility.fromJson(value as Map<String, dynamic>)),
+                  S3TransferUtility.fromJson(value as Map<String, Object?>)),
     );
 
-Map<String, dynamic> _$CognitoPluginConfigToJson(CognitoPluginConfig instance) {
-  final val = <String, dynamic>{
+Map<String, Object?> _$CognitoPluginConfigToJson(CognitoPluginConfig instance) {
+  final val = <String, Object?>{
     'UserAgent': instance.userAgent,
     'Version': instance.version,
   };

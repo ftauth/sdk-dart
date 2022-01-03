@@ -22,11 +22,11 @@ part of 'config_map.dart';
 // **************************************************************************
 
 AWSConfigMap<T> _$AWSConfigMapFromJson<T extends AWSSerializable>(
-  Map<String, dynamic> json,
+  Map<String, Object?> json,
   T Function(Object? json) fromJsonT,
 ) =>
     AWSConfigMap<T>(
-      (json['configs'] as Map<String, dynamic>).map(
+      (json['configs'] as Map<String, Object?>).map(
         (k, e) => MapEntry(k, fromJsonT(e)),
       ),
     );

@@ -22,13 +22,13 @@ part of 'pinpoint_targeting.dart';
 // **************************************************************************
 
 CognitoPinpointTargetingConfig _$CognitoPinpointTargetingConfigFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     CognitoPinpointTargetingConfig(
       region: json['Region'] as String,
     );
 
-Map<String, dynamic> _$CognitoPinpointTargetingConfigToJson(
+Map<String, Object?> _$CognitoPinpointTargetingConfigToJson(
         CognitoPinpointTargetingConfig instance) =>
-    <String, dynamic>{
+    <String, Object?>{
       'Region': instance.region,
     };

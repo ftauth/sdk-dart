@@ -22,9 +22,9 @@ part of 'identity_manager.dart';
 // **************************************************************************
 
 CognitoIdentityManager _$CognitoIdentityManagerFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     CognitoIdentityManager();
 
-Map<String, dynamic> _$CognitoIdentityManagerToJson(
+Map<String, Object?> _$CognitoIdentityManagerToJson(
         CognitoIdentityManager instance) =>
-    <String, dynamic>{};
+    <String, Object?>{};

@@ -21,11 +21,12 @@ part of 'oauth.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CognitoOAuthConfig _$CognitoOAuthConfigFromJson(Map<String, dynamic> json) =>
+CognitoOAuthConfig _$CognitoOAuthConfigFromJson(Map<String, Object?> json) =>
     CognitoOAuthConfig(
       appClientId: json['AppClientId'] as String,
       appClientSecret: json['AppClientSecret'] as String?,
-      scopes: (json['Scopes'] as List<dynamic>).map((e) => e as String).toSet(),
+      scopes:
+          (json['Scopes'] as List<dynamic>).map((e) => e as String).toList(),
       signInRedirectUri: json['SignInRedirectURI'] as String,
       signOutRedirectUri: json['SignOutRedirectURI'] as String,
       webDomain: json['WebDomain'] as String,
@@ -33,21 +34,21 @@ CognitoOAuthConfig _$CognitoOAuthConfigFromJson(Map<String, dynamic> json) =>
       signOutUri: json['SignOutURI'] as String?,
       tokenUri: json['TokenURI'] as String?,
       signInUriQueryParameters:
-          (json['SignInURIQueryParameters'] as Map<String, dynamic>?)?.map(
+          (json['SignInURIQueryParameters'] as Map<String, Object?>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
       signOutUriQueryParameters:
-          (json['SignOutURIQueryParameters'] as Map<String, dynamic>?)?.map(
+          (json['SignOutURIQueryParameters'] as Map<String, Object?>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
       tokenUriQueryParameters:
-          (json['TokenURIQueryParameters'] as Map<String, dynamic>?)?.map(
+          (json['TokenURIQueryParameters'] as Map<String, Object?>?)?.map(
         (k, e) => MapEntry(k, e as String),
       ),
     );
 
-Map<String, dynamic> _$CognitoOAuthConfigToJson(CognitoOAuthConfig instance) {
-  final val = <String, dynamic>{
+Map<String, Object?> _$CognitoOAuthConfigToJson(CognitoOAuthConfig instance) {
+  final val = <String, Object?>{
     'WebDomain': instance.webDomain,
     'AppClientId': instance.appClientId,
   };
@@ -67,6 +68,6 @@ Map<String, dynamic> _$CognitoOAuthConfigToJson(CognitoOAuthConfig instance) {
   writeNotNull('SignOutURIQueryParameters', instance.signOutUriQueryParameters);
   writeNotNull('TokenURI', instance.tokenUri);
   writeNotNull('TokenURIQueryParameters', instance.tokenUriQueryParameters);
-  val['Scopes'] = instance.scopes.toList();
+  val['Scopes'] = instance.scopes;
   return val;
 }

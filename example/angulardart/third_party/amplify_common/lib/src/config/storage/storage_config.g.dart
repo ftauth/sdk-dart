@@ -21,12 +21,12 @@ part of 'storage_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-StorageConfig _$StorageConfigFromJson(Map<String, dynamic> json) =>
+StorageConfig _$StorageConfigFromJson(Map<String, Object?> json) =>
     StorageConfig(
       plugins: AmplifyPluginRegistry.pluginConfigsFromJson(json['plugins']),
     );
 
-Map<String, dynamic> _$StorageConfigToJson(StorageConfig instance) =>
-    <String, dynamic>{
+Map<String, Object?> _$StorageConfigToJson(StorageConfig instance) =>
+    <String, Object?>{
       'plugins': instance.plugins.map((k, e) => MapEntry(k, e.toJson())),
     };

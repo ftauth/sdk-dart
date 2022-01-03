@@ -21,26 +21,26 @@ part of 'amplify_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AmplifyConfig _$AmplifyConfigFromJson(Map<String, dynamic> json) =>
+AmplifyConfig _$AmplifyConfigFromJson(Map<String, Object?> json) =>
     AmplifyConfig(
       userAgent: json['UserAgent'] as String? ?? 'aws-amplify-cli/2.0',
       version: json['Version'] as String? ?? '1.0',
       api: json['api'] == null
           ? null
-          : ApiConfig.fromJson(json['api'] as Map<String, dynamic>),
+          : ApiConfig.fromJson(json['api'] as Map<String, Object?>),
       analytics: json['analytics'] == null
           ? null
-          : AnalyticsConfig.fromJson(json['analytics'] as Map<String, dynamic>),
+          : AnalyticsConfig.fromJson(json['analytics'] as Map<String, Object?>),
       auth: json['auth'] == null
           ? null
-          : AuthConfig.fromJson(json['auth'] as Map<String, dynamic>),
+          : AuthConfig.fromJson(json['auth'] as Map<String, Object?>),
       storage: json['storage'] == null
           ? null
-          : StorageConfig.fromJson(json['storage'] as Map<String, dynamic>),
+          : StorageConfig.fromJson(json['storage'] as Map<String, Object?>),
     );
 
-Map<String, dynamic> _$AmplifyConfigToJson(AmplifyConfig instance) {
-  final val = <String, dynamic>{
+Map<String, Object?> _$AmplifyConfigToJson(AmplifyConfig instance) {
+  final val = <String, Object?>{
     'UserAgent': instance.userAgent,
     'Version': instance.version,
   };

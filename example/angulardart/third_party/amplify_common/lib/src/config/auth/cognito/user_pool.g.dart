@@ -22,7 +22,7 @@ part of 'user_pool.dart';
 // **************************************************************************
 
 CognitoUserPoolConfig _$CognitoUserPoolConfigFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     CognitoUserPoolConfig(
       poolId: json['PoolId'] as String,
       appClientId: json['AppClientId'] as String,
@@ -31,13 +31,13 @@ CognitoUserPoolConfig _$CognitoUserPoolConfigFromJson(
       hostedUI: json['HostedUI'] == null
           ? null
           : CognitoOAuthConfig.fromJson(
-              json['HostedUI'] as Map<String, dynamic>),
+              json['HostedUI'] as Map<String, Object?>),
       endpoint: json['Endpoint'] as String?,
     );
 
-Map<String, dynamic> _$CognitoUserPoolConfigToJson(
+Map<String, Object?> _$CognitoUserPoolConfigToJson(
     CognitoUserPoolConfig instance) {
-  final val = <String, dynamic>{
+  final val = <String, Object?>{
     'PoolId': instance.poolId,
     'AppClientId': instance.appClientId,
   };

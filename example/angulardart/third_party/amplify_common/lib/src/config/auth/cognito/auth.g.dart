@@ -21,11 +21,11 @@ part of 'auth.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CognitoAuthConfig _$CognitoAuthConfigFromJson(Map<String, dynamic> json) =>
+CognitoAuthConfig _$CognitoAuthConfigFromJson(Map<String, Object?> json) =>
     CognitoAuthConfig(
       oAuth: json['OAuth'] == null
           ? null
-          : CognitoOAuthConfig.fromJson(json['OAuth'] as Map<String, dynamic>),
+          : CognitoOAuthConfig.fromJson(json['OAuth'] as Map<String, Object?>),
       authenticationFlowType: $enumDecodeNullable(
           _$AuthenticationFlowTypeEnumMap, json['authenticationFlowType'],
           unknownValue: JsonKey.nullForUndefinedEnumValue),
@@ -43,7 +43,7 @@ CognitoAuthConfig _$CognitoAuthConfigFromJson(Map<String, dynamic> json) =>
       passwordProtectionSettings: json['passwordProtectionSettings'] == null
           ? null
           : PasswordProtectionSettings.fromJson(
-              json['passwordProtectionSettings'] as Map<String, dynamic>),
+              json['passwordProtectionSettings'] as Map<String, Object?>),
       mfaConfiguration: $enumDecodeNullable(
           _$MfaConfigurationEnumMap, json['mfaConfiguration']),
       mfaTypes: (json['mfaTypes'] as List<dynamic>?)
@@ -63,8 +63,8 @@ CognitoAuthConfig _$CognitoAuthConfigFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$CognitoAuthConfigToJson(CognitoAuthConfig instance) {
-  final val = <String, dynamic>{};
+Map<String, Object?> _$CognitoAuthConfigToJson(CognitoAuthConfig instance) {
+  final val = <String, Object?>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {

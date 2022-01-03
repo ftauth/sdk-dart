@@ -21,7 +21,7 @@ part of 's3_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-S3PluginConfig _$S3PluginConfigFromJson(Map<String, dynamic> json) =>
+S3PluginConfig _$S3PluginConfigFromJson(Map<String, Object?> json) =>
     S3PluginConfig(
       bucket: json['bucket'] as String,
       region: json['region'] as String,
@@ -30,8 +30,8 @@ S3PluginConfig _$S3PluginConfigFromJson(Map<String, dynamic> json) =>
           StorageAccessLevel.guest,
     );
 
-Map<String, dynamic> _$S3PluginConfigToJson(S3PluginConfig instance) =>
-    <String, dynamic>{
+Map<String, Object?> _$S3PluginConfigToJson(S3PluginConfig instance) =>
+    <String, Object?>{
       'bucket': instance.bucket,
       'region': instance.region,
       'defaultAccessLevel':

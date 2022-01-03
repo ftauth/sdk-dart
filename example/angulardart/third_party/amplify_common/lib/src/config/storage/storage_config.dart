@@ -14,18 +14,17 @@
 //
 
 import 'package:amplify_common/amplify_common.dart';
-import 'package:amplify_common/src/config/config_map.dart';
 
 export 's3_config.dart' hide S3PluginConfigFactory;
 
 part 'storage_config.g.dart';
 
-/// {@template amplify_common.storage_config}
+/// {@template amplify_flutter.storage_config}
 /// The Storage category configuration.
 /// {@endtemplate}
 @amplifySerializable
 class StorageConfig extends AmplifyPluginConfigMap {
-  /// {@macro amplify_common.storage_config}
+  /// {@macro amplify_flutter.storage_config}
   const StorageConfig({
     required Map<String, AmplifyPluginConfig> plugins,
   }) : super(plugins);
@@ -37,6 +36,9 @@ class StorageConfig extends AmplifyPluginConfigMap {
   @override
   S3PluginConfig? get awsPlugin =>
       plugins[S3PluginConfig.pluginKey] as S3PluginConfig?;
+
+  @override
+  StorageConfig copy() => StorageConfig(plugins: Map.of(plugins));
 
   @override
   Map<String, Object?> toJson() => _$StorageConfigToJson(this);

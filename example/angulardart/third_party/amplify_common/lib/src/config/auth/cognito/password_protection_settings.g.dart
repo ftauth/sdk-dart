@@ -22,7 +22,7 @@ part of 'password_protection_settings.dart';
 // **************************************************************************
 
 PasswordProtectionSettings _$PasswordProtectionSettingsFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     PasswordProtectionSettings(
       passwordPolicyMinLength: json['passwordPolicyMinLength'] as int?,
       passwordPolicyCharacters: (json['passwordPolicyCharacters']
@@ -32,9 +32,9 @@ PasswordProtectionSettings _$PasswordProtectionSettingsFromJson(
           const [],
     );
 
-Map<String, dynamic> _$PasswordProtectionSettingsToJson(
+Map<String, Object?> _$PasswordProtectionSettingsToJson(
     PasswordProtectionSettings instance) {
-  final val = <String, dynamic>{};
+  final val = <String, Object?>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {

@@ -14,21 +14,17 @@
 //
 
 import 'package:amplify_common/amplify_common.dart';
-import 'package:amplify_common/src/config/amplify_plugin_config.dart';
-import 'package:amplify_common/src/config/amplify_plugin_registry.dart';
-import 'package:amplify_common/src/config/config_map.dart';
 
-import 'cognito_config.dart';
 export 'cognito_config.dart' hide CognitoPluginConfigFactory;
 
 part 'auth_config.g.dart';
 
-/// {@template amplify_common.auth_config}
+/// {@template amplify_flutter.auth_config}
 /// The Auth category configuration.
 /// {@endtemplate}
 @amplifySerializable
 class AuthConfig extends AmplifyPluginConfigMap {
-  /// {@macro amplify_common.auth_config}
+  /// {@macro amplify_flutter.auth_config}
   const AuthConfig({required Map<String, AmplifyPluginConfig> plugins})
       : super(plugins);
 
@@ -39,6 +35,9 @@ class AuthConfig extends AmplifyPluginConfigMap {
   @override
   CognitoPluginConfig? get awsPlugin =>
       plugins[CognitoPluginConfig.pluginKey] as CognitoPluginConfig?;
+
+  @override
+  AuthConfig copy() => AuthConfig(plugins: Map.of(plugins));
 
   @override
   Map<String, Object?> toJson() => _$AuthConfigToJson(this);

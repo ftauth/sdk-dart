@@ -21,14 +21,14 @@ part of 's3_transfer_utility.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-S3TransferUtility _$S3TransferUtilityFromJson(Map<String, dynamic> json) =>
+S3TransferUtility _$S3TransferUtilityFromJson(Map<String, Object?> json) =>
     S3TransferUtility(
       bucket: json['Bucket'] as String,
       region: json['Region'] as String,
     );
 
-Map<String, dynamic> _$S3TransferUtilityToJson(S3TransferUtility instance) =>
-    <String, dynamic>{
+Map<String, Object?> _$S3TransferUtilityToJson(S3TransferUtility instance) =>
+    <String, Object?>{
       'Bucket': instance.bucket,
       'Region': instance.region,
     };

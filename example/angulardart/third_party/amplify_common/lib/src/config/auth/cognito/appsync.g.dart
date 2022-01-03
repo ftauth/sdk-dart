@@ -22,7 +22,7 @@ part of 'appsync.dart';
 // **************************************************************************
 
 CognitoAppSyncConfig _$CognitoAppSyncConfigFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     CognitoAppSyncConfig(
       apiUrl: json['ApiUrl'] as String,
       region: json['Region'] as String,
@@ -31,9 +31,9 @@ CognitoAppSyncConfig _$CognitoAppSyncConfigFromJson(
       clientDatabasePrefix: json['ClientDatabasePrefix'] as String,
     );
 
-Map<String, dynamic> _$CognitoAppSyncConfigToJson(
+Map<String, Object?> _$CognitoAppSyncConfigToJson(
     CognitoAppSyncConfig instance) {
-  final val = <String, dynamic>{
+  final val = <String, Object?>{
     'ApiUrl': instance.apiUrl,
     'Region': instance.region,
     'AuthMode': _$APIAuthorizationTypeEnumMap[instance.authMode],

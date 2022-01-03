@@ -22,39 +22,39 @@ part of 'pinpoint_config.dart';
 // **************************************************************************
 
 PinpointPluginConfig _$PinpointPluginConfigFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     PinpointPluginConfig(
       pinpointAnalytics: PinpointAnalytics.fromJson(
-          json['pinpointAnalytics'] as Map<String, dynamic>),
+          json['pinpointAnalytics'] as Map<String, Object?>),
       pinpointTargeting: PinpointTargeting.fromJson(
-          json['pinpointTargeting'] as Map<String, dynamic>),
+          json['pinpointTargeting'] as Map<String, Object?>),
     );
 
-Map<String, dynamic> _$PinpointPluginConfigToJson(
+Map<String, Object?> _$PinpointPluginConfigToJson(
         PinpointPluginConfig instance) =>
-    <String, dynamic>{
+    <String, Object?>{
       'pinpointAnalytics': instance.pinpointAnalytics.toJson(),
       'pinpointTargeting': instance.pinpointTargeting.toJson(),
     };
 
-PinpointAnalytics _$PinpointAnalyticsFromJson(Map<String, dynamic> json) =>
+PinpointAnalytics _$PinpointAnalyticsFromJson(Map<String, Object?> json) =>
     PinpointAnalytics(
       appId: json['appId'] as String,
       region: json['region'] as String,
     );
 
-Map<String, dynamic> _$PinpointAnalyticsToJson(PinpointAnalytics instance) =>
-    <String, dynamic>{
+Map<String, Object?> _$PinpointAnalyticsToJson(PinpointAnalytics instance) =>
+    <String, Object?>{
       'appId': instance.appId,
       'region': instance.region,
     };
 
-PinpointTargeting _$PinpointTargetingFromJson(Map<String, dynamic> json) =>
+PinpointTargeting _$PinpointTargetingFromJson(Map<String, Object?> json) =>
     PinpointTargeting(
       region: json['region'] as String,
     );
 
-Map<String, dynamic> _$PinpointTargetingToJson(PinpointTargeting instance) =>
-    <String, dynamic>{
+Map<String, Object?> _$PinpointTargetingToJson(PinpointTargeting instance) =>
+    <String, Object?>{
       'region': instance.region,
     };

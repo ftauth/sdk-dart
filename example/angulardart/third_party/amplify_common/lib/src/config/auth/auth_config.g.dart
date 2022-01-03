@@ -21,11 +21,11 @@ part of 'auth_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AuthConfig _$AuthConfigFromJson(Map<String, dynamic> json) => AuthConfig(
+AuthConfig _$AuthConfigFromJson(Map<String, Object?> json) => AuthConfig(
       plugins: AmplifyPluginRegistry.pluginConfigsFromJson(json['plugins']),
     );
 
-Map<String, dynamic> _$AuthConfigToJson(AuthConfig instance) =>
-    <String, dynamic>{
+Map<String, Object?> _$AuthConfigToJson(AuthConfig instance) =>
+    <String, Object?>{
       'plugins': instance.plugins.map((k, e) => MapEntry(k, e.toJson())),
     };

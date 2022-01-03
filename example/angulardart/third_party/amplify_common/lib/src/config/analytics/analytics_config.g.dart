@@ -21,12 +21,12 @@ part of 'analytics_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-AnalyticsConfig _$AnalyticsConfigFromJson(Map<String, dynamic> json) =>
+AnalyticsConfig _$AnalyticsConfigFromJson(Map<String, Object?> json) =>
     AnalyticsConfig(
       plugins: AmplifyPluginRegistry.pluginConfigsFromJson(json['plugins']),
     );
 
-Map<String, dynamic> _$AnalyticsConfigToJson(AnalyticsConfig instance) =>
-    <String, dynamic>{
+Map<String, Object?> _$AnalyticsConfigToJson(AnalyticsConfig instance) =>
+    <String, Object?>{
       'plugins': instance.plugins.map((k, e) => MapEntry(k, e.toJson())),
     };

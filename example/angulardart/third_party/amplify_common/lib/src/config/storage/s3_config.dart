@@ -17,14 +17,16 @@ import 'package:amplify_common/amplify_common.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
+import 'storage_access_level.dart';
+
 part 's3_config.g.dart';
 
-/// {@template amplify_common.s3_plugin_config_factory}
+/// {@template amplify_flutter.s3_plugin_config_factory}
 /// Configuration factory for [S3PluginConfig].
 /// {@endtemplate}
 @internal
 class S3PluginConfigFactory extends AmplifyPluginConfigFactory<S3PluginConfig> {
-  /// {@macro amplify_common.s3_plugin_config_factory}
+  /// {@macro amplify_flutter.s3_plugin_config_factory}
   const S3PluginConfigFactory();
 
   @override
@@ -36,16 +38,14 @@ class S3PluginConfigFactory extends AmplifyPluginConfigFactory<S3PluginConfig> {
   String get name => S3PluginConfig.pluginKey;
 }
 
-enum StorageAccessLevel { guest, protected, private }
-
-/// {@template amplify_common.s3_plugin_config}
+/// {@template amplify_flutter.s3_plugin_config}
 /// The AWS S3 plugin configuration.
 /// {@endtemplate}
 @amplifySerializable
 class S3PluginConfig
     with AWSEquatable<S3PluginConfig>, AWSSerializable
     implements AmplifyPluginConfig {
-  /// {@macro amplify_common.s3_plugin_config}
+  /// {@macro amplify_flutter.s3_plugin_config}
   const S3PluginConfig({
     required this.bucket,
     required this.region,
@@ -71,6 +71,18 @@ class S3PluginConfig
 
   factory S3PluginConfig.fromJson(Map<String, Object?> json) =>
       _$S3PluginConfigFromJson(json);
+
+  S3PluginConfig copyWith({
+    String? bucket,
+    String? region,
+    StorageAccessLevel? defaultAccessLevel,
+  }) {
+    return S3PluginConfig(
+      bucket: bucket ?? this.bucket,
+      region: region ?? this.region,
+      defaultAccessLevel: defaultAccessLevel ?? this.defaultAccessLevel,
+    );
+  }
 
   @override
   Map<String, Object?> toJson() => _$S3PluginConfigToJson(this);

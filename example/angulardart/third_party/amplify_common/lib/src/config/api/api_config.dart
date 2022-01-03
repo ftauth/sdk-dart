@@ -14,21 +14,17 @@
 //
 
 import 'package:amplify_common/amplify_common.dart';
-import 'package:amplify_common/src/config/amplify_plugin_config.dart';
-import 'package:amplify_common/src/config/amplify_plugin_registry.dart';
-import 'package:amplify_common/src/config/config_map.dart';
 
-import 'aws_api_config.dart';
 export 'aws_api_config.dart' hide AWSApiPluginConfigFactory;
 
 part 'api_config.g.dart';
 
-/// {@template amplify_common.api_config}
+/// {@template amplify_flutter.api_config}
 /// The API category configuration.
 /// {@endtemplate}
 @amplifySerializable
 class ApiConfig extends AmplifyPluginConfigMap {
-  /// {@macro amplify_common.api_config}
+  /// {@macro amplify_flutter.api_config}
   const ApiConfig({
     required Map<String, AmplifyPluginConfig> plugins,
   }) : super(plugins);
@@ -40,6 +36,9 @@ class ApiConfig extends AmplifyPluginConfigMap {
   @override
   AWSApiPluginConfig? get awsPlugin =>
       plugins[AWSApiPluginConfig.pluginKey] as AWSApiPluginConfig?;
+
+  @override
+  ApiConfig copy() => ApiConfig(plugins: Map.of(plugins));
 
   @override
   Map<String, Object?> toJson() => _$ApiConfigToJson(this);

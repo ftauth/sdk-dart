@@ -21,10 +21,10 @@ part of 'api_config.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ApiConfig _$ApiConfigFromJson(Map<String, dynamic> json) => ApiConfig(
+ApiConfig _$ApiConfigFromJson(Map<String, Object?> json) => ApiConfig(
       plugins: AmplifyPluginRegistry.pluginConfigsFromJson(json['plugins']),
     );
 
-Map<String, dynamic> _$ApiConfigToJson(ApiConfig instance) => <String, dynamic>{
+Map<String, Object?> _$ApiConfigToJson(ApiConfig instance) => <String, Object?>{
       'plugins': instance.plugins.map((k, e) => MapEntry(k, e.toJson())),
     };

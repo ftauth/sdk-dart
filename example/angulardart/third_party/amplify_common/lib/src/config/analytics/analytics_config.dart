@@ -14,21 +14,17 @@
 //
 
 import 'package:amplify_common/amplify_common.dart';
-import 'package:amplify_common/src/config/amplify_plugin_config.dart';
-import 'package:amplify_common/src/config/amplify_plugin_registry.dart';
-import 'package:amplify_common/src/config/config_map.dart';
 
-import 'pinpoint_config.dart';
 export 'pinpoint_config.dart' hide PinpointPluginConfigFactory;
 
 part 'analytics_config.g.dart';
 
-/// {@template amplify_common.analytics_config}
+/// {@template amplify_flutter.analytics_config}
 /// The Analytics category configuration.
 /// {@endtemplate}
 @amplifySerializable
 class AnalyticsConfig extends AmplifyPluginConfigMap {
-  /// {@macro amplify_common.analytics_config}
+  /// {@macro amplify_flutter.analytics_config}
   const AnalyticsConfig({
     required Map<String, AmplifyPluginConfig> plugins,
   }) : super(plugins);
@@ -40,6 +36,9 @@ class AnalyticsConfig extends AmplifyPluginConfigMap {
   @override
   PinpointPluginConfig? get awsPlugin =>
       plugins[PinpointPluginConfig.pluginKey] as PinpointPluginConfig?;
+
+  @override
+  AnalyticsConfig copy() => AnalyticsConfig(plugins: Map.of(plugins));
 
   @override
   Map<String, Object?> toJson() => _$AnalyticsConfigToJson(this);

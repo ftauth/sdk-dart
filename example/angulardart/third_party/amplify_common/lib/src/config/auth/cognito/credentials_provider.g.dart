@@ -22,15 +22,15 @@ part of 'credentials_provider.dart';
 // **************************************************************************
 
 CognitoIdentityCredentialsProvider _$CognitoIdentityCredentialsProviderFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     CognitoIdentityCredentialsProvider(
       poolId: json['PoolId'] as String,
       region: json['Region'] as String,
     );
 
-Map<String, dynamic> _$CognitoIdentityCredentialsProviderToJson(
+Map<String, Object?> _$CognitoIdentityCredentialsProviderToJson(
         CognitoIdentityCredentialsProvider instance) =>
-    <String, dynamic>{
+    <String, Object?>{
       'PoolId': instance.poolId,
       'Region': instance.region,
     };

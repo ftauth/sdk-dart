@@ -22,15 +22,15 @@ part of 'pinpoint_analytics.dart';
 // **************************************************************************
 
 CognitoPinpointAnalyticsConfig _$CognitoPinpointAnalyticsConfigFromJson(
-        Map<String, dynamic> json) =>
+        Map<String, Object?> json) =>
     CognitoPinpointAnalyticsConfig(
       appId: json['AppId'] as String,
       region: json['Region'] as String,
     );
 
-Map<String, dynamic> _$CognitoPinpointAnalyticsConfigToJson(
+Map<String, Object?> _$CognitoPinpointAnalyticsConfigToJson(
         CognitoPinpointAnalyticsConfig instance) =>
-    <String, dynamic>{
+    <String, Object?>{
       'AppId': instance.appId,
       'Region': instance.region,
     };

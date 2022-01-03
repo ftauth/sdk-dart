@@ -14,10 +14,6 @@
 //
 
 import 'package:amplify_common/amplify_common.dart';
-import 'package:amplify_common/src/config/amplify_plugin_config.dart';
-import 'package:amplify_common/src/config/amplify_plugin_registry.dart';
-import 'package:amplify_common/src/config/auth/cognito/appsync.dart';
-import 'package:amplify_common/src/config/config_map.dart';
 import 'package:meta/meta.dart';
 
 export 'cognito/appsync.dart';
@@ -36,13 +32,13 @@ export 'cognito/user_pool.dart';
 
 part 'cognito_config.g.dart';
 
-/// {@template amplify_common.cognito_plugin_config_factory}
+/// {@template amplify_flutter.cognito_plugin_config_factory}
 /// Configuration factory for [CognitoPluginConfig].
 /// {@endtemplate}
 @internal
 class CognitoPluginConfigFactory
     extends AmplifyPluginConfigFactory<CognitoPluginConfig> {
-  /// {@macro amplify_common.cognito_plugin_config_factory}
+  /// {@macro amplify_flutter.cognito_plugin_config_factory}
   const CognitoPluginConfigFactory();
 
   @override
@@ -54,14 +50,14 @@ class CognitoPluginConfigFactory
   String get name => CognitoPluginConfig.pluginKey;
 }
 
-/// {@template amplify_common.cognito_plugin_config}
+/// {@template amplify_flutter.cognito_plugin_config}
 /// The AWS Cognito plugin configuration.
 /// {@endtemplate}
 @awsSerializable
 class CognitoPluginConfig
     with AWSEquatable<CognitoPluginConfig>, AWSSerializable
     implements AmplifyPluginConfig {
-  /// {@macro amplify_common.cognito_plugin_config}
+  /// {@macro amplify_flutter.cognito_plugin_config}
   const CognitoPluginConfig({
     this.userAgent = 'aws-amplify-cli/0.1.0',
     this.version = '0.1.0',
@@ -109,6 +105,33 @@ class CognitoPluginConfig
 
   factory CognitoPluginConfig.fromJson(Map<String, Object?> json) =>
       _$CognitoPluginConfigFromJson(json);
+
+  CognitoPluginConfig copyWith({
+    String? userAgent,
+    String? version,
+    AWSConfigMap<CognitoIdentityManager>? identityManager,
+    CredentialsProviders? credentialsProvider,
+    AWSConfigMap<CognitoUserPoolConfig>? cognitoUserPool,
+    AWSConfigMap<CognitoAuthConfig>? auth,
+    AWSConfigMap<CognitoAppSyncConfig>? appSync,
+    AWSConfigMap<CognitoPinpointAnalyticsConfig>? pinpointAnalytics,
+    AWSConfigMap<CognitoPinpointTargetingConfig>? pinpointTargeting,
+    AWSConfigMap<S3TransferUtility>? s3TransferUtility,
+  }) {
+    return CognitoPluginConfig(
+      userAgent: userAgent ?? this.userAgent,
+      version: version ?? this.version,
+      identityManager: identityManager ?? this.identityManager?.copy(),
+      credentialsProvider:
+          credentialsProvider ?? this.credentialsProvider?.copy(),
+      cognitoUserPool: cognitoUserPool ?? this.cognitoUserPool?.copy(),
+      auth: auth ?? this.auth?.copy(),
+      appSync: appSync ?? this.appSync?.copy(),
+      pinpointAnalytics: pinpointAnalytics ?? this.pinpointAnalytics?.copy(),
+      pinpointTargeting: pinpointTargeting ?? this.pinpointTargeting?.copy(),
+      s3TransferUtility: s3TransferUtility ?? this.s3TransferUtility?.copy(),
+    );
+  }
 
   @override
   Map<String, Object?> toJson() => _$CognitoPluginConfigToJson(this);

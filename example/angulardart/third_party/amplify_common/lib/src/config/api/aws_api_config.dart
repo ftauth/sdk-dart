@@ -14,20 +14,19 @@
 //
 
 import 'package:amplify_common/amplify_common.dart';
-import 'package:amplify_common/src/config/config_map.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 export 'appsync/api_config.dart';
 export 'appsync/endpoint_type.dart';
 
-/// {@template amplify_common.aws_api_plugin_config_factory}
+/// {@template amplify_flutter.aws_api_plugin_config_factory}
 /// Configuration factory for [AWSApiPluginConfig].
 /// {@endtemplate}
 @internal
 class AWSApiPluginConfigFactory
     extends AmplifyPluginConfigFactory<AWSApiPluginConfig> {
-  /// {@macro amplify_common.aws_api_plugin_config_factory}
+  /// {@macro amplify_flutter.aws_api_plugin_config_factory}
   const AWSApiPluginConfigFactory();
 
   @override
@@ -39,12 +38,12 @@ class AWSApiPluginConfigFactory
   String get name => AWSApiPluginConfig.pluginKey;
 }
 
-/// {@template amplify_common.aws_api_plugin_config}
+/// {@template amplify_flutter.aws_api_plugin_config}
 /// The AWS API plugin configuration.
 /// {@endtemplate}
 class AWSApiPluginConfig extends ConfigMap<AWSApiConfig>
     implements AmplifyPluginConfig {
-  /// {@macro amplify_common.aws_api_plugin_config}
+  /// {@macro amplify_flutter.aws_api_plugin_config}
   const AWSApiPluginConfig(this.endpoints);
 
   /// All API endpoint configurations.
@@ -57,6 +56,9 @@ class AWSApiPluginConfig extends ConfigMap<AWSApiConfig>
     );
     return AWSApiPluginConfig(configMap.configs);
   }
+
+  @override
+  AWSApiPluginConfig copy() => AWSApiPluginConfig(Map.of(endpoints));
 
   /// The plugin's configuration key.
   static const pluginKey = 'awsAPIPlugin';
