@@ -106,13 +106,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  browser_launcher:
-    dependency: transitive
-    description:
-      name: browser_launcher
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   build:
     dependency: transitive
     description:
@@ -281,41 +274,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
-  dds:
-    dependency: "direct overridden"
-    description:
-      name: dds
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.4"
-  devtools:
-    dependency: transitive
-    description:
-      name: devtools
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.8.0"
-  devtools_server:
-    dependency: transitive
-    description:
-      name: devtools_server
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.8.0"
-  devtools_shared:
-    dependency: transitive
-    description:
-      name: devtools_shared
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.8.0"
-  dwds:
-    dependency: transitive
-    description:
-      name: dwds
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "11.5.1"
   equatable:
     dependency: transitive
     description:
@@ -435,13 +393,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.4.0"
-  json_rpc_2:
-    dependency: transitive
-    description:
-      name: json_rpc_2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.1"
   json_serializable:
     dependency: "direct dev"
     description:
@@ -603,13 +554,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.0"
-  shelf_proxy:
-    dependency: transitive
-    description:
-      name: shelf_proxy
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   shelf_static:
     dependency: transitive
     description:
@@ -659,13 +603,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.1"
-  sse:
-    dependency: transitive
-    description:
-      name: sse
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.0"
   stack_trace:
     dependency: transitive
     description:
@@ -750,13 +687,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
-  usage:
-    dependency: transitive
-    description:
-      name: usage
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.2"
   uuid:
     dependency: transitive
     description:
@@ -785,13 +715,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  webdev:
-    dependency: "direct dev"
-    description:
-      name: webdev
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.7.6"
   webkit_inspection_protocol:
     dependency: transitive
     description:

@@ -18,14 +18,9 @@ dependencies:
   json_annotation: '>=4.4.0 <4.5.0'
   stream_transform: ^2.0.0
 
-# TODO: Remove when webdev is fixed
-dependency_overrides:
-  dds: 2.1.4
-
 dev_dependencies:
   build_runner: ^2.1.5
   build_web_compilers: ^3.2.1
   json_serializable: ^6.1.0
   lints: ^1.0.0
   sass_builder: ^2.1.4
-  webdev: 2.7.6
