@@ -115,7 +115,9 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     );
   }
 
-  /// Initializes the SDK and guarantees that [_init] is only called once.
+  /// Initializes the SDK.
+  ///
+  /// It is safe to call this method more than once.
   @override
   Future<void> init() async {
     if (_latestAuthState == null) {
@@ -195,6 +197,9 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     }
   }
 
+  /// Called when FTAuth initializes and a previous [state] and [codeVerifier]
+  /// were found in storage. This generally means we are returning from a login
+  /// or have stale info which should be cleared.
   @protected
   Future<AuthState> onFoundState({
     required String state,
@@ -312,11 +317,9 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   }
 
   /// Returns the URL to direct the user to via a WebView.
-  ///
-  /// Classes which extend [AuthorizerImpl] may override this method.
   @protected
   @visibleForTesting
-  @mustCallSuper
+  @nonVirtual
   Future<String> getAuthorizationUrl({
     String? language,
     String? countryCode,

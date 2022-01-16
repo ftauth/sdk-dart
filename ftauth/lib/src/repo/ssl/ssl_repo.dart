@@ -26,7 +26,7 @@ abstract class SSLPinningInterface {
   /// Returns true if the repository is currently pinning for [host].
   bool isPinning(String host);
 
-  /// Creates a strict pinning to the given [certificate] for a particular host].
+  /// Creates a strict pinning to the given [certificate] for a particular host.
   ///
   /// When an HTTP request is made to a URL with the specified host, the SSL
   /// certificate chain that the server presents must include a root certificate

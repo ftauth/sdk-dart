@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Update documentation.
+
 ## 0.2.0
 
 - Add `ConfigChangeStrategy` for when FTAuth is re-initialized with a new client ID.

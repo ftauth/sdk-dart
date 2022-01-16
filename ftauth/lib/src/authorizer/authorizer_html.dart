@@ -50,7 +50,7 @@ class AuthorizerImpl extends Authorizer {
   }
 
   /// The current popup window, if any.
-  WindowBase? popupWindow;
+  WindowBase? _popupWindow;
 
   @override
   Future<AuthState> onFoundState({
@@ -92,10 +92,10 @@ class AuthorizerImpl extends Authorizer {
   Future<void> launchUrl(String url) async {
     FTAuth.debug('Launching URL: $url');
     _injectScript();
-    popupWindow = launchPopup(url, popupWindow);
+    _popupWindow = launchPopup(url, _popupWindow);
 
     // If the popup fails to open, redirect the current window.
-    if (popupWindow == null) {
+    if (_popupWindow == null) {
       window.location.href = url;
     }
   }
@@ -117,7 +117,7 @@ class AuthorizerImpl extends Authorizer {
       return origin?.authority == gateway.authority;
     });
 
-    popupWindow = null;
+    _popupWindow = null;
 
     final parametersJson = event.data;
     if (parametersJson is! String) {

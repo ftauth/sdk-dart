@@ -65,9 +65,10 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
 
   /// {@template ftauth.retrieve_demo_config}
   /// Creates a temporary client configuration on the hosted FTAuth Demo
-  /// server (https://demo.ftauth.io), with a single [username] and [password].
+  /// server ([https://demo.ftauth.io](https://demo.ftauth.io)). A single user
+  /// is created with login [username] and [password].
   ///
-  /// Clients created with this method are not guaranteed to be always be
+  /// Clients created with this method are not guaranteed to always be
   /// available and should be regarded as ephemeral.
   /// {@endtemplate}
   static Future<Config> retrieveDemoConfig({

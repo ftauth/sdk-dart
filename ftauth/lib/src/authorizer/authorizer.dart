@@ -50,6 +50,6 @@ abstract class AuthorizerInterface implements SSLPinningInterface {
   Stream<AuthState> get authStates;
 
   /// Pull the latest auth state from the keychain. If, for example, an app extension
-  /// refreshed it, we may not have the latest.
+  /// or another window changed it, we may not have the latest.
   Future<void> refreshAuthState();
 }
