@@ -18,7 +18,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  ftauth: ^0.1.0
+  ftauth: ^0.2.0
   ftauth_flutter_platform_interface: ^0.1.0
   http: ^0.13.0
 
