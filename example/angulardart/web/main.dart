@@ -34,8 +34,7 @@ AmplifyConfig getAmplifyConfig() {
 AppSyncConfig getAppSyncConfig(AmplifyConfig config, FTAuth ftauth) {
   return AppSyncConfig.fromAmplifyConfig(
     config,
-    authorization: AppSyncOidcAuthorization(() async {
-      await ftauth.init();
+    authorization: AppSyncOidcAuthorization(() {
       final state = ftauth.currentState;
       if (state is! AuthSignedIn) {
         return null;
@@ -65,6 +64,7 @@ GraphQLClient createGraphQLClient(AppSyncConfig config) =>
     ),
     FactoryProvider(GraphQLClient, createGraphQLClient),
     FactoryProvider(FTAuth, getFTAuthClient),
+    ClassProvider(WebSocketConnection),
     ClassProvider(MetadataRepo),
     ClassProvider(CryptoRepo, useClass: CryptoRepoImpl),
     routerProviders,

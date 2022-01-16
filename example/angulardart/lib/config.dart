@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:html';
-import 'dart:typed_data';
 
+import 'package:async/async.dart';
 import 'package:ftauth/ftauth.dart';
 import 'package:http/http.dart' as http;
-import 'package:stream_transform/stream_transform.dart';
 
 bool get isDevMode {
   var enabled = false;
@@ -56,7 +55,16 @@ class AppConfig {
 class MonitoringHttpClient extends http.BaseClient {
   static final _base = http.Client();
 
-  String formatHttpRequest(http.BaseRequest request) {
+  static String _reformatJson(String json) {
+    try {
+      const encoder = JsonEncoder.withIndent('  ');
+      return encoder.convert(jsonDecode(json));
+    } on FormatException {
+      return json;
+    }
+  }
+
+  static String formatHttpRequest(http.BaseRequest request) {
     final sb = StringBuffer();
     sb.writeln('${request.method} ${request.url} HTTP/1.1');
     for (var entry in request.headers.entries) {
@@ -65,7 +73,7 @@ class MonitoringHttpClient extends http.BaseClient {
     if (request.method == 'POST') {
       sb.writeln();
       if (request is http.Request) {
-        sb.writeln(request.body);
+        sb.writeln(_reformatJson(request.body));
       } else {
         sb.writeln('<streaming body>');
       }
@@ -78,16 +86,15 @@ class MonitoringHttpClient extends http.BaseClient {
     final message = formatHttpRequest(request);
     window.top?.postMessage(message, '*');
     final resp = await _base.send(request);
-    final bb = BytesBuilder();
-    resp.stream.tap(
-      bb.add,
-      onError: (e, _) {
-        window.top?.postMessage('Error: ${e.toString()}', '*');
-      },
-      onDone: () {
-        window.top?.postMessage('Response: ${utf8.decode(bb.toBytes())}', '*');
-      },
+    final splitter = StreamSplitter(resp.stream);
+    final body = await http.ByteStream(splitter.split()).bytesToString();
+    window.top?.postMessage('Response:\n${_reformatJson(body)}'.trim(), '*');
+    return http.StreamedResponse(
+      splitter.split(),
+      resp.statusCode,
+      contentLength: resp.contentLength,
+      request: resp.request,
+      headers: resp.headers,
     );
-    return resp;
   }
 }

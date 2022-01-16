@@ -26,6 +26,7 @@ class TodosComponent with AuthRedirector {
     this.router,
     this.gqlClient,
     this.ref,
+    this.wsConn,
   );
 
   @override
@@ -35,10 +36,11 @@ class TodosComponent with AuthRedirector {
   final FTAuth ftauth;
 
   final GraphQLClient gqlClient;
+  final WebSocketConnection wsConn;
 
   final ChangeDetectorRef ref;
 
-  List<Todo> todos = [];
+  Set<Todo> todos = {};
 
   @ViewChild('name')
   InputElement? nameInput;
@@ -46,7 +48,41 @@ class TodosComponent with AuthRedirector {
   @override
   void ngOnInit() {
     super.ngOnInit();
-    fetchTodos();
+    ftauth.authStates.firstWhere((state) => state is AuthSignedIn).then((_) {
+      print('Fetching todos');
+      fetchTodos();
+      todosStream.listen((todo) {
+        todos.add(todo);
+        ref.markForCheck();
+      }, onError: (err) {
+        window.console.error('Error listening for todos: $err');
+      });
+    });
+  }
+
+  Stream<Todo> get todosStream async* {
+    await wsConn.init();
+    final currentUser = ftauth.currentUser!;
+    final stream = wsConn.subscribe(GraphQLRequest(
+      '''
+    subscription {
+      onCreateTodo(owner: "${currentUser.id}") {
+        id
+        name
+        completed
+        owner
+      }
+    }
+    ''',
+    ));
+    await for (final payload in stream) {
+      final json = payload.data?['onCreateTodo'] as Map?;
+      print('Got payload: $json');
+      if (json == null) {
+        throw Exception('Null payload');
+      }
+      yield Todo.fromJson(json.cast());
+    }
   }
 
   Future<void> createTodo() async {
@@ -73,11 +109,6 @@ class TodosComponent with AuthRedirector {
       );
       print('Got todo: ${resp.data}');
       print('Got errors: ${resp.errors}');
-      if (resp.errors.isNotEmpty) {
-        return;
-      }
-      final todo = resp.data!['createTodo'] as Map;
-      todos.add(Todo.fromJson(todo.cast()));
       nameInput?.value = '';
     } finally {
       ref.markForCheck();
@@ -103,9 +134,6 @@ class TodosComponent with AuthRedirector {
       );
       print('Got resp for $checked: ${resp.data}');
       print('Got errors: ${resp.errors}');
-      if (resp.errors.isNotEmpty) {
-        return;
-      }
     } finally {
       ref.markForCheck();
     }
@@ -138,7 +166,7 @@ class TodosComponent with AuthRedirector {
       }
       final todos = resp.data!['listTodos']['items'] as List;
       this.todos =
-          todos.cast<Map>().map((m) => Todo.fromJson(m.cast())).toList();
+          todos.cast<Map>().map((m) => Todo.fromJson(m.cast())).toSet();
     } finally {
       ref.markForCheck();
     }

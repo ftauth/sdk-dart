@@ -13,6 +13,7 @@ dependencies:
     path: third_party/amplify_common
   angular: ^7.0.0
   angular_router: ^3.0.1
+  async: ^2.8.2
   ftauth:
     path: ../../ftauth
   json_annotation: '>=4.4.0 <4.5.0'

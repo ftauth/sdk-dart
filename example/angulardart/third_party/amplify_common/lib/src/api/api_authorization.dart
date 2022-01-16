@@ -10,8 +10,8 @@ abstract class ApiAuthorization {
   const ApiAuthorization._(this.type);
 
   final APIAuthorizationType type;
-  FutureOr<Map<String, String>> connectionHeaders(AWSHttpRequest request);
-  FutureOr<Map<String, String>> requestHeaders(AWSHttpRequest request);
+  Map<String, String> connectionHeaders(AWSHttpRequest request);
+  Map<String, String> requestHeaders(AWSHttpRequest request);
 }
 
 class AppSyncApiKeyAuthorization extends ApiAuthorization {
@@ -47,21 +47,21 @@ class AppSyncIamAuthorization extends ApiAuthorization {
   final AWSSigV4Signer _signer;
 
   @override
-  Future<Map<String, String>> connectionHeaders(AWSHttpRequest request) =>
+  Map<String, String> connectionHeaders(AWSHttpRequest request) =>
       _headers(request);
 
   @override
-  Future<Map<String, String>> requestHeaders(AWSHttpRequest request) =>
+  Map<String, String> requestHeaders(AWSHttpRequest request) =>
       _headers(request);
 
-  Future<Map<String, String>> _headers(AWSHttpRequest request) async {
+  Map<String, String> _headers(AWSHttpRequest request) {
     final host = request.host;
     final region = host.split('.')[2];
     final credentialScope = AWSCredentialScope(
       region: region,
       service: 'appsync',
     );
-    final signedRequest = await _signer.sign(
+    final signedRequest = _signer.signSync(
       request,
       credentialScope: credentialScope,
     );
@@ -81,27 +81,29 @@ class AppSyncOidcAuthorization extends ApiAuthorization {
   const AppSyncOidcAuthorization(this.getCredentials)
       : super._(APIAuthorizationType.oidc);
 
-  final Future<String?> Function() getCredentials;
+  final String? Function() getCredentials;
 
   @override
-  Future<Map<String, String>> connectionHeaders(AWSHttpRequest request) async {
-    final credentials = await getCredentials();
+  Map<String, String> connectionHeaders(AWSHttpRequest request) {
+    final credentials = getCredentials();
     if (credentials == null) {
       throw Exception('Could not retrieve credentials');
     }
     return {
       'Authorization': credentials,
+      'Host': request.host,
     };
   }
 
   @override
-  Future<Map<String, String>> requestHeaders(AWSHttpRequest request) async {
-    final credentials = await getCredentials();
+  Map<String, String> requestHeaders(AWSHttpRequest request) {
+    final credentials = getCredentials();
     if (credentials == null) {
       throw Exception('Could not retrieve credentials');
     }
     return {
       'Authorization': credentials,
+      'Host': request.host,
     };
   }
 }
