@@ -25,7 +25,7 @@ class GraphQLClient {
     );
     final resp = await _client.post(
       _config.graphQLUri,
-      headers: await auth.requestHeaders(httpRequest),
+      headers: auth.requestHeaders(httpRequest),
       body: body,
     );
     final respJson = jsonDecode(resp.body) as Map;

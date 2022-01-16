@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:aws_signature_v4/aws_signature_v4.dart';
 import 'package:meta/meta.dart';
 

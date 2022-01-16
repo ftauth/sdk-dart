@@ -16,7 +16,6 @@
 import 'dart:convert';
 
 import 'package:amplify_common/amplify_common.dart';
-import 'package:amplify_common/src/config/config_map.dart';
 import 'package:test/test.dart';
 
 import 'testdata/cli_generated.dart';
