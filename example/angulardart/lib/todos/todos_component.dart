@@ -65,15 +65,14 @@ class TodosComponent with AuthRedirector {
     final currentUser = ftauth.currentUser!;
     final stream = wsConn.subscribe(GraphQLRequest(
       '''
-    subscription {
-      onCreateTodo(owner: "${currentUser.id}") {
-        id
-        name
-        completed
-        owner
-      }
-    }
-    ''',
+subscription {
+  onCreateTodo(owner: "${currentUser.id}") {
+    id
+    name
+    completed
+    owner
+  }
+}''',
     ));
     await for (final payload in stream) {
       final json = payload.data?['onCreateTodo'] as Map?;
@@ -92,18 +91,17 @@ class TodosComponent with AuthRedirector {
       final resp = await gqlClient.send(
         GraphQLRequest<Todo>(
           '''
-          mutation CompleteTodo {
-            createTodo(input: {
-              name: "$name"
-              completed: false
-            }) {
-              id
-              name
-              completed
-              owner
-            }
-          }
-        ''',
+mutation {
+  createTodo(input: {
+    name: "$name"
+    completed: false
+  }) {
+    id
+    name
+    completed
+    owner
+  }
+}''',
           fromJson: Todo.fromJson,
         ),
       );
@@ -120,15 +118,14 @@ class TodosComponent with AuthRedirector {
       final resp = await gqlClient.send(
         GraphQLRequest<Todo>(
           '''
-          mutation {
-            updateTodo(input: {
-              id: "${todo.id}"
-              completed: $checked
-            }) {
-              completed
-            }
-          }
-        ''',
+mutation {
+  updateTodo(input: {
+    id: "${todo.id}"
+    completed: $checked
+  }) {
+    completed
+  }
+}''',
           fromJson: Todo.fromJson,
         ),
       );
@@ -143,18 +140,17 @@ class TodosComponent with AuthRedirector {
     try {
       final resp = await gqlClient.send(
         GraphQLRequest<Todo>(
-          r'''
-          query {
-            listTodos {
-              items {
-                id
-                name
-                completed
-                owner
-              }
-            }
-          }
-        ''',
+          '''
+query {
+  listTodos {
+    items {
+      id
+      name
+      completed
+      owner
+    }
+  }
+}''',
           fromJson: Todo.fromJson,
         ),
       );

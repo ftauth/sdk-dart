@@ -71,10 +71,15 @@ class AppSyncConfig {
       );
     }
     final Uri graphQLUri = Uri.parse(appSyncConfig.endpoint);
-    final String realTimeGraphQLUrl = appSyncConfig.endpoint
-        .replaceFirst('appsync-api', 'appsync-realtime-api');
-    final Uri realTimeGraphQLUri =
-        Uri.parse(realTimeGraphQLUrl).replace(scheme: 'wss');
+    final bool isCustomDomain = !graphQLUri.host.endsWith('amazonaws.com');
+    final String realTimeGraphQLUrl = isCustomDomain
+        ? appSyncConfig.endpoint
+        : appSyncConfig.endpoint
+            .replaceFirst('appsync-api', 'appsync-realtime-api');
+    final Uri realTimeGraphQLUri = Uri.parse(realTimeGraphQLUrl).replace(
+      scheme: 'wss',
+      path: isCustomDomain ? '/graphql/realtime' : '/graphql',
+    );
 
     return AppSyncConfig(
       graphQLUri: graphQLUri,

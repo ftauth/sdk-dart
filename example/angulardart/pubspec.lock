@@ -308,7 +308,7 @@ packages:
       path: "../../ftauth"
       relative: true
     source: path
-    version: "0.1.1"
+    version: "0.2.0"
   ftauth_jwt:
     dependency: transitive
     description:

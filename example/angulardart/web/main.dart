@@ -6,7 +6,6 @@ import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:angulardart/amplifyconfiguration.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/browser_client.dart';
 
 import 'package:angulardart/app_component.template.dart' as app_component;
 import 'package:angulardart/config.dart';
@@ -48,12 +47,12 @@ FTAuth getFTAuthClient(AppConfig config, StorageRepo storageRepo) {
   return FTAuth(config.config, storageRepo: storageRepo);
 }
 
-GraphQLClient createGraphQLClient(AppSyncConfig config) =>
-    GraphQLClient(config: config);
+GraphQLClient createGraphQLClient(AppSyncConfig config, http.Client client) =>
+    GraphQLClient(config: config, baseClient: client);
 
 @GenerateInjector(
   [
-    ClassProvider(http.Client, useClass: BrowserClient),
+    ClassProvider(http.Client, useClass: MonitoringHttpClient),
     FactoryProvider(AppConfig, getAppConfig),
     FactoryProvider(StorageRepo, getStorageRepo),
     FactoryProvider(AmplifyConfig, getAmplifyConfig),
