@@ -14,6 +14,7 @@ class _AndroidAuthorizer extends AuthorizerImpl {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) : super(
           config,
           storageRepo: storageRepo,
@@ -22,6 +23,7 @@ class _AndroidAuthorizer extends AuthorizerImpl {
           timeout: timeout,
           encryptionKey: encryptionKey,
           clearOnFreshInstall: clearOnFreshInstall,
+          configChangeStrategy: configChangeStrategy,
         );
 
   static final _nativeLogin = NativeLogin();
@@ -67,6 +69,7 @@ class FTAuthFlutterAndroid extends FTAuthPlatform {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) {
     authorizer = _AndroidAuthorizer(
       config,
@@ -76,6 +79,7 @@ class FTAuthFlutterAndroid extends FTAuthPlatform {
       timeout: timeout,
       encryptionKey: encryptionKey,
       clearOnFreshInstall: clearOnFreshInstall,
+      configChangeStrategy: configChangeStrategy,
     );
   }
 }

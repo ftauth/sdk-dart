@@ -7,11 +7,17 @@ abstract class AuthState extends Equatable {
 
   @override
   List<Object?> get props => [];
+
+  @override
+  String toString();
 }
 
 /// The user's state is being retrieved or refreshed.
 class AuthLoading extends AuthState {
   const AuthLoading();
+
+  @override
+  String toString() => 'AuthLoading{}';
 }
 
 /// The user is logged in with the requested privileges.
@@ -22,12 +28,18 @@ class AuthSignedIn extends AuthState {
   const AuthSignedIn(this.client, this.user);
 
   @override
+  String toString() => 'AuthSignedIn{}';
+
+  @override
   List<Object?> get props => [client, user];
 }
 
 /// The user is logged out or their access has expired.
 class AuthSignedOut extends AuthState {
   const AuthSignedOut();
+
+  @override
+  String toString() => 'AuthSignedOut{}';
 }
 
 /// An error occurred during authorization.

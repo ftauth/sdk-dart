@@ -31,6 +31,10 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   /// Whether to clear previous Keychain items on a fresh install.
   final bool clearOnFreshInstall;
 
+  /// The strategy to use when FTAuth is initialized with a new, conflicting
+  /// configuration (client ID).
+  final ConfigChangeStrategy configChangeStrategy;
+
   /// Stores pinned SSL certificates.
   final SSLRepo _sslRepository;
 
@@ -76,6 +80,7 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required this.configChangeStrategy,
   })  : _sslRepository = sslRepository ?? SSLRepoImpl(storageRepo),
         _encryptionKey = encryptionKey,
         clearOnFreshInstall = clearOnFreshInstall ?? true {
@@ -150,8 +155,18 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
     if (currentConfigStr != null) {
       final currentConfig = Config.fromJson(jsonDecode(currentConfigStr));
       if (config.clientId != currentConfig.clientId) {
-        FTAuth.debug('New client ID. Clearing old Keychain items...');
-        await storageRepo.clear();
+        switch (configChangeStrategy) {
+          case ConfigChangeStrategy.clear:
+            FTAuth.debug('New client ID. Clearing old Keychain items...');
+            await storageRepo.clear();
+            break;
+          case ConfigChangeStrategy.ignore:
+            FTAuth.debug('New client ID. Ignoring...');
+            FTAuth.info(
+                'To configure a new client ID, change your `configChangeStrategy` '
+                'to `clear` or call .logout(deinit: true).');
+            break;
+        }
       }
     }
 
@@ -433,8 +448,12 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
   }
 
   @override
-  Future<void> logout() async {
-    await _clearStorageForLogout();
+  Future<void> logout({bool deinit = false}) async {
+    if (deinit) {
+      await storageRepo.clear();
+    } else {
+      await _clearStorageForLogout();
+    }
     addState(const AuthSignedOut());
   }
 

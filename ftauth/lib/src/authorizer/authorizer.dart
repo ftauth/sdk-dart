@@ -32,7 +32,10 @@ abstract class AuthorizerInterface implements SSLPinningInterface {
   });
 
   /// Logs out the current user.
-  Future<void> logout();
+  ///
+  /// Calling with [deinit] set to `true` will remove all traces of FTAuth
+  /// from the client.
+  Future<void> logout({bool deinit = false});
 
   /// The current authorization state.
   AuthState get currentState;

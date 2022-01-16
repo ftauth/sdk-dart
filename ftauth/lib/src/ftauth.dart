@@ -43,6 +43,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
     Uint8List? encryptionKey,
     SetupHandler? setup,
     bool? clearOnFreshInstall,
+    ConfigChangeStrategy configChangeStrategy = ConfigChangeStrategy.ignore,
   })  : _baseClient = baseClient ?? http.Client(),
         _timeout = timeout ?? const Duration(seconds: 60) {
     switch (config.provider) {
@@ -53,6 +54,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
               storageRepo: storageRepo ?? StorageRepo.instance,
               baseClient: baseClient,
               clearOnFreshInstall: clearOnFreshInstall,
+              configChangeStrategy: configChangeStrategy,
             );
         break;
     }
@@ -92,6 +94,9 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
         'redirect_uris': redirectUris.toList(),
         'scopes': ['default'],
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
     if (resp.statusCode != 200) {
       throw ApiException.post(registerUri, resp.statusCode, resp.body);
@@ -117,6 +122,9 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
         'username': username,
         'password': password,
       }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
     if (user.statusCode != 200) {
       throw ApiException.post(signUpUri, user.statusCode, user.body);
@@ -160,9 +168,9 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
   }
 
   @override
-  Future<void> logout() {
+  Future<void> logout({bool deinit = false}) {
     FTAuth.info('Logging out...');
-    return authorizer.logout();
+    return authorizer.logout(deinit: deinit);
   }
 
   @override
@@ -191,7 +199,7 @@ class FTAuth extends http.BaseClient implements FTAuthInterface {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     await authorizer.refreshAuthState();
-    final state = await authStates.first;
+    final state = currentState;
     if (state is AuthSignedIn) {
       return state.client.send(request).timeout(_timeout);
     }

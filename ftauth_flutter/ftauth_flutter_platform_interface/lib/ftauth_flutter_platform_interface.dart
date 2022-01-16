@@ -76,6 +76,7 @@ abstract class FTAuthPlatform extends PlatformInterface
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) {
     throw UnimplementedError();
   }
@@ -120,7 +121,8 @@ abstract class FTAuthPlatform extends PlatformInterface
       );
 
   @override
-  Future<void> logout() => authorizer.logout();
+  Future<void> logout({bool deinit = false}) =>
+      authorizer.logout(deinit: deinit);
 
   @override
   void pinCert(Certificate certificate) => authorizer.pinCert(certificate);

@@ -13,6 +13,7 @@ export 'src/model/model.dart';
 export 'src/authorizer/authorizer.dart';
 
 export 'src/model/config/config.dart';
+export 'src/model/config/config_change_strategy.dart';
 
 export 'src/repo/crypto/crypto_repo.dart';
 export 'src/repo/metadata/metadata_repo.dart';

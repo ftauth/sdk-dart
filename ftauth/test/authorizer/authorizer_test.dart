@@ -53,6 +53,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
       );
 
       final authorizationUrl = await authorizer.getAuthorizationUrl();
@@ -97,6 +98,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         config,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
       );
 
       expect(
@@ -122,6 +124,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
       );
 
       expect(
@@ -136,6 +139,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
       );
 
       expect(
@@ -151,6 +155,7 @@ void main() {
         final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
+          configChangeStrategy: ConfigChangeStrategy.clear,
           baseClient: baseHttpClient,
         );
         await setupValidUser();
@@ -167,6 +172,7 @@ void main() {
         final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
+          configChangeStrategy: ConfigChangeStrategy.clear,
           baseClient: baseHttpClient,
         );
         await setupValidUser();
@@ -198,6 +204,7 @@ void main() {
         final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
+          configChangeStrategy: ConfigChangeStrategy.clear,
           baseClient: httpClient,
         );
         await setupValidUser();
@@ -223,6 +230,7 @@ void main() {
         final authorizer = AuthorizerImpl(
           mockPublicConfig,
           storageRepo: storageRepo,
+          configChangeStrategy: ConfigChangeStrategy.clear,
           baseClient: httpClient,
         );
         await setupValidUser();
@@ -243,6 +251,7 @@ void main() {
         mockPublicConfig,
         storageRepo: storageRepo,
         baseClient: baseHttpClient,
+        configChangeStrategy: ConfigChangeStrategy.clear,
       );
       await setupValidUser();
 
@@ -254,6 +263,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
         baseClient: baseHttpClient,
       );
 
@@ -275,6 +285,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
         baseClient: baseHttpClient,
       );
 
@@ -285,6 +296,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
         baseClient: mockOAuthServer.mockHttpClient,
       );
 
@@ -307,6 +319,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
         baseClient: mockOAuthServer.mockHttpClient.copyWith(
           tokenHandler: (_) async => Response(
             jsonEncode({paramError: 'Bad Request'}),
@@ -353,6 +366,7 @@ void main() {
       final authorizer = AuthorizerImpl(
         mockPublicConfig,
         storageRepo: storageRepo,
+        configChangeStrategy: ConfigChangeStrategy.clear,
         baseClient: mockOAuthServer.mockHttpClient,
       );
       await authorizer.logout();

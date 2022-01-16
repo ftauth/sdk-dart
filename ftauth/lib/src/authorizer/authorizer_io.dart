@@ -13,6 +13,7 @@ class AuthorizerImpl extends Authorizer {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) : super(
           config,
           storageRepo: storageRepo,
@@ -21,6 +22,7 @@ class AuthorizerImpl extends Authorizer {
           timeout: timeout,
           encryptionKey: encryptionKey,
           clearOnFreshInstall: clearOnFreshInstall,
+          configChangeStrategy: configChangeStrategy,
         );
 
   @override

@@ -70,6 +70,7 @@ class FTAuth extends InheritedWidget {
     String? appGroup,
     SetupHandler? setup,
     bool? clearOnFreshInstall,
+    ConfigChangeStrategy changeConfigStrategy = ConfigChangeStrategy.ignore,
   })  : client = FTAuthClient(
           config,
           baseClient: baseClient,
@@ -79,6 +80,7 @@ class FTAuth extends InheritedWidget {
           appGroup: appGroup,
           setup: setup,
           clearOnFreshInstall: clearOnFreshInstall,
+          configChangeStrategy: changeConfigStrategy,
         ),
         super(key: key, child: child);
 
@@ -108,6 +110,7 @@ class FTAuthClient extends ftauth.FTAuth {
     String? appGroup,
     SetupHandler? setup,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) : super(
           config,
           storageRepo: storageRepo ?? FTAuthSecureStorage(),
@@ -117,6 +120,7 @@ class FTAuthClient extends ftauth.FTAuth {
           setup: setup,
           authorizer: _platform,
           clearOnFreshInstall: clearOnFreshInstall,
+          configChangeStrategy: configChangeStrategy,
         ) {
     _platform.createAuthorizer(
       config,
@@ -125,6 +129,7 @@ class FTAuthClient extends ftauth.FTAuth {
       baseClient: baseClient,
       timeout: timeout,
       clearOnFreshInstall: clearOnFreshInstall,
+      configChangeStrategy: configChangeStrategy,
     );
   }
 

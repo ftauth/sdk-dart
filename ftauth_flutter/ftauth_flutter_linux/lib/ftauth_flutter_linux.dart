@@ -14,6 +14,7 @@ class _LinuxAuthorizer extends AuthorizerImpl {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) : super(
           config,
           storageRepo: storageRepo,
@@ -22,6 +23,7 @@ class _LinuxAuthorizer extends AuthorizerImpl {
           timeout: timeout,
           encryptionKey: encryptionKey,
           clearOnFreshInstall: clearOnFreshInstall,
+          configChangeStrategy: configChangeStrategy,
         );
 
   @override
@@ -47,6 +49,7 @@ class FTAuthFlutterLinux extends FTAuthPlatform {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) {
     authorizer = _LinuxAuthorizer(
       config,
@@ -56,6 +59,7 @@ class FTAuthFlutterLinux extends FTAuthPlatform {
       timeout: timeout,
       encryptionKey: encryptionKey,
       clearOnFreshInstall: clearOnFreshInstall,
+      configChangeStrategy: configChangeStrategy,
     );
   }
 }

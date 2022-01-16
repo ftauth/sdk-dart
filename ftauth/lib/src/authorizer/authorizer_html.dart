@@ -25,6 +25,7 @@ class AuthorizerImpl extends Authorizer {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) : super(
           config,
           storageRepo: storageRepo,
@@ -33,6 +34,7 @@ class AuthorizerImpl extends Authorizer {
           timeout: timeout,
           encryptionKey: encryptionKey,
           clearOnFreshInstall: clearOnFreshInstall,
+          configChangeStrategy: configChangeStrategy,
         );
 
   void _injectScript() {
@@ -88,6 +90,7 @@ class AuthorizerImpl extends Authorizer {
 
   @override
   Future<void> launchUrl(String url) async {
+    FTAuth.debug('Launching URL: $url');
     _injectScript();
     popupWindow = launchPopup(url, popupWindow);
 

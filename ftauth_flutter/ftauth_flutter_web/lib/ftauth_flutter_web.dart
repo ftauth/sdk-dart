@@ -20,6 +20,7 @@ class FTAuthFlutterWeb extends FTAuthPlatform {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) {
     authorizer = AuthorizerImpl(
       config,
@@ -29,6 +30,7 @@ class FTAuthFlutterWeb extends FTAuthPlatform {
       timeout: timeout,
       encryptionKey: encryptionKey,
       clearOnFreshInstall: clearOnFreshInstall,
+      configChangeStrategy: configChangeStrategy,
     );
   }
 }

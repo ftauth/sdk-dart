@@ -14,6 +14,7 @@ class _MethodChannelAuthorizer extends AuthorizerImpl {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) : super(
           config,
           storageRepo: storageRepo,
@@ -22,6 +23,7 @@ class _MethodChannelAuthorizer extends AuthorizerImpl {
           timeout: timeout,
           encryptionKey: encryptionKey,
           clearOnFreshInstall: clearOnFreshInstall,
+          configChangeStrategy: configChangeStrategy,
         );
 
   static const _channel = MethodChannel('ftauth_flutter');
@@ -61,6 +63,7 @@ class MethodChannelFTAuth extends FTAuthPlatform {
     Duration? timeout,
     Uint8List? encryptionKey,
     bool? clearOnFreshInstall,
+    required ConfigChangeStrategy configChangeStrategy,
   }) {
     authorizer = _MethodChannelAuthorizer(
       config,
@@ -70,6 +73,7 @@ class MethodChannelFTAuth extends FTAuthPlatform {
       timeout: timeout,
       encryptionKey: encryptionKey,
       clearOnFreshInstall: clearOnFreshInstall,
+      configChangeStrategy: configChangeStrategy,
     );
   }
 }
