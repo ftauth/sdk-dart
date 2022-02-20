@@ -7,7 +7,6 @@ An example of using FTAuth as an OIDC provider in AWS AppSync. Built with Angula
 To create the backend:
 
 ```sh
-cd amplify
 amplify init
 amplify push
 ```
