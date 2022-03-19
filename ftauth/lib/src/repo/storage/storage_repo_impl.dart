@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:ftauth/src/repo/path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 
 import 'storage_repo.dart';
@@ -9,10 +10,13 @@ class StorageRepoImpl implements StorageRepo {
 
   @override
   Future<void> init({
+    required PathProvider pathProvider,
     Uint8List? encryptionKey,
   }) async {
+    final path = pathProvider.getHiveDirectory();
     _box = await Hive.openBox<String>(
       'ftauth',
+      path: path,
       encryptionCipher:
           encryptionKey != null ? HiveAesCipher(encryptionKey) : null,
     );

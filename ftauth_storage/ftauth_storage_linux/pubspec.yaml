@@ -1,0 +1,32 @@
+name: ftauth_storage_linux
+description: Linux bindings for FTAuth secure storage adapter.
+version: 0.1.0
+homepage: https://github.com/ftauth/sdk-dart
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.8.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  ftauth: ^0.1.0
+  ftauth_storage_platform_interface: ^0.1.0
+
+dependency_overrides:
+  ftauth:
+    path: ../../ftauth
+  ftauth_storage_platform_interface:
+    path: ../ftauth_storage_platform_interface
+
+dev_dependencies:
+  flutter_lints: ^1.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    implements: ftauth_storage
+    platforms:
+      linux:
+        dartPluginClass: FTAuthStorageLinux

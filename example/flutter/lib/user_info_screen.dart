@@ -18,38 +18,41 @@ class _UserInfoScreenState extends State<UserInfoScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_response == null) {
-      _refreshState(FTAuth.of(context));
+      _refreshState();
     }
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      _refreshState(FTAuth.of(context));
+      _refreshState();
     }
   }
 
-  Future<void> _refreshState(FTAuthClient ssoClient) async {
+  String? get _currentUser => FTAuth.of(context).currentUser?.toString();
+
+  Future<void> _refreshState() async {
     setState(() {
       _isLoading = true;
     });
     try {
+      await FTAuth.of(context).refreshAuthState();
       setState(() {
         _isLoading = false;
-        // _response = resp;
+        _response = _currentUser;
         _error = null;
       });
     } on Exception catch (e) {
@@ -69,7 +72,9 @@ class _UserInfoScreenState extends State<UserInfoScreen>
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
-          child: Text(FTAuth.of(context).currentUser.toString()),
+          child: _isLoading
+              ? const CircularProgressIndicator()
+              : Text((_error ?? _response).toString()),
         ),
       ),
     );

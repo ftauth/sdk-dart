@@ -9,7 +9,7 @@ void main() {
   final data = 'testing'.codeUnits;
 
   setUp(() async {
-    await storageRepo.init();
+    await storageRepo.init(pathProvider: PathProvider());
   });
 
   group('CryptoRepo |', () {

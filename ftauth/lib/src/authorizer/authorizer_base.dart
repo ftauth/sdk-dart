@@ -138,7 +138,10 @@ abstract class Authorizer implements AuthorizerInterface, SSLPinningInterface {
 
     FTAuth.debug('Inititalizing SSO module...');
 
-    await storageRepo.init(encryptionKey: _encryptionKey);
+    await storageRepo.init(
+      pathProvider: PathProvider(),
+      encryptionKey: _encryptionKey,
+    );
 
     // Checks if this is the first time starting the app from a fresh install.
     // If it is, clear any old Keychain information which may be left behind

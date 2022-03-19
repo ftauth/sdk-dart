@@ -5,7 +5,7 @@ homepage: https://github.com/ftauth/sdk-dart
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=2.0.0"
+  flutter: ">=2.11.0-0"
 
 dependencies:
   flutter:
@@ -21,6 +21,32 @@ dependencies:
   ftauth_storage: ^0.1.0
   shared_preferences: ^2.0.0
   webview_flutter: ^2.0.0
+
+dependency_overrides:
+  ftauth_flutter_android:
+    path: ../ftauth_flutter_android
+  ftauth_flutter_ios:
+    path: ../ftauth_flutter_ios
+  ftauth_flutter_web:
+    path: ../ftauth_flutter_web
+  ftauth_flutter_platform_interface:
+    path: ../ftauth_flutter_platform_interface
+  ftauth_storage:
+    path: ../../ftauth_storage/ftauth_storage
+  ftauth_storage_web:
+    path: ../../ftauth_storage/ftauth_storage_web
+  ftauth_storage_ios:
+    path: ../../ftauth_storage/ftauth_storage_ios
+  ftauth_storage_android:
+    path: ../../ftauth_storage/ftauth_storage_android
+  ftauth_storage_windows:
+    path: ../../ftauth_storage/ftauth_storage_windows
+  ftauth_storage_macos:
+    path: ../../ftauth_storage/ftauth_storage_macos
+  ftauth_storage_linux:
+    path: ../../ftauth_storage/ftauth_storage_linux
+  ftauth_storage_platform_interface:
+    path: ../../ftauth_storage/ftauth_storage_platform_interface
 
 dev_dependencies:
   flutter_lints: ^1.0.0

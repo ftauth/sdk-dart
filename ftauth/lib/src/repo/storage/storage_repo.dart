@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:ftauth/src/repo/path_provider/path_provider.dart';
+
 import 'storage_repo_impl.dart';
 
 /// Handles secure storage of private information retained via the OAuth process
@@ -12,7 +14,10 @@ abstract class StorageRepo {
   }
 
   /// Initializes the storage repository.
-  Future<void> init({Uint8List? encryptionKey});
+  Future<void> init({
+    required PathProvider pathProvider,
+    Uint8List? encryptionKey,
+  });
 
   /// Returns the value stored for the given key or null, if not present.
   Future<String?> getString(String key);

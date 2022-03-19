@@ -28,8 +28,14 @@ class FTAuthSecureStorage implements StorageRepo {
   }
 
   @override
-  Future<void> init({Uint8List? encryptionKey}) async {
-    return _platform.init(encryptionKey: encryptionKey);
+  Future<void> init({
+    required PathProvider pathProvider,
+    Uint8List? encryptionKey,
+  }) async {
+    return _platform.init(
+      pathProvider: pathProvider,
+      encryptionKey: encryptionKey,
+    );
   }
 
   @override
@@ -40,5 +46,48 @@ class FTAuthSecureStorage implements StorageRepo {
   @override
   Future<void> setString(String key, String value) {
     return _platform.setString(key, value);
+  }
+}
+
+class FTAuthStorageDesktop extends FTAuthStoragePlatform {
+  static void registerWith() {
+    FTAuthStoragePlatform.instance = FTAuthStorageDesktop();
+  }
+
+  final _storageRepo = StorageRepo();
+
+  @override
+  Future<void> clear() {
+    return _storageRepo.clear();
+  }
+
+  @override
+  Future<void> delete(String key) {
+    return _storageRepo.delete(key);
+  }
+
+  @override
+  Future<String?> getString(String key) {
+    return _storageRepo.getString(key);
+  }
+
+  @override
+  Future<void> init({
+    required PathProvider pathProvider,
+    Uint8List? encryptionKey,
+  }) async {
+    await super.init(
+      pathProvider: pathProvider,
+      encryptionKey: encryptionKey,
+    );
+    return _storageRepo.init(
+      pathProvider: pathProvider,
+      encryptionKey: encryptionKey,
+    );
+  }
+
+  @override
+  Future<void> setString(String key, String value) {
+    return _storageRepo.setString(key, value);
   }
 }

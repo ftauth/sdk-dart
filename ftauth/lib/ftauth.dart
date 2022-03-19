@@ -17,6 +17,7 @@ export 'src/model/config/config_change_strategy.dart';
 
 export 'src/repo/crypto/crypto_repo.dart';
 export 'src/repo/metadata/metadata_repo.dart';
+export 'src/repo/path_provider/path_provider.dart';
 export 'src/repo/storage/storage_repo.dart';
 export 'src/repo/user/user_repo.dart';
 

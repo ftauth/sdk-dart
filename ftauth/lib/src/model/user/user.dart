@@ -1,3 +1,4 @@
+import 'package:ftauth/src/util/util.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';
@@ -23,7 +24,12 @@ class User {
     this.provider,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  Map<String, Object?> toJson() => _$UserToJson(this);
+
+  @override
+  String toString() {
+    return 'User ${prettyPrintJson(toJson())}';
+  }
 }

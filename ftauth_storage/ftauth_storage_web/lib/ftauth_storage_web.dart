@@ -6,9 +6,9 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:ftauth_storage_platform_interface/ftauth_storage_platform_interface.dart';
 
 /// A web implementation of the ftauth_storage plugin.
-class FTAuthStoragePlugin extends FTAuthStoragePlatform {
-  static void registerWith(Registrar? registrar) {
-    FTAuthStoragePlatform.instance = FTAuthStoragePlugin();
+class FTAuthStorageWeb extends FTAuthStoragePlatform {
+  static void registerWith(Registrar registrar) {
+    FTAuthStoragePlatform.instance = FTAuthStorageWeb();
   }
 
   @override

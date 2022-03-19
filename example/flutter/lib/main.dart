@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,16 @@ import 'user_info_screen.dart';
 const appGroup = 'group.io.ftauth.ftauth_example';
 final storageRepo = FTAuthSecureStorage();
 
+Uri get redirectUri {
+  if (kIsWeb || Platform.isLinux || Platform.isMacOS || Platform.isWindows) {
+    return Uri.parse('http://localhost:8080/#/auth');
+  }
+  return Uri.parse('myapp://');
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final config = await FTAuth.retrieveDemoConfig(
-    redirectUri:
-        Uri.parse(kIsWeb ? 'http://localhost:8080/#/auth' : 'myapp://'),
-  );
+  final config = await FTAuth.retrieveDemoConfig(redirectUri: redirectUri);
 
   runApp(
     FTAuth(
@@ -178,19 +183,21 @@ class _MyAppState extends State<MyApp> {
                         countryCode: _selectedCountry?.isoCode,
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      key: const Key(keyLoginEmbeddedButton),
-                      child: const Text('Login (Embedded)'),
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => EmbeddedLoginScreen(
-                            language: _selectedLanguage?.code,
-                            countryCode: _selectedCountry?.isoCode,
+                    if (kIsWeb || Platform.isAndroid || Platform.isIOS) ...[
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        key: const Key(keyLoginEmbeddedButton),
+                        child: const Text('Login (Embedded)'),
+                        onPressed: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => EmbeddedLoginScreen(
+                              language: _selectedLanguage?.code,
+                              countryCode: _selectedCountry?.isoCode,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                     const SizedBox(height: 10),
                     ElevatedButton(
                       key: const Key(keyUserInfoButton),

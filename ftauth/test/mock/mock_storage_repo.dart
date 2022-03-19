@@ -36,5 +36,8 @@ class MockStorageRepo implements StorageRepo {
   }
 
   @override
-  Future<void> init({Uint8List? encryptionKey}) async {}
+  Future<void> init({
+    required PathProvider pathProvider,
+    Uint8List? encryptionKey,
+  }) async {}
 }

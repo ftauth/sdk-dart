@@ -10,7 +10,7 @@ void main() {
   final dpopRepo = DPoPRepoImpl(cryptoRepo);
 
   setUp(() async {
-    await storageRepo.init();
+    await storageRepo.init(pathProvider: PathProvider());
   });
 
   group('DPoPRepo |', () {

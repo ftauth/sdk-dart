@@ -25,7 +25,7 @@ class _EmbeddedLoginScreenState extends State<EmbeddedLoginScreen> {
     ssoClient.authStates
         .firstWhere((state) => state is AuthSignedIn || state is AuthFailure)
         .then((_) {
-      SchedulerBinding.instance!.addPostFrameCallback((_) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
         if (mounted) Navigator.of(context).pop();
       });
     });

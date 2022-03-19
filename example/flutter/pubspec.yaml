@@ -12,6 +12,42 @@ dependencies:
   ftauth_flutter:
     path: ../../ftauth_flutter/ftauth_flutter
 
+dependency_overrides:
+  ftauth:
+    path: ../../ftauth
+  ftauth_jwt:
+    path: ../../ftauth_jwt
+  ftauth_flutter_android:
+    path: ../../ftauth_flutter/ftauth_flutter_android
+  ftauth_flutter_ios:
+    path: ../../ftauth_flutter/ftauth_flutter_ios
+  ftauth_flutter_web:
+    path: ../../ftauth_flutter/ftauth_flutter_web
+  ftauth_flutter_windows:
+    path: ../../ftauth_flutter/ftauth_flutter_windows
+  ftauth_flutter_macos:
+    path: ../../ftauth_flutter/ftauth_flutter_macos
+  ftauth_flutter_linux:
+    path: ../../ftauth_flutter/ftauth_flutter_linux
+  ftauth_flutter_platform_interface:
+    path: ../../ftauth_flutter/ftauth_flutter_platform_interface
+  ftauth_storage:
+    path: ../../ftauth_storage/ftauth_storage
+  ftauth_storage_web:
+    path: ../../ftauth_storage/ftauth_storage_web
+  ftauth_storage_ios:
+    path: ../../ftauth_storage/ftauth_storage_ios
+  ftauth_storage_android:
+    path: ../../ftauth_storage/ftauth_storage_android
+  ftauth_storage_platform_interface:
+    path: ../../ftauth_storage/ftauth_storage_platform_interface
+  ftauth_storage_windows:
+    path: ../../ftauth_storage/ftauth_storage_windows
+  ftauth_storage_macos:
+    path: ../../ftauth_storage/ftauth_storage_macos
+  ftauth_storage_linux:
+    path: ../../ftauth_storage/ftauth_storage_linux
+
 dev_dependencies:
   flutter_lints: ^1.0.0
   flutter_test:

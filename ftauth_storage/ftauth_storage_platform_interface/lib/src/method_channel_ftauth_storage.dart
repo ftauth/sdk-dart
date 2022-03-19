@@ -26,8 +26,14 @@ class MethodChannelFTAuthStorage extends FTAuthStoragePlatform {
   }
 
   @override
-  Future<void> init({Uint8List? encryptionKey}) async {
-    await super.init(encryptionKey: encryptionKey);
+  Future<void> init({
+    required PathProvider pathProvider,
+    Uint8List? encryptionKey,
+  }) async {
+    await super.init(
+      pathProvider: pathProvider,
+      encryptionKey: encryptionKey,
+    );
     FTAuth.info('encryptionKey has no effect on iOS or Android');
     return _nativeStorage.init();
   }

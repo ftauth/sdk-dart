@@ -43,7 +43,10 @@ abstract class FTAuthStoragePlatform extends PlatformInterface
 
   @override
   @mustCallSuper
-  Future<void> init({Uint8List? encryptionKey}) async {
+  Future<void> init({
+    required PathProvider pathProvider,
+    Uint8List? encryptionKey,
+  }) async {
     _sharedPrefs = await SharedPreferences.getInstance();
   }
 
